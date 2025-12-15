@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { 
   Users, 
   Crown, 
@@ -9,9 +10,12 @@ import {
   User, 
   Mail,
   MailCheck,
-  Trash2
+  Trash2,
+  Plus,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import InviteMembers from "./InviteMembers";
 
 const roleConfig = {
   lead: {
@@ -31,7 +35,9 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting }) {
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [invitations, setInvitations] = useState([]);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
 
   const sortedMembers = [...members].sort((a, b) => {
@@ -39,16 +45,35 @@ export default function MembersList({ members = [], currentUserRole, currentUser
     return roleOrder[a.role] - roleOrder[b.role];
   });
 
+  const handleInviteSubmit = () => {
+    if (invitations.length > 0 && onInvite) {
+      onInvite(invitations);
+      setInvitations([]);
+      setShowInviteDialog(false);
+    }
+  };
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-          <Users className="w-5 h-5 text-emerald-600" />
-          Trip Members
-          <Badge variant="outline" className="ml-2">
-            {members.length}
-          </Badge>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+            <Users className="w-5 h-5 text-emerald-600" />
+            Trip Members
+            <Badge variant="outline" className="ml-2">
+              {members.length}
+            </Badge>
+          </CardTitle>
+          {canManageMembers && onInvite && (
+            <Button
+              size="icon"
+              onClick={() => setShowInviteDialog(true)}
+              className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-2">
@@ -120,6 +145,42 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           </div>
         )}
       </CardContent>
+
+      {/* Invite Dialog */}
+      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Invite Members to Trip</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <InviteMembers
+              invitations={invitations}
+              onChange={setInvitations}
+            />
+          </div>
+          <DialogFooter className="gap-3">
+            <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleInviteSubmit}
+              disabled={invitations.length === 0 || isInviting}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {isInviting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Inviting...
+                </>
+              ) : (
+                <>
+                  Send {invitations.length > 0 ? `${invitations.length} ` : ''}Invitation{invitations.length !== 1 ? 's' : ''}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

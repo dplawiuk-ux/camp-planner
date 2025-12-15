@@ -85,6 +85,22 @@ export default function TripDetails() {
     }
   });
 
+  const inviteMembersMutation = useMutation({
+    mutationFn: async (invitations) => {
+      await base44.entities.TripMember.bulkCreate(
+        invitations.map(inv => ({
+          trip_id: tripId,
+          user_email: inv.email,
+          role: inv.role,
+          status: 'pending'
+        }))
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => base44.entities.Trip.delete(tripId),
     onSuccess: () => {
@@ -270,6 +286,8 @@ export default function TripDetails() {
               currentUserRole={currentUserRole}
               currentUserEmail={user?.email}
               onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
+              onInvite={canEdit ? (invitations) => inviteMembersMutation.mutate(invitations) : null}
+              isInviting={inviteMembersMutation.isPending}
             />
           </div>
 
