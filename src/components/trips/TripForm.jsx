@@ -37,6 +37,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     packing_items: defaultPackingItems
   });
   const [invitations, setInvitations] = useState([]);
+  const [customMessage, setCustomMessage] = useState("");
 
   useEffect(() => {
     if (initialData) {
