@@ -107,7 +107,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="text-sm font-medium text-slate-700">
-                      {member.user_name || member.user_email}
+                      {member.user_name || member.user_email || "Unnamed member"}
                     </p>
                     {isCurrentUser && (
                       <Button
@@ -120,10 +120,16 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       </Button>
                     )}
                   </div>
-                  
-                  {member.user_name && (
+
+                  {member.user_email && member.user_name && (
                     <p className="text-xs text-slate-500 mb-2">
                       {member.user_email}
+                    </p>
+                  )}
+
+                  {!member.user_email && (
+                    <p className="text-xs text-slate-500 mb-2">
+                      No email address
                     </p>
                   )}
                   

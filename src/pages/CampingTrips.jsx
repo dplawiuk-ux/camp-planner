@@ -69,22 +69,25 @@ export default function CampingTrips() {
         await base44.entities.TripMember.bulkCreate(
           invitations.map(inv => ({
             trip_id: trip.id,
-            user_email: inv.email,
+            user_email: inv.email || undefined,
+            user_name: inv.name || undefined,
             role: inv.role,
-            status: 'pending'
+            status: inv.email ? 'pending' : 'accepted'
           }))
         );
 
-        // Send invitation emails
+        // Send invitation emails only to members with emails
         const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${trip.id}`;
         for (const inv of invitations) {
-          const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nView trip details: ${tripUrl}`;
+          if (inv.email) {
+            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nView trip details: ${tripUrl}`;
 
-          await base44.integrations.Core.SendEmail({
-            to: inv.email,
-            subject: `You're invited to ${trip.name}`,
-            body: emailBody
-          });
+            await base44.integrations.Core.SendEmail({
+              to: inv.email,
+              subject: `You're invited to ${trip.name}`,
+              body: emailBody
+            });
+          }
         }
       }
 

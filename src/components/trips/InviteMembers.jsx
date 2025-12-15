@@ -31,26 +31,45 @@ const roleConfig = {
 
 export default function InviteMembers({ invitations = [], onChange, customMessage = "", onMessageChange }) {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [role, setRole] = useState("guest");
 
   const handleAdd = () => {
-    if (!email.trim() || !email.includes('@')) return;
+    const emailValue = email.trim();
+    const nameValue = name.trim();
     
-    const existing = invitations.find(inv => inv.email === email);
+    // Must have either email or name
+    if (!emailValue && !nameValue) return;
+    
+    // If email provided, validate it
+    if (emailValue && !emailValue.includes('@')) return;
+    
+    // Check for duplicates
+    const existing = invitations.find(inv => 
+      (emailValue && inv.email === emailValue) || 
+      (nameValue && !emailValue && inv.name === nameValue)
+    );
     if (existing) return;
 
-    onChange([...invitations, { email: email.trim(), role }]);
+    const newInvitation = { 
+      email: emailValue || undefined, 
+      name: nameValue || undefined,
+      role 
+    };
+    
+    onChange([...invitations, newInvitation]);
     setEmail("");
+    setName("");
     setRole("guest");
   };
 
-  const handleRemove = (emailToRemove) => {
-    onChange(invitations.filter(inv => inv.email !== emailToRemove));
+  const handleRemove = (index) => {
+    onChange(invitations.filter((_, i) => i !== index));
   };
 
-  const handleRoleChange = (email, newRole) => {
-    onChange(invitations.map(inv => 
-      inv.email === email ? { ...inv, role: newRole } : inv
+  const handleRoleChange = (index, newRole) => {
+    onChange(invitations.map((inv, i) => 
+      i === index ? { ...inv, role: newRole } : inv
     ));
   };
 
@@ -59,45 +78,54 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
       <div>
         <Label className="text-sm font-medium text-slate-700 flex items-center gap-2 mb-3">
           <UserPlus className="w-4 h-4 text-emerald-600" />
-          Invite Trip Members
+          Add Trip Members
         </Label>
         <p className="text-xs text-slate-500 mb-4">
-          Invite others to plan and join your camping trip
+          Add members to your trip - email optional for kids or offline campers
         </p>
       </div>
 
-      {/* Add Invitation */}
-      <div className="flex gap-2">
+      {/* Add Member */}
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Input
+            placeholder="Name (required)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAdd())}
+            className="flex-1 h-11 border-slate-200"
+          />
+          <Select value={role} onValueChange={setRole}>
+            <SelectTrigger className="w-32 h-11 border-slate-200">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(roleConfig).map(([key, { label, icon: Icon }]) => (
+                <SelectItem key={key} value={key}>
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-3 h-3" />
+                    {label}
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button 
+            type="button"
+            onClick={handleAdd} 
+            className="h-11 bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
         <Input
           type="email"
-          placeholder="email@example.com"
+          placeholder="Email (optional - for invitations)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAdd())}
-          className="flex-1 h-11 border-slate-200"
+          className="h-11 border-slate-200"
         />
-        <Select value={role} onValueChange={setRole}>
-          <SelectTrigger className="w-32 h-11 border-slate-200">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(roleConfig).map(([key, { label, icon: Icon }]) => (
-              <SelectItem key={key} value={key}>
-                <div className="flex items-center gap-2">
-                  <Icon className="w-3 h-3" />
-                  {label}
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button 
-          type="button"
-          onClick={handleAdd} 
-          className="h-11 bg-emerald-600 hover:bg-emerald-700"
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
       </div>
 
       {/* Role Descriptions */}
@@ -136,13 +164,14 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
             Invited ({invitations.length})
           </Label>
           <AnimatePresence>
-            {invitations.map((invitation) => {
+            {invitations.map((invitation, index) => {
               const config = roleConfig[invitation.role];
               const Icon = config.icon;
+              const displayText = invitation.name || invitation.email;
               
               return (
                 <motion.div
-                  key={invitation.email}
+                  key={index}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
@@ -153,12 +182,18 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-700 truncate">
-                      {invitation.email}
+                      {displayText}
                     </p>
+                    {invitation.email && invitation.name && (
+                      <p className="text-xs text-slate-500 truncate">{invitation.email}</p>
+                    )}
+                    {!invitation.email && (
+                      <Badge variant="outline" className="text-xs mt-1">No email</Badge>
+                    )}
                   </div>
                   <Select 
                     value={invitation.role} 
-                    onValueChange={(newRole) => handleRoleChange(invitation.email, newRole)}
+                    onValueChange={(newRole) => handleRoleChange(index, newRole)}
                   >
                     <SelectTrigger className="w-28 h-8 text-xs border-slate-200">
                       <SelectValue />
@@ -173,7 +208,7 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleRemove(invitation.email)}
+                    onClick={() => handleRemove(index)}
                     className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
                   >
                     <X className="w-4 h-4" />
