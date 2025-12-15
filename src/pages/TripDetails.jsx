@@ -34,6 +34,7 @@ import PackingList from "@/components/trips/PackingList";
 import MembersList from "@/components/trips/MembersList";
 import TripChat from "@/components/trips/TripChat";
 import TripMap from "@/components/trips/TripMap";
+import TentAllocation from "@/components/trips/TentAllocation";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -109,7 +110,7 @@ export default function TripDetails() {
   });
 
   const handlePackingUpdate = (items) => {
-    updateMutation.mutate({ packing_items: items });
+    updateMutation.mutate({ tripData: { packing_items: items } });
   };
 
   if (isLoading) {
@@ -291,8 +292,13 @@ export default function TripDetails() {
             />
           </div>
 
-          {/* Middle Column - Packing List */}
-          <div className="lg:col-span-1">
+          {/* Middle Column - Tent Allocation & Packing List */}
+          <div className="lg:col-span-1 space-y-6">
+            <TentAllocation
+              items={trip.packing_items || []}
+              members={members}
+              onUpdate={handlePackingUpdate}
+            />
             <PackingList
               items={trip.packing_items || []}
               onUpdate={handlePackingUpdate}

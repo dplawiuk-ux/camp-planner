@@ -11,16 +11,15 @@ import InviteMembers from "./InviteMembers";
 import LocationPicker from "./LocationPicker";
 
 const defaultPackingItems = [
-  { name: "Tent", category: "shelter", packed: false },
-  { name: "Sleeping bag", category: "sleep", packed: false },
-  { name: "Sleeping pad", category: "sleep", packed: false },
-  { name: "Camp stove", category: "cooking", packed: false },
-  { name: "Cooler", category: "cooking", packed: false },
-  { name: "First aid kit", category: "safety", packed: false },
-  { name: "Flashlight/Headlamp", category: "tools", packed: false },
-  { name: "Multi-tool", category: "tools", packed: false },
-  { name: "Rain jacket", category: "clothing", packed: false },
-  { name: "Hiking boots", category: "clothing", packed: false },
+  { id: "sleep-1", name: "Sleeping bag", category: "sleep", packed: false, assigned_to: [] },
+  { id: "sleep-2", name: "Sleeping pad", category: "sleep", packed: false, assigned_to: [] },
+  { id: "cooking-1", name: "Camp stove", category: "cooking", packed: false, assigned_to: [] },
+  { id: "cooking-2", name: "Cooler", category: "cooking", packed: false, assigned_to: [] },
+  { id: "safety-1", name: "First aid kit", category: "safety", packed: false, assigned_to: [] },
+  { id: "tools-1", name: "Flashlight/Headlamp", category: "tools", packed: false, assigned_to: [] },
+  { id: "tools-2", name: "Multi-tool", category: "tools", packed: false, assigned_to: [] },
+  { id: "clothing-1", name: "Rain jacket", category: "clothing", packed: false, assigned_to: [] },
+  { id: "clothing-2", name: "Hiking boots", category: "clothing", packed: false, assigned_to: [] },
 ];
 
 export default function TripForm({ open, onClose, onSubmit, initialData, isLoading }) {

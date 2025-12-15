@@ -1,0 +1,294 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Tent, Plus, Users, Trash2, UserPlus, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function TentAllocation({ items = [], members = [], onUpdate }) {
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newTent, setNewTent] = useState({ name: '', capacity: 2 });
+  const [assigningTo, setAssigningTo] = useState(null);
+
+  const tents = items.filter(item => item.category === 'shelter');
+  const acceptedMembers = members.filter(m => m.status === 'accepted');
+  
+  const assignedMemberEmails = new Set(
+    tents.flatMap(tent => tent.assigned_to || [])
+  );
+  const unassignedMembers = acceptedMembers.filter(
+    m => !assignedMemberEmails.has(m.user_email)
+  );
+
+  const handleAddTent = () => {
+    if (!newTent.name) return;
+    
+    const updatedItems = [
+      ...items,
+      {
+        id: `tent-${Date.now()}`,
+        name: newTent.name,
+        category: 'shelter',
+        capacity: newTent.capacity,
+        assigned_to: [],
+        packed: false
+      }
+    ];
+    
+    onUpdate(updatedItems);
+    setNewTent({ name: '', capacity: 2 });
+    setShowAddDialog(false);
+  };
+
+  const handleRemoveTent = (tentId) => {
+    const updatedItems = items.filter(item => item.id !== tentId);
+    onUpdate(updatedItems);
+  };
+
+  const handleAssignMember = (tentId, memberEmail) => {
+    const updatedItems = items.map(item => {
+      if (item.id === tentId) {
+        const assigned = item.assigned_to || [];
+        return {
+          ...item,
+          assigned_to: [...assigned, memberEmail]
+        };
+      }
+      return item;
+    });
+    onUpdate(updatedItems);
+    setAssigningTo(null);
+  };
+
+  const handleUnassignMember = (tentId, memberEmail) => {
+    const updatedItems = items.map(item => {
+      if (item.id === tentId) {
+        return {
+          ...item,
+          assigned_to: (item.assigned_to || []).filter(email => email !== memberEmail)
+        };
+      }
+      return item;
+    });
+    onUpdate(updatedItems);
+  };
+
+  const getMemberName = (email) => {
+    const member = acceptedMembers.find(m => m.user_email === email);
+    return member?.user_name || email.split('@')[0];
+  };
+
+  const totalCapacity = tents.reduce((sum, tent) => sum + (tent.capacity || 0), 0);
+  const totalAssigned = tents.reduce((sum, tent) => sum + (tent.assigned_to?.length || 0), 0);
+  const isFullyAllocated = totalAssigned >= acceptedMembers.length && unassignedMembers.length === 0;
+
+  return (
+    <Card className="border-0 shadow-sm">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+              <Tent className="w-5 h-5 text-emerald-600" />
+              Sleeping Arrangements
+            </CardTitle>
+            <p className="text-sm text-slate-500 mt-1">
+              {totalAssigned} of {acceptedMembers.length} members assigned • {totalCapacity} total capacity
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowAddDialog(true)}
+            size="sm"
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Tent
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        {tents.length === 0 ? (
+          <div className="text-center py-8 text-slate-500">
+            <Tent className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+            <p>No tents added yet</p>
+            <p className="text-sm">Add tents to manage sleeping arrangements</p>
+          </div>
+        ) : (
+          <AnimatePresence>
+            {tents.map((tent) => {
+              const assignedCount = tent.assigned_to?.length || 0;
+              const capacity = tent.capacity || 0;
+              const isFull = assignedCount >= capacity;
+              const availableMembers = unassignedMembers.filter(
+                m => !tent.assigned_to?.includes(m.user_email)
+              );
+
+              return (
+                <motion.div
+                  key={tent.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="border border-slate-200 rounded-lg p-4 bg-white"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-slate-800">{tent.name}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant={isFull ? "default" : "outline"} className="text-xs">
+                          <Users className="w-3 h-3 mr-1" />
+                          {assignedCount}/{capacity}
+                        </Badge>
+                        {isFull && (
+                          <Badge className="text-xs bg-emerald-100 text-emerald-700">
+                            Full
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      {!isFull && availableMembers.length > 0 && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setAssigningTo(tent.id)}
+                          className="h-8 w-8"
+                        >
+                          <UserPlus className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleRemoveTent(tent.id)}
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {tent.assigned_to && tent.assigned_to.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {tent.assigned_to.map((email) => (
+                        <Badge
+                          key={email}
+                          variant="secondary"
+                          className="flex items-center gap-1 pr-1"
+                        >
+                          {getMemberName(email)}
+                          <button
+                            onClick={() => handleUnassignMember(tent.id, email)}
+                            className="hover:bg-slate-200 rounded-full p-0.5"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-400 italic">No one assigned yet</p>
+                  )}
+
+                  {/* Quick assign dropdown */}
+                  {assigningTo === tent.id && availableMembers.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-slate-100">
+                      <Select
+                        onValueChange={(email) => handleAssignMember(tent.id, email)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Select member to assign" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableMembers.map((member) => (
+                            <SelectItem key={member.user_email} value={member.user_email}>
+                              {member.user_name || member.user_email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        )}
+
+        {unassignedMembers.length > 0 && tents.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <p className="text-sm font-medium text-slate-700 mb-2">
+              Unassigned Members ({unassignedMembers.length})
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {unassignedMembers.map((member) => (
+                <Badge key={member.user_email} variant="outline">
+                  {member.user_name || member.user_email}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+
+      {/* Add Tent Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Tent</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="tent-name">Tent Name</Label>
+              <Input
+                id="tent-name"
+                placeholder="e.g., Big Red Tent"
+                value={newTent.name}
+                onChange={(e) => setNewTent({ ...newTent, name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="capacity">Capacity (people)</Label>
+              <Input
+                id="capacity"
+                type="number"
+                min="1"
+                max="20"
+                value={newTent.capacity}
+                onChange={(e) => setNewTent({ ...newTent, capacity: parseInt(e.target.value) || 2 })}
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddTent}
+              disabled={!newTent.name}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              Add Tent
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Card>
+  );
+}
