@@ -87,7 +87,7 @@ export default function TripDetails() {
   });
 
   const inviteMembersMutation = useMutation({
-    mutationFn: async (invitations) => {
+    mutationFn: async ({ invitations, customMessage }) => {
       await base44.entities.TripMember.bulkCreate(
         invitations.map(inv => ({
           trip_id: tripId,
@@ -100,10 +100,12 @@ export default function TripDetails() {
       // Send invitation emails
       const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
       for (const inv of invitations) {
+        const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nView trip details: ${tripUrl}`;
+        
         await base44.integrations.Core.SendEmail({
           to: inv.email,
           subject: `You're invited to ${trip.name}`,
-          body: `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}\n\nView trip details: ${tripUrl}`
+          body: emailBody
         });
       }
     },
@@ -305,7 +307,7 @@ export default function TripDetails() {
               currentUserRole={currentUserRole}
               currentUserEmail={user?.email}
               onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
-              onInvite={canEdit ? (invitations) => inviteMembersMutation.mutate(invitations) : null}
+              onInvite={canEdit ? (invitations, customMessage) => inviteMembersMutation.mutate({ invitations, customMessage }) : null}
               isInviting={inviteMembersMutation.isPending}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}

@@ -46,7 +46,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ tripData: formData, invitations });
+    onSubmit({ tripData: formData, invitations, customMessage });
   };
 
   const handleChange = (field, value) => {
@@ -163,6 +163,8 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
               <InviteMembers 
                 invitations={invitations}
                 onChange={setInvitations}
+                customMessage={customMessage}
+                onMessageChange={setCustomMessage}
               />
             </div>
           )}

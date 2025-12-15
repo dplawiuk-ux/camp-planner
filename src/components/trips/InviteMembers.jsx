@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, UserPlus, Shield, User, Crown } from "lucide-react";
+import { Plus, X, UserPlus, Shield, User, Crown, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const roleConfig = {
@@ -28,7 +29,7 @@ const roleConfig = {
   }
 };
 
-export default function InviteMembers({ invitations = [], onChange }) {
+export default function InviteMembers({ invitations = [], onChange, customMessage = "", onMessageChange }) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("guest");
 
@@ -111,6 +112,22 @@ export default function InviteMembers({ invitations = [], onChange }) {
           </div>
         ))}
       </div>
+
+      {/* Custom Message */}
+      {invitations.length > 0 && onMessageChange && (
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-slate-500" />
+            Custom Message (Optional)
+          </Label>
+          <Textarea
+            placeholder="Add a personal message to your invitation..."
+            value={customMessage}
+            onChange={(e) => onMessageChange(e.target.value)}
+            className="min-h-20 border-slate-200 resize-none"
+          />
+        </div>
+      )}
 
       {/* Invitations List */}
       {invitations.length > 0 && (

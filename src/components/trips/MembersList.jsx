@@ -40,6 +40,7 @@ const roleConfig = {
 export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [invitations, setInvitations] = useState([]);
+  const [customMessage, setCustomMessage] = useState("");
   const [showEditName, setShowEditName] = useState(false);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
   
@@ -52,8 +53,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
   const handleInviteSubmit = () => {
     if (invitations.length > 0 && onInvite) {
-      onInvite(invitations);
+      onInvite(invitations, customMessage);
       setInvitations([]);
+      setCustomMessage("");
       setShowInviteDialog(false);
     }
   };
@@ -176,6 +178,8 @@ export default function MembersList({ members = [], currentUserRole, currentUser
             <InviteMembers
               invitations={invitations}
               onChange={setInvitations}
+              customMessage={customMessage}
+              onMessageChange={setCustomMessage}
             />
           </div>
           <DialogFooter className="gap-3">
