@@ -16,7 +16,8 @@ import {
   Package,
   Loader2,
   Edit3,
-  Trash2
+  Trash2,
+  Camera
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import EquipmentForm from "@/components/shed/EquipmentForm";
