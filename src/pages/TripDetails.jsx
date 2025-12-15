@@ -122,6 +122,19 @@ export default function TripDetails() {
     }
   });
 
+  const resendInviteMutation = useMutation({
+    mutationFn: async (member) => {
+      const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
+      const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${member.role}\n\nView trip details: ${tripUrl}`;
+      
+      await base44.integrations.Core.SendEmail({
+        to: member.user_email,
+        subject: `Reminder: You're invited to ${trip.name}`,
+        body: emailBody
+      });
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => base44.entities.Trip.delete(tripId),
     onSuccess: () => {
@@ -311,6 +324,8 @@ export default function TripDetails() {
               isInviting={inviteMembersMutation.isPending}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}
+              onResendInvite={canEdit ? (member) => resendInviteMutation.mutate(member) : null}
+              isResending={resendInviteMutation.isPending}
             />
           </div>
 

@@ -13,7 +13,8 @@ import {
   Trash2,
   Plus,
   Loader2,
-  Edit3
+  Edit3,
+  Send
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
@@ -37,7 +38,7 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [customMessage, setCustomMessage] = useState("");
@@ -145,16 +146,30 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                   </div>
                 </div>
 
-                {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onRemove(member.id)}
-                    className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+                <div className="flex gap-1 flex-shrink-0">
+                  {canManageMembers && isPending && onResendInvite && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onResendInvite(member)}
+                      disabled={isResending}
+                      className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
+                      title="Resend invitation"
+                    >
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  )}
+                  {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onRemove(member.id)}
+                      className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </motion.div>
           );
