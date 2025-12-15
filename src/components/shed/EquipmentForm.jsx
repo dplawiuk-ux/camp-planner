@@ -9,25 +9,19 @@ import { Loader2, Package } from "lucide-react";
 import ImageUpload from "@/components/shared/ImageUpload";
 
 const equipmentTypes = [
-  { value: "tent", label: "Tent" },
-  { value: "sleeping_bag", label: "Sleeping Bag" },
-  { value: "sleeping_pad", label: "Sleeping Pad" },
-  { value: "hammock", label: "Hammock" },
-  { value: "stove", label: "Stove" },
-  { value: "water_system", label: "Water System" },
-  { value: "canoe", label: "Canoe" },
-  { value: "kayak", label: "Kayak" },
-  { value: "pot", label: "Pot" },
-  { value: "pan", label: "Pan" },
-  { value: "dishes", label: "Dishes" },
-  { value: "cooler", label: "Cooler" },
+  { value: "tents", label: "Tents" },
+  { value: "sleeping_pads", label: "Sleeping Pads" },
+  { value: "sleeping_bags", label: "Sleeping Bags" },
+  { value: "kitchen", label: "Kitchen" },
+  { value: "fire", label: "Fire" },
+  { value: "watercraft", label: "Watercraft" },
   { value: "other", label: "Other" }
 ];
 
 export default function EquipmentForm({ open, onClose, onSubmit, initialData, isLoading }) {
   const [formData, setFormData] = useState(initialData || {
     name: "",
-    type: "tent",
+    type: "tents",
     capacity: "",
     notes: "",
     image_url: ""
@@ -39,7 +33,7 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
     } else {
       setFormData({
         name: "",
-        type: "tent",
+        type: "tents",
         capacity: "",
         notes: "",
         image_url: ""
@@ -60,7 +54,7 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const showCapacity = ['tent', 'cooler', 'canoe', 'kayak'].includes(formData.type);
+  const showCapacity = ['tents', 'watercraft'].includes(formData.type);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -104,9 +98,8 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
           {showCapacity && (
             <div className="space-y-2">
               <Label htmlFor="capacity">
-                Capacity {formData.type === 'tent' && "(people)"}
-                {formData.type === 'cooler' && "(liters)"}
-                {(formData.type === 'canoe' || formData.type === 'kayak') && "(people)"}
+                Capacity {formData.type === 'tents' && "(people)"}
+                {formData.type === 'watercraft' && "(people)"}
               </Label>
               <Input
                 id="capacity"
