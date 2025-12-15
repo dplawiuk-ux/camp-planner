@@ -64,7 +64,7 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
             <Package className="w-5 h-5 text-emerald-600" />
