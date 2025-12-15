@@ -69,8 +69,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   };
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card className="border-0 shadow-sm">
+    <>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-70 transition-opacity">
@@ -200,10 +201,10 @@ export default function MembersList({ members = [], currentUserRole, currentUser
             <p className="text-slate-500">No members yet</p>
           </div>
         )}
-      </CardContent>
+        </CardContent>
         </CollapsibleContent>
-      </Card>
-    </Collapsible>
+        </Card>
+      </Collapsible>
 
       {/* Invite Dialog */}
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
@@ -256,5 +257,6 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         }}
         isLoading={isUpdatingName}
       />
+    </>
   );
 }
