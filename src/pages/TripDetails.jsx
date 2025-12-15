@@ -30,7 +30,6 @@ import { format, differenceInDays } from "date-fns";
 import { motion } from "framer-motion";
 
 import TripForm from "@/components/trips/TripForm";
-import PackingList from "@/components/trips/PackingList";
 import MembersList from "@/components/trips/MembersList";
 import TripChat from "@/components/trips/TripChat";
 import TripMap from "@/components/trips/TripMap";
@@ -335,7 +334,7 @@ export default function TripDetails() {
             />
           </div>
 
-          {/* Middle Column - Tent Allocation, Gear List & Packing List */}
+          {/* Middle Column - Tent Allocation & Shared Gear */}
           <div className="lg:col-span-1 space-y-6">
             <TentAllocation
               items={trip.packing_items || []}
@@ -346,10 +345,6 @@ export default function TripDetails() {
               items={trip.gear_items || []}
               members={members}
               onUpdate={handleGearUpdate}
-            />
-            <PackingList
-              items={trip.packing_items || []}
-              onUpdate={handlePackingUpdate}
             />
           </div>
 
