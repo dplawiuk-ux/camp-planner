@@ -202,6 +202,8 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         )}
       </CardContent>
         </CollapsibleContent>
+      </Card>
+    </Collapsible>
 
       {/* Invite Dialog */}
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
@@ -254,7 +256,5 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         }}
         isLoading={isUpdatingName}
       />
-      </Card>
-    </Collapsible>
   );
 }
