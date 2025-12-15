@@ -20,7 +20,9 @@ import {
   Loader2,
   Edit3,
   Send,
-  ChevronDown
+  ChevronDown,
+  Tent,
+  Ship
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
@@ -44,11 +46,12 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending, packingItems = [], gearItems = [] }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [customMessage, setCustomMessage] = useState("");
   const [showEditName, setShowEditName] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
   const [isOpen, setIsOpen] = useState(true);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
   
@@ -111,7 +114,8 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+              onClick={() => setSelectedMember(member)}
+              className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
@@ -127,7 +131,10 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setShowEditName(true)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEditName(true);
+                        }}
                         className="h-5 w-5 text-slate-400 hover:text-emerald-600 flex-shrink-0"
                       >
                         <Edit3 className="w-3 h-3" />
@@ -171,7 +178,10 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onResendInvite(member)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onResendInvite(member);
+                      }}
                       disabled={isResending}
                       className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
                       title="Resend invitation"
@@ -183,7 +193,10 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onRemove(member.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemove(member.id);
+                      }}
                       className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -257,6 +270,102 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         }}
         isLoading={isUpdatingName}
       />
+
+      {/* Member Details Dialog */}
+      {selectedMember && (() => {
+        const config = roleConfig[selectedMember.role];
+        const Icon = config.icon;
+        const isPending = selectedMember.status === 'pending';
+        
+        // Check tent allocation
+        const tents = packingItems.filter(item => item.category === 'shelter');
+        const isInTent = tents.some(tent => tent.assigned_to?.includes(selectedMember.id));
+        
+        // Check watercraft allocation
+        const watercraft = gearItems.filter(item => item.type === 'watercraft');
+        const isInWatercraft = watercraft.some(w => w.assigned_to?.includes(selectedMember.id));
+        
+        return (
+          <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Member Details</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-xl ${config.color} flex-shrink-0`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg text-slate-800">
+                      {selectedMember.user_name || selectedMember.user_email || "Unnamed member"}
+                    </h3>
+                    {selectedMember.user_email && selectedMember.user_name && (
+                      <p className="text-sm text-slate-500">{selectedMember.user_email}</p>
+                    )}
+                    {!selectedMember.user_email && (
+                      <p className="text-sm text-slate-500">No email address</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-4 border-t border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-600">Member Level</span>
+                    <Badge className={`${config.color} border`}>
+                      {config.label}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-600">Status</span>
+                    {isPending ? (
+                      <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700">
+                        <Mail className="w-3 h-3 mr-1" />
+                        Pending
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">
+                        <MailCheck className="w-3 h-3 mr-1" />
+                        Accepted
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200">
+                    <p className="text-sm font-medium text-slate-700 mb-3">Allocations</p>
+                    <div className="flex gap-4">
+                      <div className="flex flex-col items-center gap-2 flex-1">
+                        <div className={`p-3 rounded-lg ${isInTent ? 'bg-emerald-100' : 'bg-orange-100'}`}>
+                          <Tent className={`w-5 h-5 ${isInTent ? 'text-emerald-600' : 'text-orange-600'}`} />
+                        </div>
+                        <span className="text-xs text-slate-600 text-center">
+                          {isInTent ? 'Tent Assigned' : 'No Tent'}
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center gap-2 flex-1">
+                        <div className={`p-3 rounded-lg ${isInWatercraft ? 'bg-emerald-100' : 'bg-orange-100'}`}>
+                          <Ship className={`w-5 h-5 ${isInWatercraft ? 'text-emerald-600' : 'text-orange-600'}`} />
+                        </div>
+                        <span className="text-xs text-slate-600 text-center">
+                          {isInWatercraft ? 'Watercraft Assigned' : 'No Watercraft'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button onClick={() => setSelectedMember(null)} className="w-full">
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
     </>
   );
 }

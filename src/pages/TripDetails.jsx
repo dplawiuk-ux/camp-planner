@@ -335,6 +335,8 @@ export default function TripDetails() {
               isUpdatingName={updateMemberNameMutation.isPending}
               onResendInvite={canEdit ? (member) => resendInviteMutation.mutate(member) : null}
               isResending={resendInviteMutation.isPending}
+              packingItems={trip.packing_items || []}
+              gearItems={trip.gear_items || []}
             />
           </div>
 
