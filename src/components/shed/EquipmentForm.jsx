@@ -130,7 +130,7 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
             />
           </div>
 
-          <DialogFooter className="gap-3 pt-2">
+          <DialogFooter className="gap-3 pt-2 pb-6">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Cancel
             </Button>
