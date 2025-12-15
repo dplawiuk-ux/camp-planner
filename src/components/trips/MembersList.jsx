@@ -99,7 +99,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               transition={{ delay: index * 0.05 }}
               className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
                   <Icon className="w-4 h-4" />
                 </div>
