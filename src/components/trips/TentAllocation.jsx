@@ -36,6 +36,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
   const [newTent, setNewTent] = useState({ name: '', capacity: 2 });
   const [assigningTo, setAssigningTo] = useState(null);
   const [addMode, setAddMode] = useState('shed');
+  const [isOpen, setIsOpen] = useState(true);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
