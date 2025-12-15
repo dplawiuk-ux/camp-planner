@@ -50,13 +50,13 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
   });
 
   const tents = items.filter(item => item.category === 'shelter');
-  const acceptedMembers = members.filter(m => m.status === 'accepted');
+  const allMembers = members;
   
   const assignedMemberEmails = new Set(
     tents.flatMap(tent => tent.assigned_to || [])
   );
-  const unassignedMembers = acceptedMembers.filter(
-    m => !assignedMemberEmails.has(m.user_email)
+  const unassignedMembers = allMembers.filter(
+    m => m.user_email && !assignedMemberEmails.has(m.user_email)
   );
 
   const handleAddTent = () => {
@@ -134,13 +134,13 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
   };
 
   const getMemberName = (email) => {
-    const member = acceptedMembers.find(m => m.user_email === email);
-    return member?.user_name || email.split('@')[0];
+    const member = allMembers.find(m => m.user_email === email);
+    return member?.user_name || email?.split('@')[0] || 'Unknown';
   };
 
   const totalCapacity = tents.reduce((sum, tent) => sum + (tent.capacity || 0), 0);
   const totalAssigned = tents.reduce((sum, tent) => sum + (tent.assigned_to?.length || 0), 0);
-  const isFullyAllocated = totalAssigned >= acceptedMembers.length && unassignedMembers.length === 0;
+  const isFullyAllocated = totalAssigned >= allMembers.length && unassignedMembers.length === 0;
 
   return (
     <Card className="border-0 shadow-sm">
@@ -152,7 +152,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               Sleeping Arrangements
             </CardTitle>
             <p className="text-sm text-slate-500 mt-1">
-              {totalAssigned} of {acceptedMembers.length} members assigned • {totalCapacity} total capacity
+              {totalAssigned} of {allMembers.length} members assigned • {totalCapacity} total capacity
             </p>
           </div>
           <Button
