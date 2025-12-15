@@ -102,6 +102,14 @@ export default function TripDetails() {
     }
   });
 
+  const updateMemberNameMutation = useMutation({
+    mutationFn: ({ memberId, name }) => 
+      base44.entities.TripMember.update(memberId, { user_name: name }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => base44.entities.Trip.delete(tripId),
     onSuccess: () => {
@@ -289,6 +297,8 @@ export default function TripDetails() {
               onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
               onInvite={canEdit ? (invitations) => inviteMembersMutation.mutate(invitations) : null}
               isInviting={inviteMembersMutation.isPending}
+              onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
+              isUpdatingName={updateMemberNameMutation.isPending}
             />
           </div>
 

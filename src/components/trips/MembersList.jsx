@@ -12,10 +12,12 @@ import {
   MailCheck,
   Trash2,
   Plus,
-  Loader2
+  Loader2,
+  Edit3
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
+import EditDisplayName from "./EditDisplayName";
 
 const roleConfig = {
   lead: {
@@ -35,10 +37,13 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [invitations, setInvitations] = useState([]);
+  const [showEditName, setShowEditName] = useState(false);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
+  
+  const currentMember = members.find(m => m.user_email === currentUserEmail);
 
   const sortedMembers = [...members].sort((a, b) => {
     const roleOrder = { lead: 0, admin: 1, guest: 2 };
@@ -99,10 +104,17 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-slate-700 truncate">
                     {member.user_name || member.user_email}
-                    {isCurrentUser && (
-                      <span className="text-slate-400 ml-1">(You)</span>
-                    )}
                   </p>
+                  {isCurrentUser && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowEditName(true)}
+                      className="h-5 w-5 text-slate-400 hover:text-emerald-600"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                    </Button>
+                  )}
                   {isPending && (
                     <Badge variant="outline" className="text-xs border-amber-200 bg-amber-50 text-amber-700">
                       <Mail className="w-3 h-3 mr-1" />
@@ -181,6 +193,20 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Display Name Dialog */}
+      <EditDisplayName
+        open={showEditName}
+        onClose={() => setShowEditName(false)}
+        currentName={currentMember?.user_name}
+        onSave={(name) => {
+          if (onUpdateName && currentMember) {
+            onUpdateName(currentMember.id, name);
+            setShowEditName(false);
+          }
+        }}
+        isLoading={isUpdatingName}
+      />
     </Card>
   );
 }
