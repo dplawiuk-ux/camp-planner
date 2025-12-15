@@ -52,11 +52,11 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
   const tents = items.filter(item => item.category === 'shelter');
   const allMembers = members;
   
-  const assignedMemberEmails = new Set(
+  const assignedMemberIds = new Set(
     tents.flatMap(tent => tent.assigned_to || [])
   );
   const unassignedMembers = allMembers.filter(
-    m => m.user_email && !assignedMemberEmails.has(m.user_email)
+    m => !assignedMemberIds.has(m.id)
   );
 
   const handleAddTent = () => {
@@ -105,13 +105,13 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
     onUpdate(updatedItems);
   };
 
-  const handleAssignMember = (tentId, memberEmail) => {
+  const handleAssignMember = (tentId, memberId) => {
     const updatedItems = items.map(item => {
       if (item.id === tentId) {
         const assigned = item.assigned_to || [];
         return {
           ...item,
-          assigned_to: [...assigned, memberEmail]
+          assigned_to: [...assigned, memberId]
         };
       }
       return item;
@@ -120,12 +120,12 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
     setAssigningTo(null);
   };
 
-  const handleUnassignMember = (tentId, memberEmail) => {
+  const handleUnassignMember = (tentId, memberId) => {
     const updatedItems = items.map(item => {
       if (item.id === tentId) {
         return {
           ...item,
-          assigned_to: (item.assigned_to || []).filter(email => email !== memberEmail)
+          assigned_to: (item.assigned_to || []).filter(id => id !== memberId)
         };
       }
       return item;
@@ -133,9 +133,9 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
     onUpdate(updatedItems);
   };
 
-  const getMemberName = (email) => {
-    const member = allMembers.find(m => m.user_email === email);
-    return member?.user_name || email?.split('@')[0] || 'Unknown';
+  const getMemberName = (memberId) => {
+    const member = allMembers.find(m => m.id === memberId);
+    return member?.user_name || member?.user_email || 'Unknown';
   };
 
   const totalCapacity = tents.reduce((sum, tent) => sum + (tent.capacity || 0), 0);
@@ -180,7 +180,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               const capacity = tent.capacity || 0;
               const isFull = assignedCount >= capacity;
               const availableMembers = unassignedMembers.filter(
-                m => !tent.assigned_to?.includes(m.user_email)
+                m => !tent.assigned_to?.includes(m.id)
               );
 
               return (
@@ -230,15 +230,15 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
 
                   {tent.assigned_to && tent.assigned_to.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {tent.assigned_to.map((email) => (
+                      {tent.assigned_to.map((memberId) => (
                         <Badge
-                          key={email}
+                          key={memberId}
                           variant="secondary"
                           className="flex items-center gap-1 pr-1"
                         >
-                          {getMemberName(email)}
+                          {getMemberName(memberId)}
                           <button
-                            onClick={() => handleUnassignMember(tent.id, email)}
+                            onClick={() => handleUnassignMember(tent.id, memberId)}
                             className="hover:bg-slate-200 rounded-full p-0.5"
                           >
                             <X className="w-3 h-3" />
@@ -254,15 +254,15 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                   {assigningTo === tent.id && availableMembers.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-slate-100">
                       <Select
-                        onValueChange={(email) => handleAssignMember(tent.id, email)}
+                        onValueChange={(memberId) => handleAssignMember(tent.id, memberId)}
                       >
                         <SelectTrigger className="h-9">
                           <SelectValue placeholder="Select member to assign" />
                         </SelectTrigger>
                         <SelectContent>
                           {availableMembers.map((member) => (
-                            <SelectItem key={member.user_email} value={member.user_email}>
-                              {member.user_name || member.user_email}
+                            <SelectItem key={member.id} value={member.id}>
+                              {member.user_name || member.user_email || 'Unnamed'}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -282,8 +282,8 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
             </p>
             <div className="flex flex-wrap gap-2">
               {unassignedMembers.map((member) => (
-                <Badge key={member.user_email} variant="outline">
-                  {member.user_name || member.user_email}
+                <Badge key={member.id} variant="outline">
+                  {member.user_name || member.user_email || 'Unnamed'}
                 </Badge>
               ))}
             </div>
