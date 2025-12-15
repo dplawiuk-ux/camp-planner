@@ -5,10 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { MapPin, Calendar, FileText, Image, Loader2 } from "lucide-react";
+import { MapPin, Calendar, FileText, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
 import LocationPicker from "./LocationPicker";
+import ImageUpload from "@/components/shared/ImageUpload";
 
 const defaultPackingItems = [
   { id: "sleep-1", name: "Sleeping bag", category: "sleep", packed: false, assigned_to: [] },
@@ -137,19 +138,11 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="image_url" className="text-sm font-medium text-slate-700 flex items-center gap-2">
-              <Image className="w-4 h-4 text-slate-500" />
-              Cover Image URL (optional)
-            </Label>
-            <Input
-              id="image_url"
-              placeholder="https://..."
-              value={formData.image_url}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-              className="h-12 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500"
-            />
-          </div>
+          <ImageUpload
+            label="Cover Image (optional)"
+            value={formData.image_url}
+            onChange={(url) => handleChange("image_url", url)}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-sm font-medium text-slate-700 flex items-center gap-2">

@@ -105,16 +105,11 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="image_url">Image URL (optional)</Label>
-            <Input
-              id="image_url"
-              placeholder="https://..."
-              value={formData.image_url}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-              className="h-11"
-            />
-          </div>
+          <ImageUpload
+            label="Image (optional)"
+            value={formData.image_url}
+            onChange={(url) => handleChange("image_url", url)}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="notes">Notes (optional)</Label>
