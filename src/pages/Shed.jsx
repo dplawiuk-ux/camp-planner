@@ -24,34 +24,22 @@ import EquipmentForm from "@/components/shed/EquipmentForm";
 import PhotoRecognition from "@/components/shed/PhotoRecognition";
 
 const equipmentIcons = {
-  tent: Tent,
-  sleeping_bag: Moon,
-  sleeping_pad: Moon,
-  hammock: Moon,
-  stove: Flame,
-  water_system: Droplets,
-  canoe: Ship,
-  kayak: Ship,
-  pot: Package,
-  pan: Package,
-  dishes: Package,
-  cooler: Package,
+  tents: Tent,
+  sleeping_pads: Moon,
+  sleeping_bags: Moon,
+  kitchen: Package,
+  fire: Flame,
+  watercraft: Ship,
   other: Package
 };
 
 const equipmentColors = {
-  tent: "bg-emerald-100 text-emerald-700",
-  sleeping_bag: "bg-indigo-100 text-indigo-700",
-  sleeping_pad: "bg-purple-100 text-purple-700",
-  hammock: "bg-violet-100 text-violet-700",
-  stove: "bg-orange-100 text-orange-700",
-  water_system: "bg-blue-100 text-blue-700",
-  canoe: "bg-cyan-100 text-cyan-700",
-  kayak: "bg-teal-100 text-teal-700",
-  pot: "bg-amber-100 text-amber-700",
-  pan: "bg-yellow-100 text-yellow-700",
-  dishes: "bg-lime-100 text-lime-700",
-  cooler: "bg-sky-100 text-sky-700",
+  tents: "bg-emerald-100 text-emerald-700",
+  sleeping_pads: "bg-purple-100 text-purple-700",
+  sleeping_bags: "bg-indigo-100 text-indigo-700",
+  kitchen: "bg-amber-100 text-amber-700",
+  fire: "bg-orange-100 text-orange-700",
+  watercraft: "bg-cyan-100 text-cyan-700",
   other: "bg-slate-100 text-slate-700"
 };
 
