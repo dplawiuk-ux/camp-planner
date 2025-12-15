@@ -86,8 +86,8 @@ export default function CampingTrips() {
       return trip;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['trips'] });
-      queryClient.invalidateQueries({ queryKey: ['myMemberships'] });
+      queryClient.refetchQueries({ queryKey: ['trips'] });
+      queryClient.refetchQueries({ queryKey: ['myMemberships'] });
       setShowForm(false);
     }
   });

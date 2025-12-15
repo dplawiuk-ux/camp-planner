@@ -82,7 +82,7 @@ export default function TripDetails() {
   const removeMemberMutation = useMutation({
     mutationFn: (memberId) => base44.entities.TripMember.delete(memberId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
+      queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
     }
   });
 
@@ -110,7 +110,7 @@ export default function TripDetails() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
+      queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
     }
   });
 
@@ -118,7 +118,7 @@ export default function TripDetails() {
     mutationFn: ({ memberId, name }) => 
       base44.entities.TripMember.update(memberId, { user_name: name }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
+      queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
     }
   });
 
