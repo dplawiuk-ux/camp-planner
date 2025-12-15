@@ -38,6 +38,18 @@ export default function LocationPicker({ location, lat, lng, onChange }) {
   );
   const [isSearching, setIsSearching] = useState(false);
 
+  useEffect(() => {
+    if (location !== undefined) {
+      setSearchQuery(location);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (lat && lng) {
+      setPosition({ lat, lng });
+    }
+  }, [lat, lng]);
+
   const handlePositionChange = (latlng) => {
     setPosition(latlng);
     onChange({
@@ -110,7 +122,15 @@ export default function LocationPicker({ location, lat, lng, onChange }) {
           id="location"
           placeholder="Search for a place..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setSearchQuery(newValue);
+            onChange({
+              location: newValue,
+              location_lat: position.lat,
+              location_lng: position.lng
+            });
+          }}
           onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSearch())}
           className="flex-1 h-11 border-slate-200"
         />
