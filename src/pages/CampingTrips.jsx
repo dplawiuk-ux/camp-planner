@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Search, Tent, Mountain, Loader2 } from "lucide-react";
+import { Plus, Search, Tent, Mountain, Loader2, Package, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import TripCard from "@/components/trips/TripCard";
@@ -130,6 +130,7 @@ export default function CampingTrips() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+            className="flex flex-wrap gap-3"
           >
             <Button
               onClick={() => setShowForm(true)}
@@ -139,6 +140,26 @@ export default function CampingTrips() {
               <Plus className="w-5 h-5 mr-2" />
               Plan New Trip
             </Button>
+            <Link to={createPageUrl("Shed")}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
+              >
+                <Package className="w-5 h-5 mr-2" />
+                Gear Shed
+              </Button>
+            </Link>
+            <Link to={createPageUrl("Documents")}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
+              >
+                <FileText className="w-5 h-5 mr-2" />
+                Documents
+              </Button>
+            </Link>
           </motion.div>
         </div>
         
