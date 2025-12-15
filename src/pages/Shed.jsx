@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import EquipmentForm from "@/components/shed/EquipmentForm";
+import PhotoRecognition from "@/components/shed/PhotoRecognition";
 
 const equipmentIcons = {
   tent: Tent,
@@ -58,6 +59,7 @@ export default function Shed() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showPhotoRecognition, setShowPhotoRecognition] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -109,6 +111,11 @@ export default function Shed() {
 
   const handleEdit = (item) => {
     setEditingItem(item);
+    setShowForm(true);
+  };
+
+  const handlePhotoRecognized = (recognizedData) => {
+    setEditingItem(recognizedData);
     setShowForm(true);
   };
 
@@ -185,6 +192,14 @@ export default function Shed() {
             ))}
           </div>
 
+          <Button
+            onClick={() => setShowPhotoRecognition(true)}
+            variant="outline"
+            className="whitespace-nowrap"
+          >
+            <Camera className="w-5 h-5 mr-2" />
+            Scan Photo
+          </Button>
           <Button
             onClick={() => {
               setEditingItem(null);
@@ -328,6 +343,13 @@ export default function Shed() {
           </motion.div>
         )}
       </div>
+
+      {/* Photo Recognition Modal */}
+      <PhotoRecognition
+        open={showPhotoRecognition}
+        onClose={() => setShowPhotoRecognition(false)}
+        onRecognized={handlePhotoRecognized}
+      />
 
       {/* Equipment Form Modal */}
       <EquipmentForm
