@@ -31,6 +31,8 @@ import { motion } from "framer-motion";
 
 import TripForm from "@/components/trips/TripForm";
 import PackingList from "@/components/trips/PackingList";
+import MembersList from "@/components/trips/MembersList";
+import TripChat from "@/components/trips/TripChat";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -41,6 +43,11 @@ export default function TripDetails() {
   
   const queryClient = useQueryClient();
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const { data: trip, isLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
@@ -50,11 +57,29 @@ export default function TripDetails() {
     enabled: !!tripId
   });
 
+  const { data: members = [] } = useQuery({
+    queryKey: ['tripMembers', tripId],
+    queryFn: () => base44.entities.TripMember.filter({ trip_id: tripId }),
+    enabled: !!tripId
+  });
+
+  const currentMember = members.find(m => m.user_email === user?.email);
+  const currentUserRole = currentMember?.role || 'guest';
+  const canEdit = ['lead', 'admin'].includes(currentUserRole);
+  const canDelete = currentUserRole === 'lead';
+
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Trip.update(tripId, data),
+    mutationFn: ({ tripData }) => base44.entities.Trip.update(tripId, tripData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setShowEditForm(false);
+    }
+  });
+
+  const removeMemberMutation = useMutation({
+    mutationFn: (memberId) => base44.entities.TripMember.delete(memberId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
     }
   });
 
@@ -132,22 +157,26 @@ export default function TripDetails() {
           </Link>
           
           <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowEditForm(true)}
-              className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
-            >
-              <Edit3 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowDeleteDialog(true)}
-              className="bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            {canEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowEditForm(true)}
+                className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
+              >
+                <Edit3 className="w-4 h-4" />
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowDeleteDialog(true)}
+                className="bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -180,9 +209,9 @@ export default function TripDetails() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Trip Info */}
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Left Column - Trip Info & Members */}
           <div className="lg:col-span-1 space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-4">
@@ -223,26 +252,45 @@ export default function TripDetails() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Members List */}
+            <MembersList 
+              members={members}
+              currentUserRole={currentUserRole}
+              currentUserEmail={user?.email}
+              onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
+            />
           </div>
 
-          {/* Right Column - Packing List */}
-          <div className="lg:col-span-2">
+          {/* Middle Column - Packing List */}
+          <div className="lg:col-span-1">
             <PackingList
               items={trip.packing_items || []}
               onUpdate={handlePackingUpdate}
+            />
+          </div>
+
+          {/* Right Column - Chat */}
+          <div className="lg:col-span-2">
+            <TripChat
+              tripId={tripId}
+              currentUserRole={currentUserRole}
+              currentUserEmail={user?.email}
             />
           </div>
         </div>
       </div>
 
       {/* Edit Form Modal */}
-      <TripForm
-        open={showEditForm}
-        onClose={() => setShowEditForm(false)}
-        onSubmit={(data) => updateMutation.mutate(data)}
-        initialData={trip}
-        isLoading={updateMutation.isPending}
-      />
+      {canEdit && (
+        <TripForm
+          open={showEditForm}
+          onClose={() => setShowEditForm(false)}
+          onSubmit={(data) => updateMutation.mutate(data)}
+          initialData={trip}
+          isLoading={updateMutation.isPending}
+        />
+      )}
 
       {/* Delete Confirmation */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

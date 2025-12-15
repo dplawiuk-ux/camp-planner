@@ -17,15 +17,63 @@ export default function CampingTrips() {
 
   const queryClient = useQueryClient();
 
-  const { data: trips = [], isLoading } = useQuery({
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const { data: myMemberships = [] } = useQuery({
+    queryKey: ['myMemberships'],
+    queryFn: async () => {
+      if (!user) return [];
+      return base44.entities.TripMember.filter({ user_email: user.email });
+    },
+    enabled: !!user
+  });
+
+  const { data: allTrips = [], isLoading } = useQuery({
     queryKey: ['trips'],
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
 
+  // Filter to only show trips where user is a member
+  const trips = allTrips.filter(trip => 
+    myMemberships.some(m => m.trip_id === trip.id)
+  );
+
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Trip.create(data),
+    mutationFn: async ({ tripData, invitations }) => {
+      const user = await base44.auth.me();
+      
+      // Create the trip
+      const trip = await base44.entities.Trip.create(tripData);
+      
+      // Add creator as lead
+      await base44.entities.TripMember.create({
+        trip_id: trip.id,
+        user_email: user.email,
+        user_name: user.full_name,
+        role: 'lead',
+        status: 'accepted'
+      });
+      
+      // Add invited members
+      if (invitations && invitations.length > 0) {
+        await base44.entities.TripMember.bulkCreate(
+          invitations.map(inv => ({
+            trip_id: trip.id,
+            user_email: inv.email,
+            role: inv.role,
+            status: 'pending'
+          }))
+        );
+      }
+      
+      return trip;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
+      queryClient.invalidateQueries({ queryKey: ['myMemberships'] });
       setShowForm(false);
     }
   });

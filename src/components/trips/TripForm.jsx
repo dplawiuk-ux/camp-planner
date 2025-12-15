@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { MapPin, Calendar, FileText, Image, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import InviteMembers from "./InviteMembers";
 
 const defaultPackingItems = [
   { name: "Tent", category: "shelter", packed: false },
@@ -32,10 +33,11 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     status: "planning",
     packing_items: defaultPackingItems
   });
+  const [invitations, setInvitations] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({ tripData: formData, invitations });
   };
 
   const handleChange = (field, value) => {
@@ -153,6 +155,15 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
               className="min-h-24 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 resize-none"
             />
           </div>
+
+          {!initialData && (
+            <div className="pt-4 border-t border-slate-200">
+              <InviteMembers 
+                invitations={invitations}
+                onChange={setInvitations}
+              />
+            </div>
+          )}
 
           <DialogFooter className="gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
