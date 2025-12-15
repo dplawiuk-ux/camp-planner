@@ -134,16 +134,16 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
     onUpdate(items.filter(item => item.id !== itemId));
   };
 
-  const handleAssign = (itemId, memberEmail) => {
+  const handleAssign = (itemId, memberId) => {
     onUpdate(items.map(item => {
       if (item.id === itemId) {
         const assigned = item.assigned_to || [];
-        const isAssigned = assigned.includes(memberEmail);
+        const isAssigned = assigned.includes(memberId);
         return {
           ...item,
           assigned_to: isAssigned 
-            ? assigned.filter(email => email !== memberEmail)
-            : [...assigned, memberEmail]
+            ? assigned.filter(id => id !== memberId)
+            : [...assigned, memberId]
         };
       }
       return item;
@@ -238,11 +238,11 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
                             {item.assigned_to && item.assigned_to.length > 0 && (
                               <div className="flex items-center gap-1 flex-wrap mt-2">
                                 <Users className="w-3 h-3 text-slate-400" />
-                                {item.assigned_to.map(email => {
-                                  const member = members.find(m => m.user_email === email);
+                                {item.assigned_to.map(memberId => {
+                                  const member = members.find(m => m.id === memberId);
                                   return (
-                                    <Badge key={email} variant="secondary" className="text-xs">
-                                      {member?.user_name || email}
+                                    <Badge key={memberId} variant="secondary" className="text-xs">
+                                      {member?.user_name || member?.user_email || 'Unknown'}
                                     </Badge>
                                   );
                                 })}
@@ -423,19 +423,19 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
           <div className="space-y-2 py-4">
             {members.length > 0 ? (
               members.map(member => {
-                const isAssigned = assigningItem?.assigned_to?.includes(member.user_email);
+                const isAssigned = assigningItem?.assigned_to?.includes(member.id);
                 return (
                   <div
                     key={member.id}
                     className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-                    onClick={() => handleAssign(assigningItem.id, member.user_email)}
+                    onClick={() => handleAssign(assigningItem.id, member.id)}
                   >
                     <Checkbox checked={isAssigned} />
                     <div className="flex-1">
                       <p className="font-medium text-slate-800">
-                        {member.user_name || member.user_email}
+                        {member.user_name || member.user_email || 'Unnamed'}
                       </p>
-                      {member.user_name && (
+                      {member.user_name && member.user_email && (
                         <p className="text-xs text-slate-500">{member.user_email}</p>
                       )}
                     </div>
