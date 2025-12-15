@@ -46,10 +46,10 @@ export default function CampingTrips() {
   const createMutation = useMutation({
     mutationFn: async ({ tripData, invitations }) => {
       const user = await base44.auth.me();
-      
+
       // Create the trip
       const trip = await base44.entities.Trip.create(tripData);
-      
+
       // Add creator as lead
       await base44.entities.TripMember.create({
         trip_id: trip.id,
@@ -58,7 +58,7 @@ export default function CampingTrips() {
         role: 'lead',
         status: 'accepted'
       });
-      
+
       // Add invited members
       if (invitations && invitations.length > 0) {
         await base44.entities.TripMember.bulkCreate(
@@ -69,8 +69,18 @@ export default function CampingTrips() {
             status: 'pending'
           }))
         );
+
+        // Send invitation emails
+        const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${trip.id}`;
+        for (const inv of invitations) {
+          await base44.integrations.Core.SendEmail({
+            to: inv.email,
+            subject: `You're invited to ${trip.name}`,
+            body: `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}\n\nView trip details: ${tripUrl}`
+          });
+        }
       }
-      
+
       return trip;
     },
     onSuccess: () => {
