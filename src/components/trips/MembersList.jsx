@@ -254,6 +254,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         }}
         isLoading={isUpdatingName}
       />
-    </Card>
+      </Card>
+    </Collapsible>
   );
 }
