@@ -162,7 +162,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
             <Package className="w-5 h-5 text-emerald-600" />
-            Gear List
+            Shared Gear
             {items.length > 0 && (
               <Badge variant="outline">{items.length}</Badge>
             )}
@@ -173,7 +173,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
             className="bg-emerald-600 hover:bg-emerald-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Gear
+            Add Shared Gear
           </Button>
         </div>
       </CardHeader>
@@ -184,7 +184,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-2xl mb-4">
               <Package className="w-8 h-8 text-slate-400" />
             </div>
-            <p className="text-slate-600 mb-2">No gear added yet</p>
+            <p className="text-slate-600 mb-2">No shared gear added yet</p>
             <p className="text-sm text-slate-500">Add items from your gear shed or create new ones</p>
           </div>
         ) : (
@@ -285,7 +285,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Gear to Trip</DialogTitle>
+            <DialogTitle>Add Shared Gear</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
@@ -323,14 +323,14 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-slate-500">Or add new gear</span>
+                <span className="bg-white px-2 text-slate-500">Or add new</span>
               </div>
             </div>
 
-            {/* Add New Gear */}
+            {/* Add New Shared Gear */}
             <div className="space-y-4">
               <div>
-                <Label>Gear Name</Label>
+                <Label>Item Name</Label>
                 <Input
                   placeholder="e.g., Coleman Stove"
                   value={newItemData.name}
