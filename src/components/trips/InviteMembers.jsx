@@ -11,19 +11,19 @@ const roleConfig = {
   lead: {
     icon: Crown,
     color: "bg-amber-100 text-amber-700 border-amber-200",
-    label: "Lead",
+    label: "Trip Leader",
     description: "Full access - can edit, delete, manage members"
   },
   admin: {
     icon: Shield,
     color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    label: "Admin",
+    label: "Pack Leader",
     description: "Can edit trip, manage packing list, invite guests"
   },
   guest: {
     icon: User,
     color: "bg-slate-100 text-slate-700 border-slate-200",
-    label: "Guest",
+    label: "Camper",
     description: "Can view and chat, mark items as packed"
   }
 };
