@@ -103,7 +103,7 @@ export default function Shed() {
   });
 
   const handleSubmit = (data) => {
-    if (editingItem) {
+    if (editingItem?.id) {
       updateMutation.mutate({ id: editingItem.id, data });
     } else {
       createMutation.mutate(data);
