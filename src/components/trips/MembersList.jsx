@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { 
   Users, 
   Crown, 
@@ -14,7 +19,8 @@ import {
   Plus,
   Loader2,
   Edit3,
-  Send
+  Send,
+  ChevronDown
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
@@ -43,6 +49,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   const [invitations, setInvitations] = useState([]);
   const [customMessage, setCustomMessage] = useState("");
   const [showEditName, setShowEditName] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
   
   const currentMember = members.find(m => m.user_email === currentUserEmail);
@@ -62,27 +69,33 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   };
 
   return (
-    <Card className="border-0 shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            <Users className="w-5 h-5 text-emerald-600" />
-            Trip Members
-            <Badge variant="outline" className="ml-2">
-              {members.length}
-            </Badge>
-          </CardTitle>
-          {canManageMembers && onInvite && (
-            <Button
-              size="icon"
-              onClick={() => setShowInviteDialog(true)}
-              className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          )}
-        </div>
-      </CardHeader>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-70 transition-opacity">
+              <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+              <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                <Users className="w-5 h-5 text-emerald-600" />
+                Trip Members
+                <Badge variant="outline" className="ml-2">
+                  {members.length}
+                </Badge>
+              </CardTitle>
+            </CollapsibleTrigger>
+            {canManageMembers && onInvite && (
+              <Button
+                size="icon"
+                onClick={() => setShowInviteDialog(true)}
+                className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+
+        <CollapsibleContent>
 
       <CardContent className="space-y-2">
         {sortedMembers.map((member, index) => {
@@ -188,6 +201,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           </div>
         )}
       </CardContent>
+        </CollapsibleContent>
 
       {/* Invite Dialog */}
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>

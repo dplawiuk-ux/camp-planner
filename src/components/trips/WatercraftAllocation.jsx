@@ -20,8 +20,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Waves, Plus, Users, Trash2, UserPlus, X, Package } from "lucide-react";
+import { Waves, Plus, Users, Trash2, UserPlus, X, Package, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -31,6 +36,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
   const [newWatercraft, setNewWatercraft] = useState({ name: '', capacity: 2 });
   const [assigningTo, setAssigningTo] = useState(null);
   const [addMode, setAddMode] = useState('shed');
+  const [isOpen, setIsOpen] = useState(true);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -142,28 +148,34 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
   const totalAssigned = watercraft.reduce((sum, w) => sum + (w.assigned_to?.length || 0), 0);
 
   return (
-    <Card className="border-0 shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              <Waves className="w-5 h-5 text-blue-600" />
-              Watercraft
-            </CardTitle>
-            <p className="text-sm text-slate-500 mt-1">
-              {totalAssigned} of {allMembers.length} members assigned • {totalCapacity} total capacity
-            </p>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-70 transition-opacity">
+              <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+              <div>
+                <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                  <Waves className="w-5 h-5 text-blue-600" />
+                  Watercraft
+                </CardTitle>
+                <p className="text-sm text-slate-500 mt-1">
+                  {totalAssigned} of {allMembers.length} members assigned • {totalCapacity} total capacity
+                </p>
+              </div>
+            </CollapsibleTrigger>
+            <Button
+              onClick={() => setShowAddDialog(true)}
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Watercraft
+            </Button>
           </div>
-          <Button
-            onClick={() => setShowAddDialog(true)}
-            size="sm"
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Watercraft
-          </Button>
-        </div>
-      </CardHeader>
+        </CardHeader>
+
+        <CollapsibleContent>
 
       <CardContent className="space-y-4">
         {watercraft.length === 0 ? (
@@ -289,6 +301,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
           </div>
         )}
       </CardContent>
+        </CollapsibleContent>
 
       {/* Add Watercraft Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -378,6 +391,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+      </Card>
+    </Collapsible>
   );
 }

@@ -15,6 +15,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { 
   Package, 
   Plus, 
@@ -24,7 +29,8 @@ import {
   Moon,
   Flame,
   Ship,
-  MoreVertical
+  MoreVertical,
+  ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -61,6 +67,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
     add_to_shed: false
   });
   const [assigningItem, setAssigningItem] = useState(null);
+  const [isOpen, setIsOpen] = useState(true);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -159,26 +166,32 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
   }, {});
 
   return (
-    <Card className="border-0 shadow-sm">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            <Package className="w-5 h-5 text-emerald-600" />
-            Shared Gear
-            {filteredItems.length > 0 && (
-              <Badge variant="outline">{filteredItems.length}</Badge>
-            )}
-          </CardTitle>
-          <Button
-            size="sm"
-            onClick={() => setShowAddDialog(true)}
-            className="bg-emerald-600 hover:bg-emerald-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Shared Gear
-          </Button>
-        </div>
-      </CardHeader>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="border-0 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-70 transition-opacity">
+              <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
+              <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                <Package className="w-5 h-5 text-emerald-600" />
+                Shared Gear
+                {filteredItems.length > 0 && (
+                  <Badge variant="outline">{filteredItems.length}</Badge>
+                )}
+              </CardTitle>
+            </CollapsibleTrigger>
+            <Button
+              size="sm"
+              onClick={() => setShowAddDialog(true)}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Shared Gear
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CollapsibleContent>
 
       <CardContent className="space-y-6">
         {filteredItems.length === 0 ? (
@@ -282,6 +295,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
           })
         )}
       </CardContent>
+        </CollapsibleContent>
 
       {/* Add Gear Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -454,6 +468,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+      </Card>
+    </Collapsible>
   );
 }
