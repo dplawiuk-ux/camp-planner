@@ -33,6 +33,20 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
     image_url: ""
   });
 
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData({
+        name: "",
+        type: "tent",
+        capacity: "",
+        notes: "",
+        image_url: ""
+      });
+    }
+  }, [initialData]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = {
