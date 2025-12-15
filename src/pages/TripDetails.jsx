@@ -34,6 +34,8 @@ import MembersList from "@/components/trips/MembersList";
 import TripChat from "@/components/trips/TripChat";
 import TripMap from "@/components/trips/TripMap";
 import TentAllocation from "@/components/trips/TentAllocation";
+import WatercraftAllocation from "@/components/trips/WatercraftAllocation";
+import UnallocatedMembers from "@/components/trips/UnallocatedMembers";
 import GearList from "@/components/trips/GearList";
 
 export default function TripDetails() {
@@ -337,12 +339,22 @@ export default function TripDetails() {
             />
           </div>
 
-          {/* Middle Column - Tent Allocation & Shared Gear */}
+          {/* Middle Column - Allocations & Gear */}
           <div className="lg:col-span-1 space-y-6">
+            <UnallocatedMembers
+              members={members}
+              packingItems={trip.packing_items || []}
+              gearItems={trip.gear_items || []}
+            />
             <TentAllocation
               items={trip.packing_items || []}
               members={members}
               onUpdate={handlePackingUpdate}
+            />
+            <WatercraftAllocation
+              gearItems={trip.gear_items || []}
+              members={members}
+              onUpdate={handleGearUpdate}
             />
             <GearList
               items={trip.gear_items || []}
