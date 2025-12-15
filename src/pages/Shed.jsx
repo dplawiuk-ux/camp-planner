@@ -230,7 +230,10 @@ export default function Shed() {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ delay: index * 0.05 }}
                         >
-                          <Card className="group hover:shadow-lg transition-all bg-white border-slate-200">
+                          <Card 
+                            className="group hover:shadow-lg transition-all bg-white border-slate-200 cursor-pointer"
+                            onClick={() => handleEdit(item)}
+                          >
                             <CardHeader className="pb-3">
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
@@ -247,7 +250,10 @@ export default function Shed() {
                                   <Button
                                     size="icon"
                                     variant="ghost"
-                                    onClick={() => handleEdit(item)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEdit(item);
+                                    }}
                                     className="h-8 w-8"
                                   >
                                     <Edit3 className="w-4 h-4" />
@@ -255,7 +261,10 @@ export default function Shed() {
                                   <Button
                                     size="icon"
                                     variant="ghost"
-                                    onClick={() => deleteMutation.mutate(item.id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      deleteMutation.mutate(item.id);
+                                    }}
                                     className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                                   >
                                     <Trash2 className="w-4 h-4" />
