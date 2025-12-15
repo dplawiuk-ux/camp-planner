@@ -96,6 +96,16 @@ export default function TripDetails() {
           status: 'pending'
         }))
       );
+      
+      // Send invitation emails
+      const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
+      for (const inv of invitations) {
+        await base44.integrations.Core.SendEmail({
+          to: inv.email,
+          subject: `You're invited to ${trip.name}`,
+          body: `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}\n\nView trip details: ${tripUrl}`
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tripMembers', tripId] });
