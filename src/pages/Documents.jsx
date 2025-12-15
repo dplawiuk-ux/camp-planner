@@ -9,17 +9,21 @@ import {
   Search, 
   Plus,
   Loader2,
-  Filter
+  Filter,
+  Camera
 } from "lucide-react";
 import { motion } from "framer-motion";
 import DocumentUpload from "@/components/documents/DocumentUpload";
 import DocumentCard from "@/components/documents/DocumentCard";
+import PhotoGallery from "@/components/documents/PhotoGallery";
+import PhotoUpload from "@/components/documents/PhotoUpload";
 
 export default function Documents() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [tripFilter, setTripFilter] = useState("all");
   const [showUpload, setShowUpload] = useState(false);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -81,11 +85,14 @@ export default function Documents() {
   });
 
   const filteredDocuments = documents.filter(doc => {
+    if (doc.category === 'photo') return false; // Exclude photos from documents
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === "all" || doc.category === categoryFilter;
     const matchesTrip = tripFilter === "all" || doc.trip_id === tripFilter;
     return matchesSearch && matchesCategory && matchesTrip;
   });
+
+  const photos = documents.filter(doc => doc.category === 'photo');
 
   const categories = [
     { value: "all", label: "All" },
@@ -151,6 +158,14 @@ export default function Documents() {
           </div>
 
           <Button
+            onClick={() => setShowPhotoUpload(true)}
+            variant="outline"
+            className="whitespace-nowrap"
+          >
+            <Camera className="w-5 h-5 mr-2" />
+            Upload Photos
+          </Button>
+          <Button
             onClick={() => setShowUpload(true)}
             className="bg-emerald-600 hover:bg-emerald-700 whitespace-nowrap"
           >
@@ -185,6 +200,15 @@ export default function Documents() {
             ))}
           </div>
         )}
+
+        {/* Photo Gallery */}
+        <div className="mb-12">
+          <PhotoGallery
+            photos={photos}
+            onDelete={(id) => deleteMutation.mutate(id)}
+            selectedTrip={tripFilter}
+          />
+        </div>
 
         {/* Documents Grid */}
         {isLoading ? (
@@ -235,12 +259,19 @@ export default function Documents() {
         )}
       </div>
 
-      {/* Upload Modal */}
+      {/* Upload Modals */}
       <DocumentUpload
         open={showUpload}
         onClose={() => setShowUpload(false)}
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
+        trips={trips}
+      />
+      
+      <PhotoUpload
+        open={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        onSubmit={(data) => createMutation.mutate(data)}
         trips={trips}
       />
     </div>
