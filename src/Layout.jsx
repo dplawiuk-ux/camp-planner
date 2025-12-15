@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Tent, Compass, Package, FileText } from 'lucide-react';
+import { Tent, Compass, Map, FileText } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const isHomePage = currentPageName === 'CampingTrips';
@@ -15,14 +15,14 @@ export default function Layout({ children, currentPageName }) {
             to={createPageUrl("CampingTrips")}
             className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all text-emerald-800 font-medium"
           >
-            <Tent className="w-5 h-5" />
+            <Map className="w-5 h-5" />
             <span className="hidden sm:inline">Trips</span>
           </Link>
           <Link
             to={createPageUrl("Shed")}
             className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all text-emerald-800 font-medium"
           >
-            <Package className="w-5 h-5" />
+            <Tent className="w-5 h-5" />
             <span className="hidden sm:inline">Gear Shed</span>
           </Link>
           <Link
