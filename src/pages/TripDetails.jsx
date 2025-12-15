@@ -33,6 +33,7 @@ import TripForm from "@/components/trips/TripForm";
 import PackingList from "@/components/trips/PackingList";
 import MembersList from "@/components/trips/MembersList";
 import TripChat from "@/components/trips/TripChat";
+import TripMap from "@/components/trips/TripMap";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -251,6 +252,15 @@ export default function TripDetails() {
                   </p>
                 </CardContent>
               </Card>
+            )}
+
+            {/* Map */}
+            {trip.location_lat && trip.location_lng && (
+              <TripMap
+                location={trip.location}
+                lat={trip.location_lat}
+                lng={trip.location_lng}
+              />
             )}
 
             {/* Members List */}

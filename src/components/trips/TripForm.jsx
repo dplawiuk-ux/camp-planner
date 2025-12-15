@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { MapPin, Calendar, FileText, Image, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
+import LocationPicker from "./LocationPicker";
 
 const defaultPackingItems = [
   { name: "Tent", category: "shelter", packed: false },
@@ -26,6 +27,8 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
   const [formData, setFormData] = useState(initialData || {
     name: "",
     location: "",
+    location_lat: null,
+    location_lng: null,
     start_date: "",
     end_date: "",
     notes: "",
@@ -44,9 +47,18 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleLocationChange = (locationData) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      location: locationData.location,
+      location_lat: locationData.location_lat,
+      location_lng: locationData.location_lng
+    }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-800">
             {initialData ? "Edit Trip" : "Plan New Adventure"}
@@ -68,20 +80,12 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location" className="text-sm font-medium text-slate-700 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-600" />
-              Location
-            </Label>
-            <Input
-              id="location"
-              placeholder="Yosemite National Park"
-              value={formData.location}
-              onChange={(e) => handleChange("location", e.target.value)}
-              className="h-12 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500"
-              required
-            />
-          </div>
+          <LocationPicker
+            location={formData.location}
+            lat={formData.location_lat}
+            lng={formData.location_lng}
+            onChange={handleLocationChange}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
