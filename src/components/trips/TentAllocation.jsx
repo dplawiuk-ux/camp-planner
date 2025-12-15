@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,13 +20,34 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Tent, Plus, Users, Trash2, UserPlus, X } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tent, Plus, Users, Trash2, UserPlus, X, Package } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function TentAllocation({ items = [], members = [], onUpdate }) {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newTent, setNewTent] = useState({ name: '', capacity: 2 });
   const [assigningTo, setAssigningTo] = useState(null);
+  const [addMode, setAddMode] = useState('shed');
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const { data: userTents = [] } = useQuery({
+    queryKey: ['userTents'],
+    queryFn: async () => {
+      if (!user) return [];
+      return base44.entities.Equipment.filter({ 
+        created_by: user.email, 
+        type: 'tent' 
+      });
+    },
+    enabled: !!user
+  });
 
   const tents = items.filter(item => item.category === 'shelter');
   const acceptedMembers = members.filter(m => m.status === 'accepted');
@@ -53,6 +76,27 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
     
     onUpdate(updatedItems);
     setNewTent({ name: '', capacity: 2 });
+    setShowAddDialog(false);
+  };
+
+  const handleAddFromShed = (equipmentId) => {
+    const equipment = userTents.find(t => t.id === equipmentId);
+    if (!equipment) return;
+
+    const updatedItems = [
+      ...items,
+      {
+        id: `tent-${Date.now()}`,
+        name: equipment.name,
+        category: 'shelter',
+        capacity: equipment.capacity || 2,
+        assigned_to: [],
+        packed: false,
+        equipment_id: equipment.id
+      }
+    ];
+    
+    onUpdate(updatedItems);
     setShowAddDialog(false);
   };
 
@@ -253,38 +297,84 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
           <DialogHeader>
             <DialogTitle>Add Tent</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="tent-name">Tent Name</Label>
-              <Input
-                id="tent-name"
-                placeholder="e.g., Big Red Tent"
-                value={newTent.name}
-                onChange={(e) => setNewTent({ ...newTent, name: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="capacity">Capacity (people)</Label>
-              <Input
-                id="capacity"
-                type="number"
-                min="1"
-                max="20"
-                value={newTent.capacity}
-                onChange={(e) => setNewTent({ ...newTent, capacity: parseInt(e.target.value) || 2 })}
-              />
-            </div>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+          
+          <Tabs value={addMode} onValueChange={setAddMode} className="py-4">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="shed">From Shed</TabsTrigger>
+              <TabsTrigger value="custom">Custom</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="shed" className="space-y-4 mt-4">
+              {userTents.length > 0 ? (
+                <>
+                  <p className="text-sm text-slate-600">Select a tent from your shed:</p>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {userTents.map((tent) => (
+                      <button
+                        key={tent.id}
+                        onClick={() => handleAddFromShed(tent.id)}
+                        className="w-full flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition-colors text-left"
+                      >
+                        <div>
+                          <div className="font-medium text-slate-800">{tent.name}</div>
+                          {tent.capacity && (
+                            <div className="text-sm text-slate-500">
+                              Capacity: {tent.capacity} people
+                            </div>
+                          )}
+                        </div>
+                        <Plus className="w-5 h-5 text-emerald-600" />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                  <p className="text-slate-600 mb-4">No tents in your shed yet</p>
+                  <Link to={createPageUrl("Shed")}>
+                    <Button variant="outline" size="sm">
+                      Go to Shed
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="custom" className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="tent-name">Tent Name</Label>
+                <Input
+                  id="tent-name"
+                  placeholder="e.g., Big Red Tent"
+                  value={newTent.name}
+                  onChange={(e) => setNewTent({ ...newTent, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="capacity">Capacity (people)</Label>
+                <Input
+                  id="capacity"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={newTent.capacity}
+                  onChange={(e) => setNewTent({ ...newTent, capacity: parseInt(e.target.value) || 2 })}
+                />
+              </div>
+              <Button
+                onClick={handleAddTent}
+                disabled={!newTent.name}
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+              >
+                Add Custom Tent
+              </Button>
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddDialog(false)} className="w-full">
               Cancel
-            </Button>
-            <Button
-              onClick={handleAddTent}
-              disabled={!newTent.name}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              Add Tent
             </Button>
           </DialogFooter>
         </DialogContent>

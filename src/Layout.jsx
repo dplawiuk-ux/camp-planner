@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Tent, Compass } from 'lucide-react';
+import { Tent, Compass, Package } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const isHomePage = currentPageName === 'CampingTrips';
@@ -10,13 +10,20 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-stone-50">
       {/* Simple floating nav for non-home pages */}
       {!isHomePage && (
-        <div className="fixed top-4 left-4 z-50">
+        <div className="fixed top-4 left-4 z-50 flex gap-2">
           <Link
             to={createPageUrl("CampingTrips")}
             className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all text-emerald-800 font-medium"
           >
             <Tent className="w-5 h-5" />
-            <span className="hidden sm:inline">Camp Planner</span>
+            <span className="hidden sm:inline">Trips</span>
+          </Link>
+          <Link
+            to={createPageUrl("Shed")}
+            className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all text-emerald-800 font-medium"
+          >
+            <Package className="w-5 h-5" />
+            <span className="hidden sm:inline">Shed</span>
           </Link>
         </div>
       )}

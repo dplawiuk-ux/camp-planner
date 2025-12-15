@@ -1,0 +1,153 @@
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Loader2, Package } from "lucide-react";
+
+const equipmentTypes = [
+  { value: "tent", label: "Tent" },
+  { value: "sleeping_bag", label: "Sleeping Bag" },
+  { value: "sleeping_pad", label: "Sleeping Pad" },
+  { value: "hammock", label: "Hammock" },
+  { value: "stove", label: "Stove" },
+  { value: "water_system", label: "Water System" },
+  { value: "canoe", label: "Canoe" },
+  { value: "kayak", label: "Kayak" },
+  { value: "pot", label: "Pot" },
+  { value: "pan", label: "Pan" },
+  { value: "dishes", label: "Dishes" },
+  { value: "cooler", label: "Cooler" },
+  { value: "other", label: "Other" }
+];
+
+export default function EquipmentForm({ open, onClose, onSubmit, initialData, isLoading }) {
+  const [formData, setFormData] = useState(initialData || {
+    name: "",
+    type: "tent",
+    capacity: "",
+    notes: "",
+    image_url: ""
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      ...formData,
+      capacity: formData.capacity ? parseFloat(formData.capacity) : undefined
+    };
+    onSubmit(data);
+  };
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const showCapacity = ['tent', 'cooler', 'canoe', 'kayak'].includes(formData.type);
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
+            <Package className="w-5 h-5 text-emerald-600" />
+            {initialData ? "Edit Equipment" : "Add Equipment"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-5 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Equipment Name</Label>
+            <Input
+              id="name"
+              placeholder="e.g., Big Red Tent"
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              className="h-11"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="type">Type</Label>
+            <Select value={formData.type} onValueChange={(value) => handleChange("type", value)}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {equipmentTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {showCapacity && (
+            <div className="space-y-2">
+              <Label htmlFor="capacity">
+                Capacity {formData.type === 'tent' && "(people)"}
+                {formData.type === 'cooler' && "(liters)"}
+                {(formData.type === 'canoe' || formData.type === 'kayak') && "(people)"}
+              </Label>
+              <Input
+                id="capacity"
+                type="number"
+                min="1"
+                placeholder="e.g., 4"
+                value={formData.capacity}
+                onChange={(e) => handleChange("capacity", e.target.value)}
+                className="h-11"
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="image_url">Image URL (optional)</Label>
+            <Input
+              id="image_url"
+              placeholder="https://..."
+              value={formData.image_url}
+              onChange={(e) => handleChange("image_url", e.target.value)}
+              className="h-11"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes (optional)</Label>
+            <Textarea
+              id="notes"
+              placeholder="Brand, condition, special features..."
+              value={formData.notes}
+              onChange={(e) => handleChange("notes", e.target.value)}
+              className="min-h-20 resize-none"
+            />
+          </div>
+
+          <DialogFooter className="gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                initialData ? "Save Changes" : "Add Equipment"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
