@@ -51,8 +51,8 @@ export default function PhotoRecognition({ open, onClose, onRecognized }) {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Analyze this camping/outdoor equipment photo and extract the following details:
 - name: What is this item? Be specific (e.g., "Coleman 4-Person Tent" not just "Tent")
-- type: Choose ONE from: tent, sleeping_bag, sleeping_pad, hammock, stove, water_system, canoe, kayak, pot, pan, dishes, cooler, other
-- capacity: If applicable (e.g., tent capacity in people, cooler capacity in liters, canoe/kayak capacity)
+- type: Choose ONE from: tents, sleeping_pads, sleeping_bags, kitchen, fire, watercraft, other
+- capacity: If applicable (e.g., tent capacity in people, watercraft capacity)
 - notes: Any visible details like brand, color, condition, features
 
 Return only the equipment details based on what you see in the image.`,
