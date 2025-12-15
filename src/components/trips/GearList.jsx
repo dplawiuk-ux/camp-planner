@@ -150,7 +150,9 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
     }));
   };
 
-  const groupedItems = items.reduce((acc, item) => {
+  const filteredItems = items.filter(item => item.type !== 'watercraft');
+  
+  const groupedItems = filteredItems.reduce((acc, item) => {
     if (!acc[item.type]) acc[item.type] = [];
     acc[item.type].push(item);
     return acc;
@@ -163,8 +165,8 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
           <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
             <Package className="w-5 h-5 text-emerald-600" />
             Shared Gear
-            {items.length > 0 && (
-              <Badge variant="outline">{items.length}</Badge>
+            {filteredItems.length > 0 && (
+              <Badge variant="outline">{filteredItems.length}</Badge>
             )}
           </CardTitle>
           <Button
@@ -179,7 +181,7 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {items.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-2xl mb-4">
               <Package className="w-8 h-8 text-slate-400" />
