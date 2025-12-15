@@ -28,19 +28,37 @@ export default function Documents() {
     queryFn: () => base44.auth.me()
   });
 
-  const { data: documents = [], isLoading } = useQuery({
-    queryKey: ['documents'],
+  const { data: myMemberships = [] } = useQuery({
+    queryKey: ['myMemberships'],
     queryFn: async () => {
       if (!user) return [];
-      return base44.entities.Document.filter({ created_by: user.email }, '-created_date');
+      return base44.entities.TripMember.filter({ user_email: user.email });
     },
     enabled: !!user
   });
 
-  const { data: trips = [] } = useQuery({
+  const { data: allDocuments = [], isLoading } = useQuery({
+    queryKey: ['documents'],
+    queryFn: () => base44.entities.Document.list('-created_date'),
+  });
+
+  // Filter documents: show if user is member of the trip OR if no trip assigned and user created it
+  const documents = allDocuments.filter(doc => {
+    if (doc.trip_id) {
+      return myMemberships.some(m => m.trip_id === doc.trip_id);
+    }
+    return doc.created_by === user?.email;
+  });
+
+  const { data: allTrips = [] } = useQuery({
     queryKey: ['trips'],
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
+
+  // Filter to only show trips user is a member of
+  const trips = allTrips.filter(trip => 
+    myMemberships.some(m => m.trip_id === trip.id)
+  );
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Document.create(data),
