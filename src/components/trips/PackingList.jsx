@@ -40,38 +40,50 @@ export default function PackingList({ items = [], onUpdate }) {
 
   const handleAddItem = () => {
     if (!newItem.trim()) return;
-    const updatedItems = [...items, { name: newItem, category: newCategory, packed: false }];
+    const updatedItems = [
+      ...items, 
+      { 
+        id: `item-${Date.now()}`,
+        name: newItem, 
+        category: newCategory, 
+        packed: false,
+        assigned_to: []
+      }
+    ];
     onUpdate(updatedItems);
     setNewItem("");
   };
 
-  const handleToggle = (index) => {
-    const updatedItems = items.map((item, i) => 
-      i === index ? { ...item, packed: !item.packed } : item
+  const handleToggle = (itemId) => {
+    const updatedItems = items.map(item => 
+      item.id === itemId ? { ...item, packed: !item.packed } : item
     );
     onUpdate(updatedItems);
   };
 
-  const handleDelete = (index) => {
-    const updatedItems = items.filter((_, i) => i !== index);
+  const handleDelete = (itemId) => {
+    const updatedItems = items.filter(item => item.id !== itemId);
     onUpdate(updatedItems);
   };
 
   const packedCount = items.filter(item => item.packed).length;
   const progress = items.length > 0 ? Math.round((packedCount / items.length) * 100) : 0;
 
+  // Filter out shelter items (they're in tent allocation)
+  const nonShelterItems = items.filter(item => item.category !== 'shelter');
+  
   const filteredItems = filter === "all" 
-    ? items 
+    ? nonShelterItems 
     : filter === "packed" 
-      ? items.filter(item => item.packed)
+      ? nonShelterItems.filter(item => item.packed)
       : filter === "unpacked"
-        ? items.filter(item => !item.packed)
-        : items.filter(item => item.category === filter);
+        ? nonShelterItems.filter(item => !item.packed)
+        : nonShelterItems.filter(item => item.category === filter);
 
-  const groupedItems = filteredItems.reduce((acc, item, index) => {
+  const groupedItems = filteredItems.reduce((acc, item) => {
     const cat = item.category || 'other';
     if (!acc[cat]) acc[cat] = [];
-    acc[cat].push({ ...item, originalIndex: items.indexOf(item) });
+    acc[cat].push(item);
     return acc;
   }, {});
 
@@ -194,7 +206,7 @@ export default function PackingList({ items = [], onUpdate }) {
                   <div className="space-y-1 pl-2">
                     {categoryItems.map((item) => (
                       <motion.div
-                        key={item.originalIndex}
+                        key={item.id}
                         layout
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -207,7 +219,7 @@ export default function PackingList({ items = [], onUpdate }) {
                       >
                         <Checkbox
                           checked={item.packed}
-                          onCheckedChange={() => handleToggle(item.originalIndex)}
+                          onCheckedChange={() => handleToggle(item.id)}
                           className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                         />
                         <span className={`flex-1 ${item.packed ? "line-through text-slate-400" : "text-slate-700"}`}>
@@ -216,7 +228,7 @@ export default function PackingList({ items = [], onUpdate }) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(item.originalIndex)}
+                          onClick={() => handleDelete(item.id)}
                           className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4" />
