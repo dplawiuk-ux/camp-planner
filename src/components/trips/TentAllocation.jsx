@@ -300,14 +300,14 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
           
           <Tabs value={addMode} onValueChange={setAddMode} className="py-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="shed">From Shed</TabsTrigger>
+              <TabsTrigger value="shed">From Gear Shed</TabsTrigger>
               <TabsTrigger value="custom">Custom</TabsTrigger>
             </TabsList>
 
             <TabsContent value="shed" className="space-y-4 mt-4">
               {userTents.length > 0 ? (
                 <>
-                  <p className="text-sm text-slate-600">Select a tent from your shed:</p>
+                  <p className="text-sm text-slate-600">Select a tent from your gear shed:</p>
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {userTents.map((tent) => (
                       <button
@@ -331,10 +331,10 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               ) : (
                 <div className="text-center py-8">
                   <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p className="text-slate-600 mb-4">No tents in your shed yet</p>
+                  <p className="text-slate-600 mb-4">No tents in your gear shed yet</p>
                   <Link to={createPageUrl("Shed")}>
                     <Button variant="outline" size="sm">
-                      Go to Shed
+                      Go to Gear Shed
                     </Button>
                   </Link>
                 </div>

@@ -142,7 +142,7 @@ export default function Shed() {
               <span className="text-emerald-200 font-medium">My Gear</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              The Shed
+              Gear Shed
             </h1>
             <p className="text-emerald-100 text-lg max-w-xl">
               Manage your camping equipment and allocate gear to upcoming trips
@@ -300,7 +300,7 @@ export default function Shed() {
             <h3 className="text-2xl font-semibold text-slate-800 mb-2">
               {searchQuery || typeFilter !== "all" 
                 ? "No equipment found" 
-                : "Your shed is empty"}
+                : "Your gear shed is empty"}
             </h3>
             <p className="text-slate-500 mb-8">
               {searchQuery || typeFilter !== "all"
