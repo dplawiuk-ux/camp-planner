@@ -331,6 +331,7 @@ export default function Shed() {
 
       {/* Equipment Form Modal */}
       <EquipmentForm
+        key={editingItem?.id || 'new'}
         open={showForm}
         onClose={() => {
           setShowForm(false);
