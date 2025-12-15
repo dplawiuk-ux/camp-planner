@@ -32,7 +32,12 @@ export default function Documents() {
     queryKey: ['myMemberships'],
     queryFn: async () => {
       if (!user) return [];
-      return base44.entities.TripMember.filter({ user_email: user.email });
+      const emails = [user.email, ...(user.alternate_emails || [])];
+      const membershipsPromises = emails.map(email => 
+        base44.entities.TripMember.filter({ user_email: email })
+      );
+      const results = await Promise.all(membershipsPromises);
+      return results.flat();
     },
     enabled: !!user
   });

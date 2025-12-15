@@ -65,7 +65,8 @@ export default function TripDetails() {
     enabled: !!tripId
   });
 
-  const currentMember = members.find(m => m.user_email === user?.email);
+  const userEmails = [user?.email, ...(user?.alternate_emails || [])];
+  const currentMember = members.find(m => userEmails.includes(m.user_email));
   const currentUserRole = currentMember?.role || 'guest';
   const canEdit = ['lead', 'admin'].includes(currentUserRole);
   const canDelete = currentUserRole === 'lead';
