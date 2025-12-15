@@ -94,58 +94,66 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+              className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              <div className={`p-2 rounded-lg ${config.color}`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-slate-700 truncate">
-                    {member.user_name || member.user_email}
-                  </p>
-                  {isCurrentUser && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowEditName(true)}
-                      className="h-5 w-5 text-slate-400 hover:text-emerald-600"
-                    >
-                      <Edit3 className="w-3 h-3" />
-                    </Button>
-                  )}
-                  {isPending && (
-                    <Badge variant="outline" className="text-xs border-amber-200 bg-amber-50 text-amber-700">
-                      <Mail className="w-3 h-3 mr-1" />
-                      Pending
-                    </Badge>
-                  )}
-                  {!isPending && (
-                    <MailCheck className="w-3 h-3 text-emerald-500" />
-                  )}
+              <div className="flex items-start gap-3">
+                <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
+                  <Icon className="w-4 h-4" />
                 </div>
-                {member.user_name && (
-                  <p className="text-xs text-slate-500 truncate">
-                    {member.user_email}
-                  </p>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm font-medium text-slate-700">
+                      {member.user_name || member.user_email}
+                    </p>
+                    {isCurrentUser && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowEditName(true)}
+                        className="h-5 w-5 text-slate-400 hover:text-emerald-600 flex-shrink-0"
+                      >
+                        <Edit3 className="w-3 h-3" />
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {member.user_name && (
+                    <p className="text-xs text-slate-500 mb-2">
+                      {member.user_email}
+                    </p>
+                  )}
+                  
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="secondary" className={`${config.color} border text-xs`}>
+                      {config.label}
+                    </Badge>
+                    {isPending && (
+                      <Badge variant="outline" className="text-xs border-amber-200 bg-amber-50 text-amber-700">
+                        <Mail className="w-3 h-3 mr-1" />
+                        Pending
+                      </Badge>
+                    )}
+                    {!isPending && (
+                      <Badge variant="outline" className="text-xs border-emerald-200 bg-emerald-50 text-emerald-700">
+                        <MailCheck className="w-3 h-3 mr-1" />
+                        Accepted
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onRemove(member.id)}
+                    className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 )}
               </div>
-
-              <Badge variant="secondary" className={`${config.color} border text-xs`}>
-                {config.label}
-              </Badge>
-
-              {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onRemove(member.id)}
-                  className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
             </motion.div>
           );
         })}
