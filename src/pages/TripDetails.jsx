@@ -71,8 +71,9 @@ export default function TripDetails() {
 
   const updateMutation = useMutation({
     mutationFn: ({ tripData }) => base44.entities.Trip.update(tripId, tripData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+      await queryClient.refetchQueries({ queryKey: ['trip', tripId] });
       setShowEditForm(false);
     }
   });
