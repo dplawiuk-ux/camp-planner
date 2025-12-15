@@ -17,6 +17,7 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
   });
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
@@ -24,6 +25,29 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
       setFile(selectedFile);
       if (!formData.name) {
         setFormData(prev => ({ ...prev, name: selectedFile.name }));
+      }
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+      if (!formData.name) {
+        setFormData(prev => ({ ...prev, name: droppedFile.name }));
       }
     }
   };
@@ -71,25 +95,45 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
         <form onSubmit={handleSubmit} className="space-y-5 py-4">
           <div className="space-y-2">
             <Label htmlFor="file">File</Label>
-            <div className="flex items-center gap-3">
-              <Input
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+                isDragging 
+                  ? 'border-emerald-500 bg-emerald-50' 
+                  : 'border-slate-200 bg-slate-50'
+              }`}
+            >
+              <input
                 id="file"
                 type="file"
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
-                className="h-11"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 required
               />
-              {file && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Upload className="w-4 h-4" />
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </div>
-              )}
+              <div className="text-center">
+                <Upload className={`w-8 h-8 mx-auto mb-2 ${isDragging ? 'text-emerald-600' : 'text-slate-400'}`} />
+                {file ? (
+                  <div>
+                    <p className="font-medium text-slate-700">{file.name}</p>
+                    <p className="text-sm text-slate-500">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-slate-700 mb-1">
+                      <span className="font-medium text-emerald-600">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      PDF, JPG, PNG, GIF, WEBP
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            <p className="text-xs text-slate-500">
-              Supported formats: PDF, JPG, PNG, GIF, WEBP
-            </p>
           </div>
 
           <div className="space-y-2">
