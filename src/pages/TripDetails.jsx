@@ -73,7 +73,9 @@ export default function TripDetails() {
   const canDelete = currentUserRole === 'lead';
 
   // Debug log
+  console.log('Trip ID:', tripId);
   console.log('User emails:', userEmails);
+  console.log('All members:', members);
   console.log('Current member:', currentMember);
   console.log('Current role:', currentUserRole);
   console.log('Can edit:', canEdit);
