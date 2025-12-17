@@ -64,29 +64,45 @@ export default function ImageUpload({ label, value, onChange, className }) {
     const reader = new FileReader();
     reader.onload = () => {
       setImageToCrop(reader.result);
-      setShowCropDialog(true);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleUploadOriginal = async () => {
+    if (!imageToCrop) return;
+    
+    setIsUploading(true);
+    try {
+      const blob = await fetch(imageToCrop).then(r => r.blob());
+      const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      onChange(file_url);
+      setImageToCrop(null);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleCropSave = async () => {
     if (!imageToCrop || !croppedAreaPixels) return;
 
-    setIsUploading(true);
     setShowCropDialog(false);
+    setIsUploading(true);
     
     try {
       const croppedBlob = await getCroppedImg(imageToCrop, croppedAreaPixels);
       const croppedFile = new File([croppedBlob], 'cropped-image.jpg', { type: 'image/jpeg' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
       onChange(file_url);
+      setImageToCrop(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
-      setImageToCrop(null);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
     }
   };
 
@@ -156,6 +172,54 @@ export default function ImageUpload({ label, value, onChange, className }) {
             >
               <X className="w-4 h-4 mr-2" />
               Remove
+            </Button>
+          </div>
+        </div>
+      ) : imageToCrop ? (
+        <div className="relative group">
+          <img
+            src={imageToCrop}
+            alt="Preview"
+            className="w-full h-48 object-cover rounded-lg border border-slate-200"
+          />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={() => setShowCropDialog(true)}
+              disabled={isUploading}
+            >
+              <Crop className="w-4 h-4 mr-2" />
+              Crop
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="bg-emerald-600 hover:bg-emerald-700"
+              onClick={handleUploadOriginal}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Use Original
+                </>
+              )}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={() => setImageToCrop(null)}
+              disabled={isUploading}
+            >
+              <X className="w-4 h-4" />
             </Button>
           </div>
         </div>

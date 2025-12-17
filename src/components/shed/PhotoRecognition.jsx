@@ -64,7 +64,6 @@ export default function PhotoRecognition({ open, onClose, onRecognized }) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageToCrop(reader.result);
-        setShowCropDialog(true);
       };
       reader.readAsDataURL(selectedFile);
     }
@@ -89,6 +88,26 @@ export default function PhotoRecognition({ open, onClose, onRecognized }) {
     } catch (error) {
       console.error('Crop failed:', error);
     }
+  };
+
+  const handleUseOriginal = () => {
+    const blob = dataURItoBlob(imageToCrop);
+    const originalFile = new File([blob], 'equipment.jpg', { type: 'image/jpeg' });
+    
+    setFile(originalFile);
+    setPreview(imageToCrop);
+    setImageToCrop(null);
+  };
+
+  const dataURItoBlob = (dataURI) => {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
   };
 
   const handleCropCancel = () => {
@@ -175,7 +194,36 @@ Return only the equipment details based on what you see in the image.`,
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {!preview ? (
+          {imageToCrop && !preview ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-4"
+            >
+              <img
+                src={imageToCrop}
+                alt="Preview"
+                className="w-full h-64 object-cover rounded-xl border border-slate-200"
+              />
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCropDialog(true)}
+                  className="flex-1"
+                >
+                  <Crop className="w-4 h-4 mr-2" />
+                  Crop Image
+                </Button>
+                <Button
+                  onClick={handleUseOriginal}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  Use Original
+                </Button>
+              </div>
+            </motion.div>
+          ) : !preview ? (
             <div
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
