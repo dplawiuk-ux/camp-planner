@@ -77,10 +77,9 @@ export default function CampingTrips() {
         );
 
         // Send invitation emails only to members with emails
-        const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${trip.id}`;
         for (const inv of invitations) {
           if (inv.email) {
-            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nView trip details: ${tripUrl}`;
+            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nTo view the trip and accept your invitation, please log in to the Camp Planner app.`;
 
             await base44.integrations.Core.SendEmail({
               to: inv.email,
