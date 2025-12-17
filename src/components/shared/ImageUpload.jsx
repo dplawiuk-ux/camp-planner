@@ -1,27 +1,100 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { base44 } from "@/api/base44Client";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Image, Upload, X, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
+import { Image, Upload, X, Loader2, Crop } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Cropper from 'react-easy-crop';
+
+const createImage = (url) =>
+  new Promise((resolve, reject) => {
+    const image = new window.Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.setAttribute('crossOrigin', 'anonymous');
+    image.src = url;
+  });
+
+async function getCroppedImg(imageSrc, pixelCrop) {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(blob);
+    }, 'image/jpeg', 0.95);
+  });
+}
 
 export default function ImageUpload({ label, value, onChange, className }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showCropDialog, setShowCropDialog] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const fileInputRef = useRef(null);
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
 
   const handleFile = async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageToCrop(reader.result);
+      setShowCropDialog(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropSave = async () => {
+    if (!imageToCrop || !croppedAreaPixels) return;
+
     setIsUploading(true);
+    setShowCropDialog(false);
+    
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const croppedBlob = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], 'cropped-image.jpg', { type: 'image/jpeg' });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
       onChange(file_url);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
+      setImageToCrop(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
     }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropDialog(false);
+    setImageToCrop(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
   };
 
   const handleDrop = (e) => {
@@ -129,6 +202,54 @@ export default function ImageUpload({ label, value, onChange, className }) {
         onChange={handleFileSelect}
         className="hidden"
       />
+
+      {/* Crop Dialog */}
+      <Dialog open={showCropDialog} onOpenChange={handleCropCancel}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crop className="w-5 h-5" />
+              Crop Image
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="relative w-full h-96 bg-slate-900 rounded-lg">
+            {imageToCrop && (
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm">Zoom</Label>
+            <Slider
+              value={[zoom]}
+              onValueChange={(value) => setZoom(value[0])}
+              min={1}
+              max={3}
+              step={0.1}
+              className="w-full"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCropCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleCropSave} className="bg-emerald-600 hover:bg-emerald-700">
+              <Crop className="w-4 h-4 mr-2" />
+              Crop & Upload
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
