@@ -6,6 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +44,8 @@ export default function TripDetails() {
   
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingField, setEditingField] = useState(null);
+  const [editValue, setEditValue] = useState('');
   
   const queryClient = useQueryClient();
 
@@ -86,8 +89,25 @@ export default function TripDetails() {
       await queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       await queryClient.refetchQueries({ queryKey: ['trip', tripId] });
       setShowEditForm(false);
+      setEditingField(null);
     }
   });
+
+  const handleStartEdit = (field, value) => {
+    if (!canEdit) return;
+    setEditingField(field);
+    setEditValue(value || '');
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingField || !editValue) return;
+    updateMutation.mutate({ tripData: { [editingField]: editValue } });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setEditValue('');
+  };
 
   const removeMemberMutation = useMutation({
     mutationFn: (memberId) => base44.entities.TripMember.delete(memberId),
@@ -257,14 +277,76 @@ export default function TripDetails() {
             <Badge className={`${statusColors[trip.status]} border mb-4`}>
               {trip.status}
             </Badge>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-              {trip.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-white/90">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                <span>{trip.location}</span>
+
+            {editingField === 'name' ? (
+              <div className="flex items-center gap-2 mb-3">
+                <Input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  className="text-3xl md:text-5xl font-bold text-white bg-white/10 border-white/30"
+                  autoFocus
+                />
+                <Button
+                  onClick={handleSaveEdit}
+                  size="sm"
+                  className="bg-white text-emerald-800 hover:bg-white/90"
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={handleCancelEdit}
+                  size="sm"
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  Cancel
+                </Button>
               </div>
+            ) : (
+              <h1
+                className={`text-3xl md:text-5xl font-bold text-white mb-3 ${canEdit ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                onClick={() => handleStartEdit('name', trip.name)}
+              >
+                {trip.name}
+              </h1>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4 text-white/90">
+              {editingField === 'location' ? (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    className="text-white bg-white/10 border-white/30"
+                    autoFocus
+                  />
+                  <Button
+                    onClick={handleSaveEdit}
+                    size="sm"
+                    className="bg-white text-emerald-800 hover:bg-white/90"
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={handleCancelEdit}
+                    size="sm"
+                    variant="ghost"
+                    className="text-white hover:bg-white/10"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className={`flex items-center gap-2 ${canEdit ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                  onClick={() => handleStartEdit('location', trip.location)}
+                >
+                  <MapPin className="w-5 h-5" />
+                  <span>{trip.location}</span>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 <span>
@@ -308,16 +390,46 @@ export default function TripDetails() {
             </div>
 
             {/* Notes */}
-            {trip.notes && (
+            {(trip.notes || canEdit) && (
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <FileText className="w-5 h-5 text-slate-400" />
                     <h3 className="font-semibold text-slate-800">Notes</h3>
                   </div>
-                  <p className="text-slate-600 whitespace-pre-wrap leading-relaxed">
-                    {trip.notes}
-                  </p>
+                  {editingField === 'notes' ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="w-full min-h-[100px] p-3 border border-slate-200 rounded-lg text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSaveEdit}
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          onClick={handleCancelEdit}
+                          size="sm"
+                          variant="outline"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p
+                      className={`text-slate-600 whitespace-pre-wrap leading-relaxed ${canEdit ? 'cursor-pointer hover:bg-slate-50 rounded p-2 -m-2 transition-colors' : ''}`}
+                      onClick={() => handleStartEdit('notes', trip.notes)}
+                    >
+                      {trip.notes || (canEdit ? 'Click to add notes...' : '')}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
