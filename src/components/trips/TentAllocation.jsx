@@ -49,7 +49,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
       if (!user) return [];
       return base44.entities.Equipment.filter({ 
         created_by: user.email, 
-        type: 'tent' 
+        type: 'tents' 
       });
     },
     enabled: !!user
