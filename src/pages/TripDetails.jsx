@@ -111,7 +111,7 @@ export default function TripDetails() {
       // Send invitation emails only to members with emails
       for (const inv of invitations) {
         if (inv.email) {
-          const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
+          const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
           const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
 
           await base44.integrations.Core.SendEmail({
@@ -137,7 +137,7 @@ export default function TripDetails() {
 
   const resendInviteMutation = useMutation({
     mutationFn: async (member) => {
-      const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
+      const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
       const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${member.role}\n\nClick here to view the trip:\n${tripUrl}`;
       
       await base44.integrations.Core.SendEmail({
