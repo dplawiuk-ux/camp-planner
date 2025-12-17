@@ -66,11 +66,17 @@ export default function TripDetails() {
     enabled: !!tripId
   });
 
-  const userEmails = [user?.email, ...(user?.alternate_emails || [])];
-  const currentMember = members.find(m => userEmails.includes(m.user_email));
+  const userEmails = [user?.email, ...(user?.alternate_emails || [])].filter(Boolean);
+  const currentMember = members.find(m => m.user_email && userEmails.includes(m.user_email));
   const currentUserRole = currentMember?.role || 'guest';
   const canEdit = ['lead', 'admin'].includes(currentUserRole);
   const canDelete = currentUserRole === 'lead';
+
+  // Debug log
+  console.log('User emails:', userEmails);
+  console.log('Current member:', currentMember);
+  console.log('Current role:', currentUserRole);
+  console.log('Can edit:', canEdit);
 
   const updateMutation = useMutation({
     mutationFn: ({ tripData }) => base44.entities.Trip.update(tripId, tripData),
