@@ -46,7 +46,7 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending, packingItems = [], gearItems = [] }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending, packingItems = [], gearItems = [], tripCode }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [customMessage, setCustomMessage] = useState("");
@@ -231,6 +231,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               onChange={setInvitations}
               customMessage={customMessage}
               onMessageChange={setCustomMessage}
+              tripCode={tripCode}
             />
           </div>
           <DialogFooter className="gap-3">

@@ -351,6 +351,7 @@ export default function TripDetails() {
               isResending={resendInviteMutation.isPending}
               packingItems={trip.packing_items || []}
               gearItems={trip.gear_items || []}
+              tripCode={trip.trip_code}
             />
           </div>
 
