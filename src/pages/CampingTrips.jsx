@@ -6,14 +6,17 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Search, Tent, Mountain, Loader2, Package, FileText } from "lucide-react";
+import { Plus, Search, Tent, Mountain, Loader2, Package, FileText, Ticket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 import TripCard from "@/components/trips/TripCard";
 import TripForm from "@/components/trips/TripForm";
+import JoinTripDialog from "@/components/trips/JoinTripDialog";
 
 export default function CampingTrips() {
   const [showForm, setShowForm] = useState(false);
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -47,6 +50,49 @@ export default function CampingTrips() {
   const trips = allTrips.filter(trip => 
     myMemberships.some(m => m.trip_id === trip.id)
   );
+
+  const joinTripMutation = useMutation({
+    mutationFn: async (tripCode) => {
+      const user = await base44.auth.me();
+      
+      // Find trip by code
+      const trips = await base44.entities.Trip.filter({ trip_code: tripCode });
+      if (trips.length === 0) {
+        throw new Error("Invalid trip code");
+      }
+      const trip = trips[0];
+      
+      // Check if already a member
+      const emails = [user.email, ...(user.alternate_emails || [])];
+      const existingMember = await base44.entities.TripMember.filter({ trip_id: trip.id });
+      const alreadyMember = existingMember.some(m => m.user_email && emails.includes(m.user_email));
+      
+      if (alreadyMember) {
+        throw new Error("You're already a member of this trip");
+      }
+      
+      // Add as guest
+      await base44.entities.TripMember.create({
+        trip_id: trip.id,
+        user_email: user.email,
+        user_name: user.full_name,
+        role: 'guest',
+        status: 'accepted'
+      });
+      
+      return trip;
+    },
+    onSuccess: (trip) => {
+      queryClient.refetchQueries({ queryKey: ['trips'] });
+      queryClient.refetchQueries({ queryKey: ['myMemberships'] });
+      setShowJoinDialog(false);
+      toast.success(`Joined "${trip.name}"!`);
+      window.location.href = createPageUrl('TripDetails') + '?id=' + trip.id;
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to join trip");
+    }
+  });
 
   const createMutation = useMutation({
     mutationFn: async ({ tripData, invitations, customMessage }) => {
@@ -162,6 +208,15 @@ export default function CampingTrips() {
               <Plus className="w-5 h-5 mr-2" />
               Plan New Trip
             </Button>
+            <Button
+              onClick={() => setShowJoinDialog(true)}
+              size="lg"
+              variant="outline"
+              className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
+            >
+              <Ticket className="w-5 h-5 mr-2" />
+              Join a Trip
+            </Button>
             <Link to={createPageUrl("Shed")}>
               <Button
                 size="lg"
@@ -264,6 +319,14 @@ export default function CampingTrips() {
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
-    </div>
-  );
-}
+
+      {/* Join Trip Dialog */}
+      <JoinTripDialog
+        open={showJoinDialog}
+        onClose={() => setShowJoinDialog(false)}
+        onJoin={(code) => joinTripMutation.mutate(code)}
+        isLoading={joinTripMutation.isPending}
+      />
+      </div>
+      );
+      }

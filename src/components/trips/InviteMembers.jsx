@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, UserPlus, Shield, User, Crown, MessageSquare } from "lucide-react";
+import { Plus, X, UserPlus, Shield, User, Crown, MessageSquare, Copy, Check, Ticket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 const roleConfig = {
   lead: {
@@ -29,10 +30,20 @@ const roleConfig = {
   }
 };
 
-export default function InviteMembers({ invitations = [], onChange, customMessage = "", onMessageChange }) {
+export default function InviteMembers({ invitations = [], onChange, customMessage = "", onMessageChange, tripCode, onGenerateTripCode }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("guest");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    if (tripCode) {
+      navigator.clipboard.writeText(tripCode);
+      setCopied(true);
+      toast.success("Trip code copied!");
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const handleAdd = () => {
     const emailValue = email.trim();
@@ -84,6 +95,49 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
           Add members to your trip - email optional for kids or offline campers
         </p>
       </div>
+
+      {/* Trip Code Section */}
+      {onGenerateTripCode && (
+        <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200 space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-emerald-800 flex items-center gap-2">
+              <Ticket className="w-4 h-4" />
+              Trip Join Code
+            </Label>
+            {!tripCode && (
+              <Button
+                type="button"
+                onClick={onGenerateTripCode}
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs border-emerald-300 hover:bg-emerald-100"
+              >
+                Generate Code
+              </Button>
+            )}
+          </div>
+          {tripCode ? (
+            <div className="flex items-center gap-2">
+              <div className="flex-1 p-3 bg-white rounded border border-emerald-300 font-mono text-lg font-semibold text-emerald-700 tracking-wider">
+                {tripCode}
+              </div>
+              <Button
+                type="button"
+                onClick={handleCopyCode}
+                size="icon"
+                variant="outline"
+                className="h-12 w-12 border-emerald-300 hover:bg-emerald-100"
+              >
+                {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
+              </Button>
+            </div>
+          ) : (
+            <p className="text-xs text-emerald-700">
+              Generate a code to let others join your trip without an email invitation
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Add Member */}
       <div className="space-y-2">

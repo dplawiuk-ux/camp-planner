@@ -23,6 +23,15 @@ const defaultPackingItems = [
   { id: "clothing-2", name: "Hiking boots", category: "clothing", packed: false, assigned_to: [] },
 ];
 
+const generateTripCode = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars like 0, O, 1, I
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
 export default function TripForm({ open, onClose, onSubmit, initialData, isLoading }) {
   const [formData, setFormData] = useState(initialData || {
     name: "",
@@ -44,6 +53,11 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
       setFormData(initialData);
     }
   }, [initialData]);
+
+  const handleGenerateTripCode = () => {
+    const code = generateTripCode();
+    setFormData(prev => ({ ...prev, trip_code: code }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -166,6 +180,8 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
                 onChange={setInvitations}
                 customMessage={customMessage}
                 onMessageChange={setCustomMessage}
+                tripCode={formData.trip_code}
+                onGenerateTripCode={handleGenerateTripCode}
               />
             </div>
           )}
