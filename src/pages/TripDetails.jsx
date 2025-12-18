@@ -109,22 +109,40 @@ export default function TripDetails() {
         }))
       );
 
+      const emailResults = [];
       // Send invitation emails only to members with emails
       for (const inv of invitations) {
         if (inv.email) {
-          const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
-          const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
+          try {
+            const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
+            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
 
-          await base44.integrations.Core.SendEmail({
-            to: inv.email,
-            subject: `You're invited to ${trip.name}`,
-            body: emailBody
-          });
+            await base44.integrations.Core.SendEmail({
+              from_name: user.full_name || 'Camp Planner',
+              to: inv.email,
+              subject: `You're invited to ${trip.name}`,
+              body: emailBody
+            });
+            emailResults.push({ email: inv.email, success: true });
+          } catch (error) {
+            console.error(`Failed to send email to ${inv.email}:`, error);
+            emailResults.push({ email: inv.email, success: false, error: error.message });
+          }
         }
       }
+      return emailResults;
     },
-    onSuccess: () => {
+    onSuccess: (emailResults) => {
       queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
+
+      const failed = emailResults.filter(r => !r.success);
+      if (failed.length > 0) {
+        const { toast } = require('sonner');
+        toast.error(`Failed to send ${failed.length} email(s). Members were added but may need to be notified manually.`);
+      } else if (emailResults.length > 0) {
+        const { toast } = require('sonner');
+        toast.success(`Sent ${emailResults.length} invitation email(s)`);
+      }
     }
   });
 
@@ -140,12 +158,21 @@ export default function TripDetails() {
     mutationFn: async (member) => {
       const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
       const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${member.role}\n\nClick here to view the trip:\n${tripUrl}`;
-      
+
       await base44.integrations.Core.SendEmail({
+        from_name: user.full_name || 'Camp Planner',
         to: member.user_email,
         subject: `Reminder: You're invited to ${trip.name}`,
         body: emailBody
       });
+    },
+    onSuccess: () => {
+      const { toast } = require('sonner');
+      toast.success('Invitation email resent');
+    },
+    onError: (error) => {
+      const { toast } = require('sonner');
+      toast.error(`Failed to send email: ${error.message}`);
     }
   });
 

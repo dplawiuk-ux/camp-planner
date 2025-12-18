@@ -110,6 +110,7 @@ export default function CampingTrips() {
         status: 'accepted'
       });
 
+      const emailResults = [];
       // Add invited members
       if (invitations && invitations.length > 0) {
         await base44.entities.TripMember.bulkCreate(
@@ -125,24 +126,38 @@ export default function CampingTrips() {
         // Send invitation emails only to members with emails
         for (const inv of invitations) {
           if (inv.email) {
-            const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${trip.id}`;
-            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
+            try {
+              const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${trip.id}`;
+              const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
 
-            await base44.integrations.Core.SendEmail({
-              to: inv.email,
-              subject: `You're invited to ${trip.name}`,
-              body: emailBody
-            });
+              await base44.integrations.Core.SendEmail({
+                from_name: user.full_name || 'Camp Planner',
+                to: inv.email,
+                subject: `You're invited to ${trip.name}`,
+                body: emailBody
+              });
+              emailResults.push({ email: inv.email, success: true });
+            } catch (error) {
+              console.error(`Failed to send email to ${inv.email}:`, error);
+              emailResults.push({ email: inv.email, success: false, error: error.message });
+            }
           }
         }
       }
 
-      return trip;
+      return { trip, emailResults };
     },
-    onSuccess: () => {
+    onSuccess: ({ emailResults }) => {
       queryClient.refetchQueries({ queryKey: ['trips'] });
       queryClient.refetchQueries({ queryKey: ['myMemberships'] });
       setShowForm(false);
+
+      const failed = emailResults.filter(r => !r.success);
+      if (failed.length > 0) {
+        toast.error(`Failed to send ${failed.length} email(s). Members were added but may need to be notified manually.`);
+      } else if (emailResults.length > 0) {
+        toast.success(`Trip created and sent ${emailResults.length} invitation email(s)`);
+      }
     }
   });
 
