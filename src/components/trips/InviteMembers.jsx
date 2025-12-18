@@ -97,45 +97,29 @@ export default function InviteMembers({ invitations = [], onChange, customMessag
       </div>
 
       {/* Trip Code Section */}
-      {onGenerateTripCode && (
+      {tripCode && (
         <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200 space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-emerald-800 flex items-center gap-2">
-              <Ticket className="w-4 h-4" />
-              Trip Join Code
-            </Label>
-            {!tripCode && (
-              <Button
-                type="button"
-                onClick={onGenerateTripCode}
-                size="sm"
-                variant="outline"
-                className="h-8 text-xs border-emerald-300 hover:bg-emerald-100"
-              >
-                Generate Code
-              </Button>
-            )}
-          </div>
-          {tripCode ? (
-            <div className="flex items-center gap-2">
-              <div className="flex-1 p-3 bg-white rounded border border-emerald-300 font-mono text-lg font-semibold text-emerald-700 tracking-wider">
-                {tripCode}
-              </div>
-              <Button
-                type="button"
-                onClick={handleCopyCode}
-                size="icon"
-                variant="outline"
-                className="h-12 w-12 border-emerald-300 hover:bg-emerald-100"
-              >
-                {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
-              </Button>
+          <Label className="text-sm font-medium text-emerald-800 flex items-center gap-2">
+            <Ticket className="w-4 h-4" />
+            Trip Join Code
+          </Label>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 p-3 bg-white rounded border border-emerald-300 font-mono text-lg font-semibold text-emerald-700 tracking-wider">
+              {tripCode}
             </div>
-          ) : (
-            <p className="text-xs text-emerald-700">
-              Generate a code to let others join your trip without an email invitation
-            </p>
-          )}
+            <Button
+              type="button"
+              onClick={handleCopyCode}
+              size="icon"
+              variant="outline"
+              className="h-12 w-12 border-emerald-300 hover:bg-emerald-100"
+            >
+              {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
+            </Button>
+          </div>
+          <p className="text-xs text-emerald-700">
+            Share this code so others can join your trip
+          </p>
         </div>
       )}
 
