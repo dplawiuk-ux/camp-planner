@@ -43,7 +43,8 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     notes: "",
     image_url: "",
     status: "planning",
-    packing_items: defaultPackingItems
+    packing_items: defaultPackingItems,
+    trip_code: generateTripCode()
   });
   const [invitations, setInvitations] = useState([]);
   const [customMessage, setCustomMessage] = useState("");
@@ -171,6 +172,31 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
               onChange={(e) => handleChange("notes", e.target.value)}
               className="min-h-24 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 resize-none"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="trip_code" className="text-sm font-medium text-slate-700">
+              Trip Code
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                id="trip_code"
+                value={formData.trip_code || ''}
+                onChange={(e) => handleChange("trip_code", e.target.value.toUpperCase())}
+                className="h-12 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 font-mono"
+                placeholder="XXXXXXXX"
+                maxLength={8}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGenerateTripCode}
+                className="h-12 px-4"
+              >
+                Generate
+              </Button>
+            </div>
+            <p className="text-xs text-slate-500">Members can use this code to join the trip</p>
           </div>
 
           {!initialData && (
