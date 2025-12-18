@@ -215,7 +215,7 @@ export default function TripDetails() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
-        <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
+        <div className="absolute top-6 left-6">
           <Link to={createPageUrl("CampingTrips")}>
             <Button 
               variant="ghost" 
@@ -225,29 +225,6 @@ export default function TripDetails() {
               Back
             </Button>
           </Link>
-          
-          <div className="flex gap-2">
-            {canEdit && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowEditForm(true)}
-                className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
-              >
-                <Edit3 className="w-4 h-4" />
-              </Button>
-            )}
-            {canDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowDeleteDialog(true)}
-                className="bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
@@ -263,18 +240,43 @@ export default function TripDetails() {
               {trip.name}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-white/90">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                <span>{trip.location}</span>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-4 text-white/90">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  <span>{trip.location}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  <span>
+                    {format(startDate, "MMM d")}
+                    {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                <span>
-                  {format(startDate, "MMM d")}
-                  {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
-                </span>
+              <div className="flex gap-2">
+                {canEdit && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowEditForm(true)}
+                    className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
+                )}
+                {canDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
