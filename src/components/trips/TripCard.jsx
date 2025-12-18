@@ -72,27 +72,6 @@ export default function TripCard({ trip, index }) {
                 {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
               </span>
             </div>
-
-            {totalItems > 0 && (
-              <div className="pt-4 border-t border-slate-100">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                    Packing Progress
-                  </span>
-                  <span className="text-sm font-semibold text-slate-700">
-                    {packedCount}/{totalItems}
-                  </span>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${packingProgress}%` }}
-                    transition={{ delay: 0.3, duration: 0.8 }}
-                    className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
-                  />
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </Link>
