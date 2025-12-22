@@ -36,8 +36,8 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
   const [formData, setFormData] = useState(initialData || {
     name: "",
     location: "",
-    location_lat: null,
-    location_lng: null,
+    location_lat: 45.9511,
+    location_lng: -78.1348,
     start_date: "",
     end_date: "",
     notes: "",
@@ -54,6 +54,26 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
       setFormData(initialData);
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (open && !initialData) {
+      // Try to get user's current location when form opens for new trip
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setFormData(prev => ({
+              ...prev,
+              location_lat: position.coords.latitude,
+              location_lng: position.coords.longitude
+            }));
+          },
+          (error) => {
+            console.log('Geolocation not available, using default location');
+          }
+        );
+      }
+    }
+  }, [open, initialData]);
 
   const handleGenerateTripCode = () => {
     const code = generateTripCode();
