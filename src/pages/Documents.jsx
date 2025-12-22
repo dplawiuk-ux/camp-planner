@@ -51,10 +51,22 @@ export default function Documents() {
     queryFn: () => base44.entities.Document.list('-created_date'),
   });
 
-  // Filter documents: show if user is member of the trip OR if no trip assigned and user created it
+  // Filter documents: show if user is member of the trip (and not locked out) OR if no trip assigned and user created it
   const documents = allDocuments.filter(doc => {
     if (doc.trip_id) {
-      return myMemberships.some(m => m.trip_id === doc.trip_id);
+      const isMember = myMemberships.some(m => m.trip_id === doc.trip_id);
+      if (!isMember) return false;
+      
+      // Check if user is locked out from this trip
+      const trip = allTrips.find(t => t.id === doc.trip_id);
+      if (trip) {
+        const emails = [user?.email, ...(user?.alternate_emails || [])].filter(Boolean);
+        const lockedEmails = trip.locked_out_emails || [];
+        const isLockedOut = emails.some(email => lockedEmails.includes(email));
+        if (isLockedOut) return false;
+      }
+      
+      return true;
     }
     return doc.created_by === user?.email;
   });
@@ -64,10 +76,18 @@ export default function Documents() {
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
 
-  // Filter to only show trips user is a member of
-  const trips = allTrips.filter(trip => 
-    myMemberships.some(m => m.trip_id === trip.id)
-  );
+  // Filter to only show trips user is a member of (and not locked out)
+  const trips = allTrips.filter(trip => {
+    const isMember = myMemberships.some(m => m.trip_id === trip.id);
+    if (!isMember) return false;
+    
+    // Check if user is locked out from this trip
+    const emails = [user?.email, ...(user?.alternate_emails || [])].filter(Boolean);
+    const lockedEmails = trip.locked_out_emails || [];
+    const isLockedOut = emails.some(email => lockedEmails.includes(email));
+    
+    return !isLockedOut;
+  });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Document.create(data),
