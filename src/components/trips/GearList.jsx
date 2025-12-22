@@ -30,9 +30,15 @@ import {
   Flame,
   Ship,
   MoreVertical,
-  ChevronDown
+  ChevronDown,
+  MessageSquarePlus,
+  Check,
+  X,
+  UserPlus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import GearRequestDialog from "./GearRequestDialog";
+import ConfirmGearDialog from "./ConfirmGearDialog";
 
 const gearIcons = {
   tents: Tent,
@@ -54,8 +60,11 @@ const gearColors = {
   other: "bg-slate-100 text-slate-700 border-slate-200"
 };
 
-export default function GearList({ items = [], onUpdate, members = [] }) {
+export default function GearList({ items = [], onUpdate, members = [], requests = [], onUpdateRequests, currentUserRole, currentUserEmail }) {
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmingRequest, setConfirmingRequest] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedShedItem, setSelectedShedItem] = useState(null);
   const [newItemData, setNewItemData] = useState({
@@ -68,6 +77,8 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
   });
   const [assigningItem, setAssigningItem] = useState(null);
   const [isOpen, setIsOpen] = useState(true);
+  
+  const canManageRequests = ['lead', 'admin'].includes(currentUserRole);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -158,12 +169,60 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
   };
 
   const filteredItems = items.filter(item => item.type !== 'watercraft');
+  const filteredRequests = (requests || []).filter(req => req.type !== 'watercraft');
   
   const groupedItems = filteredItems.reduce((acc, item) => {
     if (!acc[item.type]) acc[item.type] = [];
     acc[item.type].push(item);
     return acc;
   }, {});
+
+  const groupedRequests = filteredRequests.reduce((acc, req) => {
+    if (!acc[req.type]) acc[req.type] = [];
+    acc[req.type].push(req);
+    return acc;
+  }, {});
+
+  const handleAddRequest = (request) => {
+    onUpdateRequests([...(requests || []), request]);
+  };
+
+  const handleVolunteer = (requestId) => {
+    const currentMember = members.find(m => m.user_email === currentUserEmail);
+    if (!currentMember) return;
+    
+    onUpdateRequests((requests || []).map(req =>
+      req.id === requestId
+        ? { ...req, assigned_to_member_id: currentMember.id, status: "assigned" }
+        : req
+    ));
+  };
+
+  const handleConfirmRequest = async (requestId, equipmentId) => {
+    onUpdateRequests((requests || []).map(req =>
+      req.id === requestId
+        ? { 
+            ...req, 
+            status: "confirmed",
+            fulfilled_by_equipment_id: equipmentId
+          }
+        : req
+    ));
+    setShowConfirmDialog(false);
+    setConfirmingRequest(null);
+  };
+
+  const handleDeclineRequest = (requestId) => {
+    onUpdateRequests((requests || []).map(req =>
+      req.id === requestId
+        ? { ...req, status: "open", assigned_to_member_id: null }
+        : req
+    ));
+  };
+
+  const handleRemoveRequest = (requestId) => {
+    onUpdateRequests((requests || []).filter(req => req.id !== requestId));
+  };
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -180,29 +239,190 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
                 )}
               </CardTitle>
             </CollapsibleTrigger>
-            <Button
-              size="sm"
-              onClick={() => setShowAddDialog(true)}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Shared Gear
-            </Button>
+            <div className="flex gap-2">
+              {canManageRequests && (
+                <Button
+                  size="sm"
+                  onClick={() => setShowRequestDialog(true)}
+                  variant="outline"
+                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                >
+                  <MessageSquarePlus className="w-4 h-4 mr-2" />
+                  Request Gear
+                </Button>
+              )}
+              <Button
+                size="sm"
+                onClick={() => setShowAddDialog(true)}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Shared Gear
+              </Button>
+            </div>
           </div>
         </CardHeader>
 
         <CollapsibleContent>
 
       <CardContent className="space-y-6">
-        {filteredItems.length === 0 ? (
+        {/* Gear Requests Section */}
+        {filteredRequests.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+              <MessageSquarePlus className="w-5 h-5 text-amber-600" />
+              Gear Requests
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                {filteredRequests.filter(r => r.status === 'open' || r.status === 'assigned').length}
+              </Badge>
+            </h3>
+            
+            <div className="space-y-2">
+              <AnimatePresence>
+                {filteredRequests.map((request, index) => {
+                  const Icon = gearIcons[request.type] || Package;
+                  const colorClass = gearColors[request.type] || "bg-slate-100 text-slate-700";
+                  const assignedMember = request.assigned_to_member_id 
+                    ? members.find(m => m.id === request.assigned_to_member_id)
+                    : null;
+                  const currentMember = members.find(m => m.user_email === currentUserEmail);
+                  const isAssignedToMe = assignedMember?.id === currentMember?.id;
+
+                  return (
+                    <motion.div
+                      key={request.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`p-3 rounded-lg border-2 ${
+                        request.status === 'confirmed' 
+                          ? 'bg-emerald-50 border-emerald-300'
+                          : request.status === 'declined'
+                          ? 'bg-red-50 border-red-200'
+                          : 'bg-amber-50 border-amber-300'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <div className={`p-1.5 rounded-lg ${colorClass} border`}>
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <p className="font-medium text-slate-800">{request.name}</p>
+                            {request.status === 'open' && (
+                              <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                                Open
+                              </Badge>
+                            )}
+                            {request.status === 'assigned' && (
+                              <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                                Assigned
+                              </Badge>
+                            )}
+                            {request.status === 'confirmed' && (
+                              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+                                Confirmed
+                              </Badge>
+                            )}
+                          </div>
+
+                          {request.notes && (
+                            <p className="text-xs text-slate-600 mb-2">{request.notes}</p>
+                          )}
+
+                          {assignedMember && (
+                            <div className="flex items-center gap-1 mb-2">
+                              <Users className="w-3 h-3 text-slate-400" />
+                              <span className="text-xs text-slate-600">
+                                {assignedMember.user_name || assignedMember.user_email}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Action buttons for assigned member */}
+                          {isAssignedToMe && request.status === 'assigned' && (
+                            <div className="flex gap-2 mt-2">
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setConfirmingRequest(request);
+                                  setShowConfirmDialog(true);
+                                }}
+                                className="bg-emerald-600 hover:bg-emerald-700 h-8"
+                              >
+                                <Check className="w-3 h-3 mr-1" />
+                                Confirm
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeclineRequest(request.id)}
+                                className="border-red-300 text-red-700 hover:bg-red-50 h-8"
+                              >
+                                <X className="w-3 h-3 mr-1" />
+                                Decline
+                              </Button>
+                            </div>
+                          )}
+
+                          {/* Volunteer button for open requests */}
+                          {!assignedMember && request.status === 'open' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleVolunteer(request.id)}
+                              className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 h-8 mt-2"
+                            >
+                              <UserPlus className="w-3 h-3 mr-1" />
+                              I'll bring this
+                            </Button>
+                          )}
+                        </div>
+
+                        {canManageRequests && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem 
+                                onClick={() => handleRemoveRequest(request.id)}
+                                className="text-red-600"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Remove Request
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
+
+        {/* Existing Shared Gear Section */}
+        {filteredItems.length === 0 && filteredRequests.length === 0 ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-2xl mb-4">
               <Package className="w-8 h-8 text-slate-400" />
             </div>
-            <p className="text-slate-600 mb-2">No shared gear added yet</p>
+            <p className="text-slate-600 mb-2">No shared gear or requests yet</p>
             <p className="text-sm text-slate-500">Add items from your gear shed or create new ones</p>
           </div>
-        ) : (
+        ) : filteredItems.length > 0 ? (
+          <div className="space-y-6">
+            {filteredRequests.length > 0 && (
+              <div className="border-t border-slate-200 pt-6">
+                <h3 className="font-semibold text-slate-800 mb-4">Confirmed Gear</h3>
+              </div>
+            )}
           Object.entries(groupedItems).map(([type, typeItems]) => {
             const Icon = gearIcons[type] || Package;
             const colorClass = gearColors[type] || "bg-slate-100 text-slate-700";
@@ -293,7 +513,8 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
               </div>
             );
           })
-        )}
+          </div>
+        ) : null}
       </CardContent>
         </CollapsibleContent>
 
@@ -468,6 +689,25 @@ export default function GearList({ items = [], onUpdate, members = [] }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Gear Request Dialog */}
+      <GearRequestDialog
+        open={showRequestDialog}
+        onClose={() => setShowRequestDialog(false)}
+        onSubmit={handleAddRequest}
+        members={members}
+      />
+
+      {/* Confirm Gear Dialog */}
+      <ConfirmGearDialog
+        open={showConfirmDialog}
+        onClose={() => {
+          setShowConfirmDialog(false);
+          setConfirmingRequest(null);
+        }}
+        request={confirmingRequest}
+        onConfirm={handleConfirmRequest}
+      />
       </Card>
     </Collapsible>
   );

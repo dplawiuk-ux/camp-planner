@@ -147,6 +147,10 @@ export default function TripDetails() {
     updateMutation.mutate({ tripData: { gear_items: items } });
   };
 
+  const handleGearRequestsUpdate = (requests) => {
+    updateMutation.mutate({ tripData: { gear_requests: requests } });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
@@ -358,6 +362,10 @@ export default function TripDetails() {
               items={trip.gear_items || []}
               members={members}
               onUpdate={handleGearUpdate}
+              requests={trip.gear_requests || []}
+              onUpdateRequests={handleGearRequestsUpdate}
+              currentUserRole={currentUserRole}
+              currentUserEmail={user?.email}
             />
           </div>
 
