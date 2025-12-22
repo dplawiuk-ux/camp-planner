@@ -21,7 +21,8 @@ import {
   Edit3,
   ChevronDown,
   Tent,
-  Ship
+  Ship,
+  Package
 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
@@ -46,7 +47,7 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], tripCode, tripName, tripStartDate }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [showChangeRole, setShowChangeRole] = useState(false);
@@ -270,10 +271,29 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         // Check tent allocation
         const tents = packingItems.filter(item => item.category === 'shelter');
         const isInTent = tents.some(tent => tent.assigned_to?.includes(selectedMember.id));
+        const memberTents = tents.filter(tent => tent.assigned_to?.includes(selectedMember.id));
         
         // Check watercraft allocation
         const watercraft = gearItems.filter(item => item.type === 'watercraft');
         const isInWatercraft = watercraft.some(w => w.assigned_to?.includes(selectedMember.id));
+        const memberWatercraft = watercraft.filter(w => w.assigned_to?.includes(selectedMember.id));
+        
+        // Get all shared gear assigned to this member (excluding tents and watercraft)
+        const memberSharedGear = gearItems.filter(item => 
+          item.type !== 'watercraft' && 
+          item.assigned_to?.includes(selectedMember.id)
+        );
+        
+        // Get confirmed gear requests for this member
+        const memberGearRequests = (gearRequests || []).filter(req => 
+          req.assigned_to_member_id === selectedMember.id && 
+          req.status === 'confirmed'
+        );
+        
+        const hasGearCommitments = memberTents.length > 0 || 
+                                    memberWatercraft.length > 0 || 
+                                    memberSharedGear.length > 0 || 
+                                    memberGearRequests.length > 0;
         
         return (
           <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
@@ -344,6 +364,59 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       </div>
                     </div>
                   </div>
+
+                  {hasGearCommitments && (
+                    <div className="pt-3 border-t border-slate-200">
+                      <p className="text-sm font-medium text-slate-700 mb-3">Committed to Bring</p>
+                      <div className="space-y-2">
+                        {memberTents.map(tent => (
+                          <div key={tent.id} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                            <Tent className="w-4 h-4 text-emerald-600" />
+                            <span className="text-sm text-slate-700">{tent.name}</span>
+                            {tent.capacity && (
+                              <Badge variant="outline" className="text-xs ml-auto">
+                                {tent.capacity} people
+                              </Badge>
+                            )}
+                          </div>
+                        ))}
+                        
+                        {memberWatercraft.map(craft => (
+                          <div key={craft.id} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                            <Ship className="w-4 h-4 text-cyan-600" />
+                            <span className="text-sm text-slate-700">{craft.name}</span>
+                            {craft.capacity && (
+                              <Badge variant="outline" className="text-xs ml-auto">
+                                {craft.capacity} people
+                              </Badge>
+                            )}
+                          </div>
+                        ))}
+                        
+                        {memberSharedGear.map(gear => (
+                          <div key={gear.id} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                            <Package className="w-4 h-4 text-emerald-600" />
+                            <span className="text-sm text-slate-700">{gear.name}</span>
+                            {gear.is_rental && (
+                              <Badge variant="outline" className="text-xs ml-auto border-amber-300 bg-amber-50 text-amber-700">
+                                Rental
+                              </Badge>
+                            )}
+                          </div>
+                        ))}
+                        
+                        {memberGearRequests.map(req => (
+                          <div key={req.id} className="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <Package className="w-4 h-4 text-emerald-600" />
+                            <span className="text-sm text-slate-700">{req.name}</span>
+                            <Badge variant="outline" className="text-xs ml-auto bg-emerald-100 text-emerald-700 border-emerald-300">
+                              Confirmed
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

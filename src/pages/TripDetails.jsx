@@ -340,6 +340,7 @@ export default function TripDetails() {
               isUpdatingRole={updateMemberRoleMutation.isPending}
               packingItems={trip.packing_items || []}
               gearItems={trip.gear_items || []}
+              gearRequests={trip.gear_requests || []}
               tripCode={trip.trip_code}
               tripName={trip.name}
               tripStartDate={format(startDate, 'MMMM d, yyyy')}
