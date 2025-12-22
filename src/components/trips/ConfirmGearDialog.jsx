@@ -56,7 +56,7 @@ export default function ConfirmGearDialog({ open, onClose, request, onConfirm })
       equipmentId = created.id;
     }
 
-    onConfirm(equipmentId);
+    onConfirm(request.id, equipmentId);
     setMode("none");
     setSearchQuery("");
     setSelectedEquipment(null);
