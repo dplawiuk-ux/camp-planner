@@ -436,11 +436,6 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
           </div>
         ) : filteredItems.length > 0 ? (
           <div className="space-y-6">
-            {filteredRequests.length > 0 && (
-              <div className="border-t border-slate-200 pt-6">
-                <h3 className="font-semibold text-slate-800 mb-4">Confirmed Gear</h3>
-              </div>
-            )}
             {Object.entries(groupedItems).map(([type, typeItems]) => {
             const Icon = gearIcons[type] || Package;
             const colorClass = gearColors[type] || "bg-slate-100 text-slate-700";
