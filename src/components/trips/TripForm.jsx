@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { MapPin, Calendar, FileText, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
+import { format } from "date-fns";
 import LocationPicker from "./LocationPicker";
 import ImageUpload from "@/components/shared/ImageUpload";
 
@@ -46,8 +47,6 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     packing_items: defaultPackingItems,
     trip_code: generateTripCode()
   });
-  const [invitations, setInvitations] = useState([]);
-  const [customMessage, setCustomMessage] = useState("");
 
   useEffect(() => {
     if (initialData) {
@@ -82,7 +81,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ tripData: formData, invitations, customMessage });
+    onSubmit({ tripData: formData });
   };
 
   const handleChange = (field, value) => {
@@ -219,15 +218,12 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             <p className="text-xs text-slate-500">Members can use this code to join the trip</p>
           </div>
 
-          {!initialData && (
+          {!initialData && formData.name && formData.start_date && (
             <div className="pt-4 border-t border-slate-200">
               <InviteMembers 
-                invitations={invitations}
-                onChange={setInvitations}
-                customMessage={customMessage}
-                onMessageChange={setCustomMessage}
                 tripCode={formData.trip_code}
-                onGenerateTripCode={handleGenerateTripCode}
+                tripName={formData.name}
+                tripStartDate={format(new Date(formData.start_date), 'MMMM d, yyyy')}
               />
             </div>
           )}

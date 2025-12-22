@@ -19,7 +19,6 @@ import {
   Plus,
   Loader2,
   Edit3,
-  Send,
   ChevronDown,
   Tent,
   Ship
@@ -27,6 +26,7 @@ import {
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
 import EditDisplayName from "./EditDisplayName";
+import ChangeRoleDialog from "./ChangeRoleDialog";
 
 const roleConfig = {
   lead: {
@@ -46,14 +46,14 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onResendInvite, isResending, packingItems = [], gearItems = [], tripCode }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], tripCode, tripName, tripStartDate }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [invitations, setInvitations] = useState([]);
-  const [customMessage, setCustomMessage] = useState("");
   const [showEditName, setShowEditName] = useState(false);
+  const [showChangeRole, setShowChangeRole] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isOpen, setIsOpen] = useState(true);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
+  const isLead = currentUserRole === 'lead';
   
   const currentMember = members.find(m => m.user_email === currentUserEmail);
 
@@ -62,12 +62,12 @@ export default function MembersList({ members = [], currentUserRole, currentUser
     return roleOrder[a.role] - roleOrder[b.role];
   });
 
-  const handleInviteSubmit = () => {
-    if (invitations.length > 0 && onInvite) {
-      onInvite(invitations, customMessage);
-      setInvitations([]);
-      setCustomMessage("");
-      setShowInviteDialog(false);
+  const handleMemberClick = (member) => {
+    if (isLead && member.role !== 'lead' && member.user_email !== currentUserEmail) {
+      setSelectedMember(member);
+      setShowChangeRole(true);
+    } else {
+      setSelectedMember(member);
     }
   };
 
@@ -114,8 +114,12 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => setSelectedMember(member)}
-              className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+              onClick={() => handleMemberClick(member)}
+              className={`p-4 bg-slate-50 rounded-lg transition-colors ${
+                isLead && member.role !== 'lead' && member.user_email !== currentUserEmail
+                  ? 'hover:bg-emerald-50 cursor-pointer'
+                  : 'hover:bg-slate-100 cursor-pointer'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
@@ -174,21 +178,6 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 </div>
 
                 <div className="flex gap-1 flex-shrink-0">
-                  {canManageMembers && isPending && onResendInvite && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onResendInvite(member);
-                      }}
-                      disabled={isResending}
-                      className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50"
-                      title="Resend invitation"
-                    >
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  )}
                   {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
                     <Button
                       variant="ghost"
@@ -223,36 +212,18 @@ export default function MembersList({ members = [], currentUserRole, currentUser
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Invite Members to Trip</DialogTitle>
+            <DialogTitle>Share Trip Invite</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <InviteMembers
-              invitations={invitations}
-              onChange={setInvitations}
-              customMessage={customMessage}
-              onMessageChange={setCustomMessage}
               tripCode={tripCode}
+              tripName={tripName}
+              tripStartDate={tripStartDate}
             />
           </div>
-          <DialogFooter className="gap-3">
-            <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleInviteSubmit}
-              disabled={invitations.length === 0 || isInviting}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              {isInviting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Inviting...
-                </>
-              ) : (
-                <>
-                  Send {invitations.length > 0 ? `${invitations.length} ` : ''}Invitation{invitations.length !== 1 ? 's' : ''}
-                </>
-              )}
+          <DialogFooter>
+            <Button onClick={() => setShowInviteDialog(false)}>
+              Done
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -270,6 +241,24 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           }
         }}
         isLoading={isUpdatingName}
+      />
+
+      {/* Change Role Dialog */}
+      <ChangeRoleDialog
+        open={showChangeRole}
+        onClose={() => {
+          setShowChangeRole(false);
+          setSelectedMember(null);
+        }}
+        member={selectedMember}
+        onSave={(newRole) => {
+          if (onUpdateRole && selectedMember) {
+            onUpdateRole(selectedMember.id, newRole);
+            setShowChangeRole(false);
+            setSelectedMember(null);
+          }
+        }}
+        isLoading={isUpdatingRole}
       />
 
       {/* Member Details Dialog */}

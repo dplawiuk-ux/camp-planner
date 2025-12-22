@@ -97,54 +97,7 @@ export default function TripDetails() {
     }
   });
 
-  const inviteMembersMutation = useMutation({
-    mutationFn: async ({ invitations, customMessage }) => {
-      await base44.entities.TripMember.bulkCreate(
-        invitations.map(inv => ({
-          trip_id: tripId,
-          user_email: inv.email || undefined,
-          user_name: inv.name || undefined,
-          role: inv.role,
-          status: inv.email ? 'pending' : 'accepted'
-        }))
-      );
 
-      const emailResults = [];
-      // Send invitation emails only to members with emails
-      for (const inv of invitations) {
-        if (inv.email) {
-          try {
-            const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
-            const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${inv.role}${customMessage ? `\n\nPersonal message:\n${customMessage}` : ''}\n\nClick here to view the trip:\n${tripUrl}`;
-
-            await base44.integrations.Core.SendEmail({
-              from_name: user.full_name || 'Camp Planner',
-              to: inv.email,
-              subject: `You're invited to ${trip.name}`,
-              body: emailBody
-            });
-            emailResults.push({ email: inv.email, success: true });
-          } catch (error) {
-            console.error(`Failed to send email to ${inv.email}:`, error);
-            emailResults.push({ email: inv.email, success: false, error: error.message });
-          }
-        }
-      }
-      return emailResults;
-    },
-    onSuccess: (emailResults) => {
-      queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
-
-      const failed = emailResults.filter(r => !r.success);
-      if (failed.length > 0) {
-        const { toast } = require('sonner');
-        toast.error(`Failed to send ${failed.length} email(s). Members were added but may need to be notified manually.`);
-      } else if (emailResults.length > 0) {
-        const { toast } = require('sonner');
-        toast.success(`Sent ${emailResults.length} invitation email(s)`);
-      }
-    }
-  });
 
   const updateMemberNameMutation = useMutation({
     mutationFn: ({ memberId, name }) => 
@@ -154,25 +107,11 @@ export default function TripDetails() {
     }
   });
 
-  const resendInviteMutation = useMutation({
-    mutationFn: async (member) => {
-      const tripUrl = `https://trailhead-planner-1412cfe0.base44.app${createPageUrl('TripDetails')}?id=${tripId}`;
-      const emailBody = `${user.full_name} has invited you to join their camping trip "${trip.name}" at ${trip.location}.\n\nTrip dates: ${trip.start_date}${trip.end_date ? ` to ${trip.end_date}` : ''}\n\nRole: ${member.role}\n\nClick here to view the trip:\n${tripUrl}`;
-
-      await base44.integrations.Core.SendEmail({
-        from_name: user.full_name || 'Camp Planner',
-        to: member.user_email,
-        subject: `Reminder: You're invited to ${trip.name}`,
-        body: emailBody
-      });
-    },
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: ({ memberId, role }) => 
+      base44.entities.TripMember.update(memberId, { role }),
     onSuccess: () => {
-      const { toast } = require('sonner');
-      toast.success('Invitation email resent');
-    },
-    onError: (error) => {
-      const { toast } = require('sonner');
-      toast.error(`Failed to send email: ${error.message}`);
+      queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
     }
   });
 
@@ -370,15 +309,16 @@ export default function TripDetails() {
               currentUserRole={currentUserRole}
               currentUserEmail={user?.email}
               onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
-              onInvite={canEdit ? (invitations, customMessage) => inviteMembersMutation.mutate({ invitations, customMessage }) : null}
-              isInviting={inviteMembersMutation.isPending}
+              onInvite={canEdit}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}
-              onResendInvite={canEdit ? (member) => resendInviteMutation.mutate(member) : null}
-              isResending={resendInviteMutation.isPending}
+              onUpdateRole={(memberId, role) => updateMemberRoleMutation.mutate({ memberId, role })}
+              isUpdatingRole={updateMemberRoleMutation.isPending}
               packingItems={trip.packing_items || []}
               gearItems={trip.gear_items || []}
               tripCode={trip.trip_code}
+              tripName={trip.name}
+              tripStartDate={format(startDate, 'MMMM d, yyyy')}
             />
           </div>
 
