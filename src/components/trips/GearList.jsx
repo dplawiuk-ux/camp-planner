@@ -199,6 +199,23 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
   };
 
   const handleConfirmRequest = async (requestId, equipmentId) => {
+    const request = (requests || []).find(req => req.id === requestId);
+    if (!request) return;
+
+    // Add confirmed request to shared gear
+    const newGearItem = {
+      id: `gear-${Date.now()}`,
+      name: request.name,
+      type: request.type,
+      equipment_id: equipmentId || null,
+      notes: request.notes,
+      is_rental: false,
+      assigned_to: request.assigned_to_member_id ? [request.assigned_to_member_id] : []
+    };
+
+    onUpdate([...items, newGearItem]);
+
+    // Update request status
     onUpdateRequests((requests || []).map(req =>
       req.id === requestId
         ? { 
@@ -208,6 +225,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
           }
         : req
     ));
+    
     setShowConfirmDialog(false);
     setConfirmingRequest(null);
   };
