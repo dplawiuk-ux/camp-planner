@@ -423,7 +423,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                 <h3 className="font-semibold text-slate-800 mb-4">Confirmed Gear</h3>
               </div>
             )}
-          Object.entries(groupedItems).map(([type, typeItems]) => {
+            {Object.entries(groupedItems).map(([type, typeItems]) => {
             const Icon = gearIcons[type] || Package;
             const colorClass = gearColors[type] || "bg-slate-100 text-slate-700";
 
@@ -512,7 +512,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                 </div>
               </div>
             );
-          })
+          })}
           </div>
         ) : null}
       </CardContent>
