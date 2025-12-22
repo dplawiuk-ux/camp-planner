@@ -184,7 +184,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       size="icon"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onRemove(member.id);
+                        onRemove(member);
                       }}
                       className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
                     >

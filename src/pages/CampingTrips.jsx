@@ -62,8 +62,16 @@ export default function CampingTrips() {
       }
       const trip = trips[0];
       
-      // Check if already a member
+      // Check if user is locked out
       const emails = [user.email, ...(user.alternate_emails || [])];
+      const lockedEmails = trip.locked_out_emails || [];
+      const isLockedOut = emails.some(email => lockedEmails.includes(email));
+      
+      if (isLockedOut) {
+        throw new Error("You have been locked out from this trip");
+      }
+      
+      // Check if already a member
       const existingMember = await base44.entities.TripMember.filter({ trip_id: trip.id });
       const alreadyMember = existingMember.some(m => m.user_email && emails.includes(m.user_email));
       

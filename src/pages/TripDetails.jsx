@@ -37,6 +37,7 @@ import TripMap from "@/components/trips/TripMap";
 import TentAllocation from "@/components/trips/TentAllocation";
 import WatercraftAllocation from "@/components/trips/WatercraftAllocation";
 import GearList from "@/components/trips/GearList";
+import RemoveMemberDialog from "@/components/trips/RemoveMemberDialog";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -44,6 +45,8 @@ export default function TripDetails() {
   
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRemoveMemberDialog, setShowRemoveMemberDialog] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState(null);
   
   const queryClient = useQueryClient();
 
@@ -91,9 +94,23 @@ export default function TripDetails() {
   });
 
   const removeMemberMutation = useMutation({
-    mutationFn: (memberId) => base44.entities.TripMember.delete(memberId),
+    mutationFn: async ({ memberId, memberEmail, lockOut }) => {
+      await base44.entities.TripMember.delete(memberId);
+      
+      if (lockOut && memberEmail) {
+        const currentLockedEmails = trip.locked_out_emails || [];
+        if (!currentLockedEmails.includes(memberEmail)) {
+          await base44.entities.Trip.update(tripId, {
+            locked_out_emails: [...currentLockedEmails, memberEmail]
+          });
+        }
+      }
+    },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
+      queryClient.refetchQueries({ queryKey: ['trip', tripId] });
+      setShowRemoveMemberDialog(false);
+      setMemberToRemove(null);
     }
   });
 
@@ -308,7 +325,10 @@ export default function TripDetails() {
               members={members}
               currentUserRole={currentUserRole}
               currentUserEmail={user?.email}
-              onRemove={canEdit ? (id) => removeMemberMutation.mutate(id) : null}
+              onRemove={canEdit ? (member) => {
+                setMemberToRemove(member);
+                setShowRemoveMemberDialog(true);
+              } : null}
               onInvite={canEdit}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}
@@ -388,6 +408,24 @@ export default function TripDetails() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
-}
+
+      {/* Remove Member Dialog */}
+      <RemoveMemberDialog
+        open={showRemoveMemberDialog}
+        onClose={() => {
+          setShowRemoveMemberDialog(false);
+          setMemberToRemove(null);
+        }}
+        member={memberToRemove}
+        onConfirm={(lockOut) => {
+          removeMemberMutation.mutate({
+            memberId: memberToRemove.id,
+            memberEmail: memberToRemove.user_email,
+            lockOut
+          });
+        }}
+        isLoading={removeMemberMutation.isPending}
+      />
+      </div>
+      );
+      }
