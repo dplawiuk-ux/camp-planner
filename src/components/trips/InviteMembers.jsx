@@ -12,7 +12,7 @@ export default function InviteMembers({ tripCode, tripName, tripStartDate }) {
 Trip: ${tripName}
 Start Date: ${tripStartDate}
 
-To join, visit: https://trailhead-planner-1412cfe0.base44.app
+To join, visit: www.camp-planner.com
 Then use this Trip Code: ${tripCode}`;
 
   const handleCopyInvite = () => {
