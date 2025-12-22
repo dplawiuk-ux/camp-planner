@@ -58,11 +58,11 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
       
       const documentData = {
         ...formData,
-        file_url,
+        file_url: file_uri,
         file_type: file.type,
         trip_id: formData.trip_id || undefined
       };

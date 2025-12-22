@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,12 +33,32 @@ const categoryLabels = {
 };
 
 export default function DocumentCard({ document, index, onDelete, trip }) {
+  const [signedUrl, setSignedUrl] = useState(null);
+  
   const isImage = document.file_type?.includes('image') || 
                   /\.(jpg|jpeg|png|gif|webp)$/i.test(document.file_url);
   const isPDF = document.file_type?.includes('pdf') || 
                 document.file_url?.toLowerCase().endsWith('.pdf');
 
   const Icon = isImage ? FileImage : isPDF ? FileText : File;
+
+  useEffect(() => {
+    const generateSignedUrl = async () => {
+      try {
+        const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ 
+          file_uri: document.file_url,
+          expires_in: 3600
+        });
+        setSignedUrl(signed_url);
+      } catch (error) {
+        console.error('Failed to generate signed URL:', error);
+      }
+    };
+    
+    if (document.file_url) {
+      generateSignedUrl();
+    }
+  }, [document.file_url]);
 
   return (
     <motion.div
@@ -48,9 +69,9 @@ export default function DocumentCard({ document, index, onDelete, trip }) {
       <Card className="group hover:shadow-lg transition-all bg-white border-slate-200 overflow-hidden">
         {/* Preview */}
         <div className="relative h-48 bg-slate-100 overflow-hidden">
-          {isImage ? (
+          {isImage && signedUrl ? (
             <img
-              src={document.file_url}
+              src={signedUrl}
               alt={document.name}
               className="w-full h-full object-cover"
             />
@@ -63,7 +84,8 @@ export default function DocumentCard({ document, index, onDelete, trip }) {
             <Button
               size="icon"
               variant="ghost"
-              onClick={() => window.open(document.file_url, '_blank')}
+              onClick={() => signedUrl && window.open(signedUrl, '_blank')}
+              disabled={!signedUrl}
               className="h-8 w-8 bg-white/90 hover:bg-white"
             >
               <ExternalLink className="w-4 h-4" />
@@ -105,14 +127,21 @@ export default function DocumentCard({ document, index, onDelete, trip }) {
 
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>{format(new Date(document.created_date), 'MMM d, yyyy')}</span>
-            <a
-              href={document.file_url}
-              download
-              className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700"
-            >
-              <Download className="w-3 h-3" />
-              Download
-            </a>
+            {signedUrl ? (
+              <a
+                href={signedUrl}
+                download
+                className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700"
+              >
+                <Download className="w-3 h-3" />
+                Download
+              </a>
+            ) : (
+              <span className="flex items-center gap-1 text-slate-400">
+                <Download className="w-3 h-3" />
+                Loading...
+              </span>
+            )}
           </div>
         </CardContent>
       </Card>

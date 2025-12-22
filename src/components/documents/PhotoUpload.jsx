@@ -27,11 +27,11 @@ export default function PhotoUpload({ open, onClose, onSubmit, trips = [] }) {
     setIsUploading(true);
     try {
       for (const file of selectedFiles) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
         
         await onSubmit({
           name: file.name,
-          file_url,
+          file_url: file_uri,
           file_type: file.type,
           category: 'photo',
           trip_id: formData.trip_id || undefined,

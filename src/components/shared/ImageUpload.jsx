@@ -75,8 +75,9 @@ export default function ImageUpload({ label, value, onChange, className }) {
     try {
       const blob = await fetch(imageToCrop).then(r => r.blob());
       const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onChange(file_url);
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri, expires_in: 31536000 });
+      onChange(signed_url);
       setImageToCrop(null);
     } catch (error) {
       console.error('Upload failed:', error);
@@ -94,8 +95,9 @@ export default function ImageUpload({ label, value, onChange, className }) {
     try {
       const croppedBlob = await getCroppedImg(imageToCrop, croppedAreaPixels);
       const croppedFile = new File([croppedBlob], 'cropped-image.jpg', { type: 'image/jpeg' });
-      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
-      onChange(file_url);
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file: croppedFile });
+      const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri, expires_in: 31536000 });
+      onChange(signed_url);
       setImageToCrop(null);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
