@@ -364,14 +364,21 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
               </div>
               <div className="space-y-2">
                 <Label htmlFor="capacity">Capacity (people)</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={newWatercraft.capacity}
-                  onChange={(e) => setNewWatercraft({ ...newWatercraft, capacity: parseInt(e.target.value) || 2 })}
-                />
+                <Select 
+                  value={String(newWatercraft.capacity)} 
+                  onValueChange={(value) => setNewWatercraft({ ...newWatercraft, capacity: parseInt(value) })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select capacity" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem key={num} value={String(num)}>
+                        {num} {num === 1 ? 'person' : 'people'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Button
                 onClick={handleAddWatercraft}
