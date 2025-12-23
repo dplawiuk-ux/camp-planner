@@ -51,7 +51,7 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate, layout = "compact" }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate, layout = "compact", paddleIn = false }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [showChangeRole, setShowChangeRole] = useState(false);
@@ -229,9 +229,11 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       <div className={`p-1 rounded ${isInTent ? 'bg-green-100' : 'bg-yellow-100'}`}>
                         <Tent className={`w-3 h-3 ${isInTent ? 'text-green-600' : 'text-yellow-600'}`} />
                       </div>
-                      <div className={`p-1 rounded ${isInWatercraft ? 'bg-green-100' : 'bg-yellow-100'}`}>
-                        <Ship className={`w-3 h-3 ${isInWatercraft ? 'text-green-600' : 'text-yellow-600'}`} />
-                      </div>
+                      {paddleIn && (
+                        <div className={`p-1 rounded ${isInWatercraft ? 'bg-green-100' : 'bg-yellow-100'}`}>
+                          <Ship className={`w-3 h-3 ${isInWatercraft ? 'text-green-600' : 'text-yellow-600'}`} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
