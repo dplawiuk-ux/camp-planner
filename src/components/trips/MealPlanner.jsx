@@ -39,6 +39,8 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
   const [isSharedOpen, setIsSharedOpen] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [editValue, setEditValue] = useState('');
+  const [addingTo, setAddingTo] = useState(null); // { day, mealType }
+  const [addValue, setAddValue] = useState('');
 
   const queryClient = useQueryClient();
 
@@ -139,6 +141,30 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
     });
   };
 
+  const handleStartAdd = (day, mealType) => {
+    setAddingTo({ day, mealType });
+    setAddValue('');
+  };
+
+  const handleSaveAdd = () => {
+    if (addValue.trim() && addingTo) {
+      createMutation.mutate({
+        item_name: addValue.trim(),
+        trip_id: tripId,
+        day_number: addingTo.day,
+        meal_type: addingTo.mealType,
+        is_shared_food: false
+      });
+      setAddingTo(null);
+      setAddValue('');
+    }
+  };
+
+  const handleCancelAdd = () => {
+    setAddingTo(null);
+    setAddValue('');
+  };
+
   const getMemberName = (memberId) => {
     const member = members.find(m => m.id === memberId);
     return member?.user_name || member?.user_email || 'Unassigned';
@@ -196,8 +222,8 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                             {mealType}
                           </Badge>
                         </div>
-                        {mealsByDay[day][mealType].length > 0 ? (
-                          <div className="ml-4 space-y-1">
+                        <div className="ml-4 space-y-1">
+                          {mealsByDay[day][mealType].length > 0 && (
                             <AnimatePresence>
                               {mealsByDay[day][mealType].map((item) => (
                                 <motion.div
@@ -281,10 +307,48 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                                 </motion.div>
                               ))}
                             </AnimatePresence>
-                          </div>
-                        ) : (
-                          <p className="ml-4 text-sm text-slate-400 italic">No items planned</p>
-                        )}
+                          )}
+                          
+                          {addingTo?.day === day && addingTo?.mealType === mealType ? (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                value={addValue}
+                                onChange={(e) => setAddValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveAdd();
+                                  if (e.key === 'Escape') handleCancelAdd();
+                                }}
+                                placeholder="Enter item name..."
+                                className="h-7 text-sm"
+                                autoFocus
+                              />
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={handleSaveAdd}
+                                className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50"
+                              >
+                                <Check className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={handleCancelAdd}
+                                className="h-6 w-6 text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => handleStartAdd(day, mealType)}
+                              className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add item
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
