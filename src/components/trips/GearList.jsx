@@ -351,7 +351,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                             <div className="flex items-center gap-1 mb-2">
                               <Users className="w-3 h-3 text-slate-400" />
                               <span className="text-xs text-slate-600">
-                                {assignedMember.user_name || assignedMember.user_email}
+                               {assignedMember.user_name || 'Unnamed'}
                               </span>
                             </div>
                           )}
@@ -488,7 +488,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                                   const member = members.find(m => m.id === memberId);
                                   return (
                                     <Badge key={memberId} variant="secondary" className="text-xs">
-                                      {member?.user_name || member?.user_email || 'Unknown'}
+                                      {member?.user_name || 'Unknown'}
                                     </Badge>
                                   );
                                 })}
@@ -681,11 +681,8 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                     <Checkbox checked={isAssigned} />
                     <div className="flex-1">
                       <p className="font-medium text-slate-800">
-                        {member.user_name || member.user_email || 'Unnamed'}
+                        {member.user_name || 'Unnamed'}
                       </p>
-                      {member.user_name && member.user_email && (
-                        <p className="text-xs text-slate-500">{member.user_email}</p>
-                      )}
                     </div>
                   </div>
                 );
