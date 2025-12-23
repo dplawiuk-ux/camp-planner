@@ -260,22 +260,20 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
             <div className="flex gap-2">
               {canManageRequests && (
                 <Button
-                  size="sm"
+                  size="icon"
                   onClick={() => setShowRequestDialog(true)}
                   variant="outline"
-                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                  className="h-8 w-8 border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                 >
-                  <MessageSquarePlus className="w-4 h-4 mr-2" />
-                  Request Gear
+                  <MessageSquarePlus className="w-4 h-4" />
                 </Button>
               )}
               <Button
-                size="sm"
+                size="icon"
                 onClick={() => setShowAddDialog(true)}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="h-8 w-8 bg-emerald-600 hover:bg-emerald-700"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Shared Gear
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </div>

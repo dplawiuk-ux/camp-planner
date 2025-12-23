@@ -166,11 +166,10 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
             </CollapsibleTrigger>
             <Button
               onClick={() => setShowAddDialog(true)}
-              size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              size="icon"
+              className="h-8 w-8 bg-blue-600 hover:bg-blue-700"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Watercraft
+              <Plus className="w-4 h-4" />
             </Button>
           </div>
         </CardHeader>

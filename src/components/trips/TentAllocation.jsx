@@ -167,11 +167,10 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
             </CollapsibleTrigger>
             <Button
               onClick={() => setShowAddDialog(true)}
-              size="sm"
-              className="bg-emerald-600 hover:bg-emerald-700"
+              size="icon"
+              className="h-8 w-8 bg-emerald-600 hover:bg-emerald-700"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Tent
+              <Plus className="w-4 h-4" />
             </Button>
           </div>
         </CardHeader>
