@@ -130,9 +130,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-medium text-slate-700">
-                      {member.user_name || member.user_email || "Unnamed member"}
-                    </p>
+                   <p className="text-sm font-medium text-slate-700">
+                     {member.user_name || "Unnamed"}
+                   </p>
                     {isCurrentUser && (
                       <Button
                         variant="ghost"
@@ -148,17 +148,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     )}
                   </div>
 
-                  {member.user_email && member.user_name && (
-                    <p className="text-xs text-slate-500 mb-2">
-                      {member.user_email}
-                    </p>
-                  )}
 
-                  {!member.user_email && (
-                    <p className="text-xs text-slate-500 mb-2">
-                      No email address
-                    </p>
-                  )}
                   
                   <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant="secondary" className={`${config.color} border text-xs`}>
@@ -311,15 +301,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-slate-800">
-                      {selectedMember.user_name || selectedMember.user_email || "Unnamed member"}
-                    </h3>
-                    {selectedMember.user_email && selectedMember.user_name && (
-                      <p className="text-sm text-slate-500">{selectedMember.user_email}</p>
-                    )}
-                    {!selectedMember.user_email && (
-                      <p className="text-sm text-slate-500">No email address</p>
-                    )}
+                   <h3 className="font-semibold text-lg text-slate-800">
+                     {selectedMember.user_name || "Unnamed"}
+                   </h3>
                   </div>
                 </div>
 
