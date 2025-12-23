@@ -217,18 +217,6 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Badge variant="secondary" className={`${config.color} border text-xs`}>
                       {config.label}
                     </Badge>
-                    {isPending && (
-                      <Badge variant="outline" className="text-xs border-amber-200 bg-amber-50 text-amber-700">
-                        <Mail className="w-3 h-3 mr-1" />
-                        Pending
-                      </Badge>
-                    )}
-                    {!isPending && (
-                      <Badge variant="outline" className="text-xs border-emerald-200 bg-emerald-50 text-emerald-700">
-                        <MailCheck className="w-3 h-3 mr-1" />
-                        Accepted
-                      </Badge>
-                    )}
                   </div>
                 </div>
 
@@ -456,20 +444,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Status</span>
-                    {isPending ? (
-                      <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700">
-                        <Mail className="w-3 h-3 mr-1" />
-                        Pending
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">
-                        <MailCheck className="w-3 h-3 mr-1" />
-                        Accepted
-                      </Badge>
-                    )}
-                  </div>
+
 
                   <div className="pt-3 border-t border-slate-200">
                     <p className="text-sm font-medium text-slate-700 mb-3">Allocations</p>
