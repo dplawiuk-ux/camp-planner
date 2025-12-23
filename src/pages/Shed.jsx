@@ -234,7 +234,8 @@ export default function Shed() {
           </div>
         ) : filteredEquipment.length > 0 ? (
           <div className="space-y-8">
-            {Object.entries(groupedEquipment).map(([type, items]) => {
+            {typeOrder.filter(type => groupedEquipment[type]).map((type) => {
+              const items = groupedEquipment[type];
               const Icon = equipmentIcons[type] || Package;
               const colorClass = equipmentColors[type] || "bg-slate-100 text-slate-700";
               
