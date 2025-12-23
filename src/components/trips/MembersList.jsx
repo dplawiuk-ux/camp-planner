@@ -13,8 +13,6 @@ import {
   Crown, 
   Shield, 
   User, 
-  Mail,
-  MailCheck,
   Trash2,
   Plus,
   Loader2,
