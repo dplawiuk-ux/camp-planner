@@ -351,13 +351,18 @@ export default function TripDetails() {
           </div>
 
           {/* Middle Column - Allocations & Gear */}
-          <div className={`space-y-6 ${
-            sectionFilter === 'all' ? 'lg:col-span-1' :
-            (sectionFilter === 'gear' || sectionFilter === 'documents') ? 'lg:col-span-3' :
+          <div className={`${
+            sectionFilter === 'all' ? 'lg:col-span-1 space-y-6' :
+            sectionFilter === 'gear' ? 'lg:col-span-3' :
+            sectionFilter === 'documents' ? 'lg:col-span-3' :
             'hidden'
           }`}>
             {(sectionFilter === 'all' || sectionFilter === 'gear') && (
-              <>
+              <div className={`${
+                sectionFilter === 'gear' 
+                  ? 'grid grid-cols-1 lg:grid-cols-3 gap-6' 
+                  : 'space-y-6'
+              }`}>
                 <TentAllocation
                   items={trip.packing_items || []}
                   members={members}
@@ -377,7 +382,7 @@ export default function TripDetails() {
                   currentUserRole={currentUserRole}
                   currentUserEmail={user?.email}
                 />
-              </>
+              </div>
             )}
             {(sectionFilter === 'all' || sectionFilter === 'documents') && (
               <TripDocuments tripId={tripId} />
