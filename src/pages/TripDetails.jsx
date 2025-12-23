@@ -296,9 +296,13 @@ export default function TripDetails() {
           </Tabs>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Trip Info & Members */}
-          <div className={`lg:col-span-1 space-y-6 ${(sectionFilter !== 'all' && sectionFilter !== 'team') ? 'hidden' : ''}`}>
+          <div className={`space-y-6 ${
+            sectionFilter === 'all' ? 'lg:col-span-1' : 
+            sectionFilter === 'team' ? 'lg:col-span-3' : 
+            'hidden'
+          }`}>
             {/* Notes */}
             {trip.notes && (
               <Card className="border-0 shadow-sm">
@@ -347,10 +351,9 @@ export default function TripDetails() {
           </div>
 
           {/* Middle Column - Allocations & Gear */}
-          <div className={`lg:col-span-1 space-y-6 ${
-            sectionFilter === 'all' ? '' :
-            sectionFilter === 'gear' ? '' :
-            sectionFilter === 'documents' ? '' :
+          <div className={`space-y-6 ${
+            sectionFilter === 'all' ? 'lg:col-span-1' :
+            (sectionFilter === 'gear' || sectionFilter === 'documents') ? 'lg:col-span-3' :
             'hidden'
           }`}>
             {(sectionFilter === 'all' || sectionFilter === 'gear') && (
@@ -382,7 +385,11 @@ export default function TripDetails() {
           </div>
 
           {/* Right Column - Chat */}
-          <div className={`lg:col-span-2 ${(sectionFilter !== 'all' && sectionFilter !== 'chat') ? 'hidden' : ''}`}>
+          <div className={`${
+            sectionFilter === 'all' ? 'lg:col-span-1' : 
+            sectionFilter === 'chat' ? 'lg:col-span-3' : 
+            'hidden'
+          }`}>
             <TripChat
               tripId={tripId}
               currentUserRole={currentUserRole}
