@@ -29,8 +29,6 @@ import {
   ArrowLeft, 
   MapPin, 
   Calendar, 
-  Edit3, 
-  Trash2, 
   FileText,
   Loader2,
   Tent
