@@ -611,14 +611,21 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
               {['tents', 'watercraft'].includes(newItemData.type) && (
                 <div>
                   <Label>Capacity (people)</Label>
-                  <Input
-                    type="number"
-                    min="1"
-                    placeholder="e.g., 4"
-                    value={newItemData.capacity}
-                    onChange={(e) => setNewItemData({...newItemData, capacity: e.target.value})}
-                    className="mt-2"
-                  />
+                  <Select 
+                    value={newItemData.capacity?.toString() || "2"} 
+                    onValueChange={(value) => setNewItemData({...newItemData, capacity: value})}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select capacity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 21 }, (_, i) => i).map(num => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num} {num === 1 ? 'person' : 'people'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
 
