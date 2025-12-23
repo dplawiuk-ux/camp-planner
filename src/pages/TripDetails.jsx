@@ -300,7 +300,7 @@ export default function TripDetails() {
           {/* Left Column - Trip Info & Members */}
           <div className={`space-y-6 ${
             sectionFilter === 'all' ? 'lg:col-span-1' : 
-            sectionFilter === 'team' ? 'lg:col-span-1' : 
+            sectionFilter === 'team' ? 'lg:col-span-3' : 
             'hidden'
           }`}>
             {/* Notes */}
@@ -353,7 +353,7 @@ export default function TripDetails() {
           {/* Middle Column - Allocations & Gear */}
           <div className={`space-y-6 ${
             sectionFilter === 'all' ? 'lg:col-span-1' :
-            (sectionFilter === 'gear' || sectionFilter === 'documents') ? 'lg:col-span-1' :
+            (sectionFilter === 'gear' || sectionFilter === 'documents') ? 'lg:col-span-3' :
             'hidden'
           }`}>
             {(sectionFilter === 'all' || sectionFilter === 'gear') && (
@@ -387,7 +387,7 @@ export default function TripDetails() {
           {/* Right Column - Chat */}
           <div className={`${
             sectionFilter === 'all' ? 'lg:col-span-1' : 
-            sectionFilter === 'chat' ? 'lg:col-span-2' : 
+            sectionFilter === 'chat' ? 'lg:col-span-3' : 
             'hidden'
           }`}>
             <TripChat
