@@ -371,7 +371,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                   <SelectTrigger>
                     <SelectValue placeholder="Select capacity" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom" align="start">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <SelectItem key={num} value={String(num)}>
                         {num} {num === 1 ? 'person' : 'people'}
