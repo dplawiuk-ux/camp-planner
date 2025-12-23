@@ -17,7 +17,8 @@ import {
   Loader2,
   Edit3,
   Trash2,
-  Camera
+  Camera,
+  UtensilsCrossed
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import EquipmentForm from "@/components/shed/EquipmentForm";
@@ -26,23 +27,25 @@ import TopNavBar from "@/components/layout/TopNavBar";
 
 const equipmentIcons = {
   tents: Tent,
-  sleeping_pads: Moon,
-  sleeping_bags: Moon,
-  kitchen: Package,
-  fire: Flame,
   watercraft: Ship,
+  sleeping: Moon,
+  fire: Flame,
+  water: Droplets,
+  kitchen: UtensilsCrossed,
   other: Package
 };
 
 const equipmentColors = {
   tents: "bg-emerald-100 text-emerald-700",
-  sleeping_pads: "bg-purple-100 text-purple-700",
-  sleeping_bags: "bg-indigo-100 text-indigo-700",
-  kitchen: "bg-amber-100 text-amber-700",
-  fire: "bg-orange-100 text-orange-700",
   watercraft: "bg-cyan-100 text-cyan-700",
+  sleeping: "bg-purple-100 text-purple-700",
+  fire: "bg-orange-100 text-orange-700",
+  water: "bg-blue-100 text-blue-700",
+  kitchen: "bg-amber-100 text-amber-700",
   other: "bg-slate-100 text-slate-700"
 };
+
+const typeOrder = ['tents', 'watercraft', 'sleeping', 'fire', 'water', 'kitchen', 'other'];
 
 export default function Shed() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,7 +124,9 @@ export default function Shed() {
     return acc;
   }, {});
 
-  const uniqueTypes = [...new Set(equipment.map(item => item.type))];
+  const uniqueTypes = typeOrder.filter(type => 
+    equipment.some(item => item.type === type)
+  );
 
   const headerActions = (
     <Button
@@ -175,16 +180,20 @@ export default function Shed() {
           >
             All
           </Button>
-          {uniqueTypes.map((type) => (
-            <Button
-              key={type}
-              variant={typeFilter === type ? "default" : "outline"}
-              onClick={() => setTypeFilter(type)}
-              className={typeFilter === type ? "bg-emerald-600" : ""}
-            >
-              {type.replace(/_/g, ' ')}
-            </Button>
-          ))}
+          {uniqueTypes.map((type) => {
+            const Icon = equipmentIcons[type];
+            return (
+              <Button
+                key={type}
+                variant={typeFilter === type ? "default" : "outline"}
+                onClick={() => setTypeFilter(type)}
+                className={typeFilter === type ? "bg-emerald-600" : ""}
+              >
+                {Icon && <Icon className="w-4 h-4 mr-2" />}
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </Button>
+            );
+          })}
           <Button
             onClick={() => setShowPhotoRecognition(true)}
             variant="outline"
