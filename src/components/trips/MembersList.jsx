@@ -24,6 +24,7 @@ import {
   Ship,
   Package
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
 import EditDisplayName from "./EditDisplayName";
@@ -53,6 +54,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   const [showChangeRole, setShowChangeRole] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isOpen, setIsOpen] = useState(true);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [showBulkChangeRole, setShowBulkChangeRole] = useState(false);
   const canManageMembers = ['lead', 'admin'].includes(currentUserRole);
   const isLead = currentUserRole === 'lead';
   
@@ -64,12 +68,28 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   });
 
   const handleMemberClick = (member) => {
-    if (isLead && member.role !== 'lead' && member.user_email !== currentUserEmail) {
+    if (multiSelectMode && member.role !== 'lead') {
+      const isSelected = selectedMembers.some(m => m.id === member.id);
+      if (isSelected) {
+        setSelectedMembers(selectedMembers.filter(m => m.id !== member.id));
+      } else {
+        setSelectedMembers([...selectedMembers, member]);
+      }
+    } else if (isLead && member.role !== 'lead' && member.user_email !== currentUserEmail) {
       setSelectedMember(member);
       setShowChangeRole(true);
     } else {
       setSelectedMember(member);
     }
+  };
+
+  const handleBulkRoleChange = (newRole) => {
+    selectedMembers.forEach(member => {
+      onUpdateRole(member.id, newRole);
+    });
+    setMultiSelectMode(false);
+    setSelectedMembers([]);
+    setShowBulkChangeRole(false);
   };
 
   return (
@@ -88,15 +108,51 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 </Badge>
               </CardTitle>
             </CollapsibleTrigger>
-            {canManageMembers && onInvite && (
-              <Button
-                size="icon"
-                onClick={() => setShowInviteDialog(true)}
-                className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {isLead && members.filter(m => m.role !== 'lead').length > 0 && (
+                multiSelectMode ? (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setMultiSelectMode(false);
+                        setSelectedMembers([]);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => setShowBulkChangeRole(true)}
+                      disabled={selectedMembers.length === 0}
+                      className="bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      Change Role ({selectedMembers.length})
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setMultiSelectMode(true)}
+                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Roles
+                  </Button>
+                )
+              )}
+              {canManageMembers && onInvite && (
+                <Button
+                  size="icon"
+                  onClick={() => setShowInviteDialog(true)}
+                  className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
 
@@ -117,10 +173,14 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => handleMemberClick(member)}
-              className={`p-4 bg-slate-50 rounded-lg transition-colors ${
-                isLead && member.role !== 'lead' && member.user_email !== currentUserEmail
-                  ? 'hover:bg-emerald-50 cursor-pointer'
-                  : 'hover:bg-slate-100 cursor-pointer'
+              className={`p-4 rounded-lg transition-colors ${
+                multiSelectMode && member.role !== 'lead'
+                  ? selectedMembers.some(m => m.id === member.id)
+                    ? 'bg-emerald-100 border-2 border-emerald-600 cursor-pointer'
+                    : 'bg-slate-50 border-2 border-transparent hover:border-emerald-300 cursor-pointer'
+                  : isLead && member.role !== 'lead' && member.user_email !== currentUserEmail
+                    ? 'bg-slate-50 hover:bg-emerald-50 cursor-pointer'
+                    : 'bg-slate-50 hover:bg-slate-100 cursor-pointer'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -170,18 +230,26 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                 </div>
 
                 <div className="flex gap-1 flex-shrink-0">
-                  {canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRemove(member);
-                      }}
-                      className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  {multiSelectMode && member.role !== 'lead' ? (
+                    <Checkbox 
+                      checked={selectedMembers.some(m => m.id === member.id)}
+                      onCheckedChange={() => handleMemberClick(member)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    canManageMembers && !isCurrentUser && member.role !== 'lead' && onRemove && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemove(member);
+                        }}
+                        className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )
                   )}
                 </div>
               </div>
@@ -254,6 +322,60 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         }}
         isLoading={isUpdatingRole}
       />
+
+      {/* Bulk Change Role Dialog */}
+      <Dialog open={showBulkChangeRole} onOpenChange={setShowBulkChangeRole}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Change Role for {selectedMembers.length} Member{selectedMembers.length > 1 ? 's' : ''}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-slate-600">
+              Selected members will be changed to:
+            </p>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start h-auto p-4 border-2 hover:border-emerald-600 hover:bg-emerald-50"
+                onClick={() => handleBulkRoleChange('admin')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-emerald-100 text-emerald-700">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold">Pack Leader</div>
+                    <div className="text-xs text-slate-500">Can manage trip details and members</div>
+                  </div>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full justify-start h-auto p-4 border-2 hover:border-slate-400 hover:bg-slate-50"
+                onClick={() => handleBulkRoleChange('guest')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-slate-100 text-slate-700">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold">Camper</div>
+                    <div className="text-xs text-slate-500">Standard trip member</div>
+                  </div>
+                </div>
+              </Button>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBulkChangeRole(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Member Details Dialog */}
       {selectedMember && (() => {
