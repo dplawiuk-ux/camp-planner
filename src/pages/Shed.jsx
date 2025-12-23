@@ -22,6 +22,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import EquipmentForm from "@/components/shed/EquipmentForm";
 import PhotoRecognition from "@/components/shed/PhotoRecognition";
+import TopNavBar from "@/components/layout/TopNavBar";
 
 const equipmentIcons = {
   tents: Tent,
@@ -122,11 +123,26 @@ export default function Shed() {
 
   const uniqueTypes = [...new Set(equipment.map(item => item.type))];
 
+  const headerActions = (
+    <Button
+      onClick={() => {
+        setEditingItem(null);
+        setShowForm(true);
+      }}
+      size="icon"
+      className="bg-emerald-600 hover:bg-emerald-700"
+    >
+      <Plus className="w-5 h-5" />
+    </Button>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30">
+      <TopNavBar title="Gear Shed" rightActions={headerActions} />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white pt-14">
+        <div className="max-w-7xl mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,10 +153,7 @@ export default function Shed() {
               </div>
               <span className="text-emerald-200 font-medium">My Gear</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Gear Shed
-            </h1>
-            <p className="text-emerald-100 text-lg max-w-xl">
+            <p className="text-emerald-100 text-base max-w-xl">
               Manage your camping equipment and allocate gear to upcoming trips
             </p>
           </motion.div>

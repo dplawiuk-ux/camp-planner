@@ -17,6 +17,13 @@ import DocumentUpload from "@/components/documents/DocumentUpload";
 import DocumentCard from "@/components/documents/DocumentCard";
 import PhotoGallery from "@/components/documents/PhotoGallery";
 import PhotoUpload from "@/components/documents/PhotoUpload";
+import TopNavBar from "@/components/layout/TopNavBar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Documents() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -124,11 +131,36 @@ export default function Documents() {
     { value: "other", label: "Other" }
   ];
 
+  const headerActions = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="icon"
+          className="bg-emerald-600 hover:bg-emerald-700"
+        >
+          <Plus className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setShowUpload(true)}>
+          <FileText className="w-4 h-4 mr-2" />
+          Upload Document
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setShowPhotoUpload(true)}>
+          <Camera className="w-4 h-4 mr-2" />
+          Upload Photo
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30">
+      <TopNavBar title="Documents" rightActions={headerActions} />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white pt-14">
+        <div className="max-w-7xl mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -139,10 +171,7 @@ export default function Documents() {
               </div>
               <span className="text-emerald-200 font-medium">Files & Documents</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Documents
-            </h1>
-            <p className="text-emerald-100 text-lg max-w-xl">
+            <p className="text-emerald-100 text-base max-w-xl">
               Store and organize permits, bookings, maps, and other trip documents
             </p>
           </motion.div>
