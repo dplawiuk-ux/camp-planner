@@ -298,7 +298,7 @@ export default function TripDetails() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Trip Info & Members */}
+          {/* Left Column - Trip Info & Members & Chat */}
           <div className={`space-y-6 ${
             sectionFilter === 'all' ? 'lg:col-span-1' : 
             sectionFilter === 'team' ? 'lg:col-span-3' : 
@@ -358,9 +358,18 @@ export default function TripDetails() {
               tripStartDate={format(startDate, 'MMMM d, yyyy')}
               layout={sectionFilter === 'team' ? 'expanded' : 'compact'}
             />
+
+            {/* Trip Chat - shown in first column for 'all' view */}
+            {sectionFilter === 'all' && (
+              <TripChat
+                tripId={tripId}
+                currentUserRole={currentUserRole}
+                currentUserEmail={user?.email}
+              />
+            )}
           </div>
 
-          {/* Middle Column - Allocations & Gear */}
+          {/* Middle Column - Allocations & Gear & Documents */}
           <div className={`${
             sectionFilter === 'all' ? 'lg:col-span-1 space-y-6' :
             sectionFilter === 'gear' ? 'lg:col-span-3' :
@@ -408,17 +417,27 @@ export default function TripDetails() {
             )}
           </div>
 
-          {/* Right Column - Chat */}
+          {/* Right Column - Meals */}
           <div className={`${
             sectionFilter === 'all' ? 'lg:col-span-1' : 
             sectionFilter === 'chat' ? 'lg:col-span-3' : 
             'hidden'
           }`}>
-            <TripChat
-              tripId={tripId}
-              currentUserRole={currentUserRole}
-              currentUserEmail={user?.email}
-            />
+            {sectionFilter === 'all' && (
+              <MealPlanner
+                tripId={tripId}
+                members={members}
+                startDate={trip.start_date}
+                endDate={trip.end_date}
+              />
+            )}
+            {sectionFilter === 'chat' && (
+              <TripChat
+                tripId={tripId}
+                currentUserRole={currentUserRole}
+                currentUserEmail={user?.email}
+              />
+            )}
           </div>
         </div>
       </div>
