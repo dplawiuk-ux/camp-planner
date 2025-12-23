@@ -46,6 +46,7 @@ import WatercraftAllocation from "@/components/trips/WatercraftAllocation";
 import GearList from "@/components/trips/GearList";
 import RemoveMemberDialog from "@/components/trips/RemoveMemberDialog";
 import TripDocuments from "@/components/trips/TripDocuments";
+import MealPlanner from "@/components/trips/MealPlanner";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -289,6 +290,7 @@ export default function TripDetails() {
               <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg px-6">Team</TabsTrigger>
               <TabsTrigger value="gear" className="rounded-lg px-6">Gear</TabsTrigger>
+              <TabsTrigger value="meals" className="rounded-lg px-6">Meals</TabsTrigger>
               <TabsTrigger value="documents" className="rounded-lg px-6">Documents</TabsTrigger>
               <TabsTrigger value="chat" className="rounded-lg px-6">Chat</TabsTrigger>
             </TabsList>
@@ -362,6 +364,7 @@ export default function TripDetails() {
           <div className={`${
             sectionFilter === 'all' ? 'lg:col-span-1 space-y-6' :
             sectionFilter === 'gear' ? 'lg:col-span-3' :
+            sectionFilter === 'meals' ? 'lg:col-span-3' :
             sectionFilter === 'documents' ? 'lg:col-span-3' :
             'hidden'
           }`}>
@@ -391,6 +394,14 @@ export default function TripDetails() {
                   currentUserEmail={user?.email}
                 />
               </div>
+            )}
+            {sectionFilter === 'meals' && (
+              <MealPlanner
+                tripId={tripId}
+                members={members}
+                startDate={trip.start_date}
+                endDate={trip.end_date}
+              />
             )}
             {(sectionFilter === 'all' || sectionFilter === 'documents') && (
               <TripDocuments tripId={tripId} />
