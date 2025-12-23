@@ -101,15 +101,21 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
                 Capacity {formData.type === 'tents' && "(people)"}
                 {formData.type === 'watercraft' && "(people)"}
               </Label>
-              <Input
-                id="capacity"
-                type="number"
-                min="1"
-                placeholder="e.g., 4"
-                value={formData.capacity}
-                onChange={(e) => handleChange("capacity", e.target.value)}
-                className="h-11"
-              />
+              <Select 
+                value={formData.capacity?.toString() || ""} 
+                onValueChange={(value) => handleChange("capacity", value)}
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select capacity" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 21 }, (_, i) => (
+                    <SelectItem key={i} value={i.toString()}>
+                      {i}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 
