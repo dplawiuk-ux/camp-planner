@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Check, Ticket, Users } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Copy, Check, Ticket, Users, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
-export default function InviteMembers({ tripCode, tripName, tripStartDate }) {
+export default function InviteMembers({ tripCode, tripName, tripStartDate, onAddOfflineMember }) {
   const [copied, setCopied] = useState(false);
+  const [offlineMemberName, setOfflineMemberName] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
   const inviteText = `Join my camping trip!
 
@@ -22,55 +26,82 @@ Then use this Trip Code: ${tripCode}`;
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleAddOfflineMember = async () => {
+    if (!offlineMemberName.trim() || !onAddOfflineMember) return;
+    
+    setIsAdding(true);
+    try {
+      await onAddOfflineMember(offlineMemberName.trim());
+      setOfflineMemberName("");
+      toast.success("Camper added successfully!");
+    } catch (error) {
+      toast.error("Failed to add camper");
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <div>
-        <Label className="text-sm font-medium text-slate-700 flex items-center gap-2 mb-2">
-          <Users className="w-4 h-4 text-emerald-600" />
-          Invite People to Your Trip
-        </Label>
-        <p className="text-xs text-slate-500 mb-4">
-          Copy the text below and share it via text, WhatsApp, or any messaging app. All new members will join as Campers.
-        </p>
-      </div>
+    <Tabs defaultValue="invite" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="invite">
+          <Ticket className="w-4 h-4 mr-2" />
+          Share Invite
+        </TabsTrigger>
+        <TabsTrigger value="offline">
+          <UserPlus className="w-4 h-4 mr-2" />
+          Add Camper
+        </TabsTrigger>
+      </TabsList>
 
-      {/* Invite Text Box */}
-      <div className="relative">
-        <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 font-mono text-sm text-slate-700 whitespace-pre-wrap">
-          {inviteText}
+      <TabsContent value="invite" className="space-y-4">
+        <div>
+          <Label className="text-sm font-medium text-slate-700 flex items-center gap-2 mb-2">
+            <Users className="w-4 h-4 text-emerald-600" />
+            Invite People to Your Trip
+          </Label>
+          <p className="text-xs text-slate-500 mb-4">
+            Copy the text below and share it via text, WhatsApp, or any messaging app. All new members will join as Campers.
+          </p>
         </div>
-        <Button
-          type="button"
-          onClick={handleCopyInvite}
-          className="absolute top-2 right-2 h-8 gap-2 bg-emerald-600 hover:bg-emerald-700"
-        >
-          {copied ? (
-            <>
-              <Check className="w-4 h-4" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy className="w-4 h-4" />
-              Copy Invite
-            </>
-          )}
-        </Button>
-      </div>
 
-      {/* Trip Code Display */}
-      <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200 space-y-2">
-        <Label className="text-sm font-medium text-emerald-800 flex items-center gap-2">
-          <Ticket className="w-4 h-4" />
-          Trip Join Code
-        </Label>
-        <div className="p-3 bg-white rounded border border-emerald-300 font-mono text-xl font-bold text-emerald-700 tracking-wider text-center">
-          {tripCode}
+        {/* Invite Text Box */}
+        <div className="relative">
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 font-mono text-sm text-slate-700 whitespace-pre-wrap">
+            {inviteText}
+          </div>
+          <Button
+            type="button"
+            onClick={handleCopyInvite}
+            className="absolute top-2 right-2 h-8 gap-2 bg-emerald-600 hover:bg-emerald-700"
+          >
+            {copied ? (
+              <>
+                <Check className="w-4 h-4" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-4 h-4" />
+                Copy Invite
+              </>
+            )}
+          </Button>
         </div>
-        <p className="text-xs text-emerald-700">
-          Members use this code at the app to join your trip
-        </p>
-      </div>
+
+        {/* Trip Code Display */}
+        <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200 space-y-2">
+          <Label className="text-sm font-medium text-emerald-800 flex items-center gap-2">
+            <Ticket className="w-4 h-4" />
+            Trip Join Code
+          </Label>
+          <div className="p-3 bg-white rounded border border-emerald-300 font-mono text-xl font-bold text-emerald-700 tracking-wider text-center">
+            {tripCode}
+          </div>
+          <p className="text-xs text-emerald-700">
+            Members use this code at the app to join your trip
+          </p>
+        </div>
       </TabsContent>
 
       <TabsContent value="offline" className="space-y-4">
