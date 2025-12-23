@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,6 +55,7 @@ export default function TripDetails() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showRemoveMemberDialog, setShowRemoveMemberDialog] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState(null);
+  const [sectionFilter, setSectionFilter] = useState("all");
   
   const queryClient = useQueryClient();
 
@@ -277,9 +279,22 @@ export default function TripDetails() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Section Filter */}
+        <div className="mb-8 flex justify-center">
+          <Tabs value={sectionFilter} onValueChange={setSectionFilter}>
+            <TabsList className="bg-white border border-slate-200 p-1 rounded-xl">
+              <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
+              <TabsTrigger value="team" className="rounded-lg px-6">Team</TabsTrigger>
+              <TabsTrigger value="gear" className="rounded-lg px-6">Gear</TabsTrigger>
+              <TabsTrigger value="documents" className="rounded-lg px-6">Documents</TabsTrigger>
+              <TabsTrigger value="chat" className="rounded-lg px-6">Chat</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Column - Trip Info & Members */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className={`lg:col-span-1 space-y-6 ${(sectionFilter !== 'all' && sectionFilter !== 'team') ? 'hidden' : ''}`}>
             {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-4">
               <Card className="border-0 shadow-sm">
@@ -353,31 +368,42 @@ export default function TripDetails() {
           </div>
 
           {/* Middle Column - Allocations & Gear */}
-          <div className="lg:col-span-1 space-y-6">
-            <TentAllocation
-              items={trip.packing_items || []}
-              members={members}
-              onUpdate={handlePackingUpdate}
-            />
-            <WatercraftAllocation
-              gearItems={trip.gear_items || []}
-              members={members}
-              onUpdate={handleGearUpdate}
-            />
-            <GearList
-              items={trip.gear_items || []}
-              members={members}
-              onUpdate={handleGearUpdate}
-              requests={trip.gear_requests || []}
-              onUpdateRequests={handleGearRequestsUpdate}
-              currentUserRole={currentUserRole}
-              currentUserEmail={user?.email}
-            />
-            <TripDocuments tripId={tripId} />
+          <div className={`lg:col-span-1 space-y-6 ${
+            sectionFilter === 'all' ? '' :
+            sectionFilter === 'gear' ? '' :
+            sectionFilter === 'documents' ? '' :
+            'hidden'
+          }`}>
+            {(sectionFilter === 'all' || sectionFilter === 'gear') && (
+              <>
+                <TentAllocation
+                  items={trip.packing_items || []}
+                  members={members}
+                  onUpdate={handlePackingUpdate}
+                />
+                <WatercraftAllocation
+                  gearItems={trip.gear_items || []}
+                  members={members}
+                  onUpdate={handleGearUpdate}
+                />
+                <GearList
+                  items={trip.gear_items || []}
+                  members={members}
+                  onUpdate={handleGearUpdate}
+                  requests={trip.gear_requests || []}
+                  onUpdateRequests={handleGearRequestsUpdate}
+                  currentUserRole={currentUserRole}
+                  currentUserEmail={user?.email}
+                />
+              </>
+            )}
+            {(sectionFilter === 'all' || sectionFilter === 'documents') && (
+              <TripDocuments tripId={tripId} />
+            )}
           </div>
 
           {/* Right Column - Chat */}
-          <div className="lg:col-span-2">
+          <div className={`lg:col-span-2 ${(sectionFilter !== 'all' && sectionFilter !== 'chat') ? 'hidden' : ''}`}>
             <TripChat
               tripId={tripId}
               currentUserRole={currentUserRole}
