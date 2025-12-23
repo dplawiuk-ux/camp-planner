@@ -202,11 +202,11 @@ export default function Shed() {
 
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-10">
+        <div className="flex gap-1.5 mb-10 overflow-x-auto">
           <Button
             variant={typeFilter === "all" ? "default" : "outline"}
             onClick={() => setTypeFilter("all")}
-            className={typeFilter === "all" ? "bg-slate-800" : ""}
+            className={`h-9 px-3 text-sm flex-shrink-0 ${typeFilter === "all" ? "bg-slate-800" : ""}`}
           >
             All
           </Button>
@@ -218,10 +218,10 @@ export default function Shed() {
                 size="icon"
                 variant={typeFilter === type ? "default" : "outline"}
                 onClick={() => setTypeFilter(type)}
-                className={typeFilter === type ? "bg-emerald-600" : ""}
+                className={`h-9 w-9 flex-shrink-0 ${typeFilter === type ? "bg-emerald-600" : ""}`}
                 title={type.charAt(0).toUpperCase() + type.slice(1)}
               >
-                {Icon && <Icon className="w-4 h-4" />}
+                {Icon && <Icon className="w-3.5 h-3.5" />}
               </Button>
             );
           })}
