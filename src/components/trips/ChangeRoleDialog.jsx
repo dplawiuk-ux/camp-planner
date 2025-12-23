@@ -23,6 +23,12 @@ const roleConfig = {
     color: "bg-slate-100 text-slate-700 border-slate-200",
     label: "Camper",
     description: "Can view and chat, mark items as packed"
+  },
+  jr_camper: {
+    icon: User,
+    color: "bg-blue-100 text-blue-700 border-blue-200",
+    label: "Jr Camper",
+    description: "Non-registered trip member"
   }
 };
 
@@ -52,7 +58,7 @@ export default function ChangeRoleDialog({ open, onClose, member, onSave, isLoad
           <div className="space-y-2">
             <Label className="text-sm text-slate-600">Member</Label>
             <p className="font-semibold text-slate-800">
-              {member.user_name || member.user_email || "Unnamed member"}
+              {member.user_name || "Unnamed"}
             </p>
           </div>
 
