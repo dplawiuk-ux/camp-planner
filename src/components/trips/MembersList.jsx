@@ -45,6 +45,11 @@ const roleConfig = {
     icon: User,
     color: "bg-slate-100 text-slate-700 border-slate-200",
     label: "Camper"
+  },
+  jr_camper: {
+    icon: User,
+    color: "bg-blue-100 text-blue-700 border-blue-200",
+    label: "Jr Camper"
   }
 };
 
@@ -63,7 +68,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
   const currentMember = members.find(m => m.user_email === currentUserEmail);
 
   const sortedMembers = [...members].sort((a, b) => {
-    const roleOrder = { lead: 0, admin: 1, guest: 2 };
+    const roleOrder = { lead: 0, admin: 1, guest: 2, jr_camper: 3 };
     return roleOrder[a.role] - roleOrder[b.role];
   });
 
@@ -363,6 +368,22 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                   <div className="text-left">
                     <div className="font-semibold">Camper</div>
                     <div className="text-xs text-slate-500">Standard trip member</div>
+                  </div>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full justify-start h-auto p-4 border-2 hover:border-blue-400 hover:bg-blue-50"
+                onClick={() => handleBulkRoleChange('jr_camper')}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-100 text-blue-700">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold">Jr Camper</div>
+                    <div className="text-xs text-slate-500">Non-registered member</div>
                   </div>
                 </div>
               </Button>

@@ -341,7 +341,7 @@ export default function TripDetails() {
                 await base44.entities.TripMember.create({
                   trip_id: tripId,
                   user_name: memberName,
-                  role: 'guest',
+                  role: 'jr_camper',
                   status: 'accepted'
                 });
                 queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
