@@ -357,6 +357,7 @@ export default function TripDetails() {
               tripName={trip.name}
               tripStartDate={format(startDate, 'MMMM d, yyyy')}
               layout={sectionFilter === 'team' ? 'expanded' : 'compact'}
+              paddleIn={trip.paddle_in}
             />
 
             {/* Trip Chat - shown in first column for 'all' view */}

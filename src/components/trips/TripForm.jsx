@@ -5,7 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { MapPin, Calendar, FileText, Loader2 } from "lucide-react";
+import { MapPin, Calendar, FileText, Loader2, Ship } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
 import InviteMembers from "./InviteMembers";
 import { format } from "date-fns";
@@ -41,6 +42,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
     location_lng: -78.1348,
     start_date: "",
     end_date: "",
+    paddle_in: false,
     notes: "",
     image_url: "",
     status: "planning",
@@ -127,6 +129,21 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             lng={formData.location_lng}
             onChange={handleLocationChange}
           />
+
+          {/* Paddle In Checkbox */}
+          <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <Checkbox 
+              id="paddle-in"
+              checked={formData.paddle_in}
+              onCheckedChange={(checked) => handleChange("paddle_in", checked)}
+            />
+            <div className="flex items-center gap-2">
+              <Ship className="w-4 h-4 text-blue-600" />
+              <Label htmlFor="paddle-in" className="text-sm font-medium text-slate-700 cursor-pointer">
+                Paddle In
+              </Label>
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
