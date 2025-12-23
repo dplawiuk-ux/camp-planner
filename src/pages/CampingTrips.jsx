@@ -173,29 +173,8 @@ export default function CampingTrips() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30">
-      <TopNavBar title="Trips" rightActions={headerActions} />
-      
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-800 to-emerald-900 text-white pt-14">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-20 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
-        </div>
-        
-        <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-16">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-emerald-100 text-base max-w-xl"
-          >
-            Plan your perfect outdoor escape. Track gear, organize trips, and never forget essentials again.
-          </motion.p>
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-stone-50 to-transparent" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30 pt-14">
+      <TopNavBar title="Trips" />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -210,6 +189,27 @@ export default function CampingTrips() {
               className="pl-12 h-12 bg-white border-slate-200 rounded-xl"
             />
           </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                className="h-12 w-12 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setShowForm(true)}>
+                <Tent className="w-4 h-4 mr-2" />
+                Create a Trip
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowJoinDialog(true)}>
+                <Ticket className="w-4 h-4 mr-2" />
+                Join a Trip
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Tabs value={statusFilter} onValueChange={setStatusFilter}>
             <TabsList className="h-12 bg-white border border-slate-200 p-1 rounded-xl">

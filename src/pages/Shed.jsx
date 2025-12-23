@@ -137,28 +137,8 @@ export default function Shed() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30">
-      <TopNavBar title="Gear Shed" rightActions={headerActions} />
-      
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white pt-14">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-white/10 backdrop-blur-sm rounded-2xl">
-                <Package className="w-8 h-8" />
-              </div>
-              <span className="text-emerald-200 font-medium">My Gear</span>
-            </div>
-            <p className="text-emerald-100 text-base max-w-xl">
-              Manage your camping equipment and allocate gear to upcoming trips
-            </p>
-          </motion.div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30 pt-14">
+      <TopNavBar title="Gear Shed" />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -167,12 +147,23 @@ export default function Shed() {
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <Input
-              placeholder="Search equipment..."
+              placeholder="Search My Gear"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-12 bg-white border-slate-200 rounded-xl"
             />
           </div>
+
+          <Button
+            onClick={() => {
+              setEditingItem(null);
+              setShowForm(true);
+            }}
+            size="icon"
+            className="h-12 w-12 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+          >
+            <Plus className="w-5 h-5" />
+          </Button>
 
           <div className="flex gap-2 overflow-x-auto">
             <Button
@@ -197,20 +188,10 @@ export default function Shed() {
           <Button
             onClick={() => setShowPhotoRecognition(true)}
             variant="outline"
-            className="whitespace-nowrap"
+            className="whitespace-nowrap h-12"
           >
             <Camera className="w-5 h-5 mr-2" />
             Scan Photo
-          </Button>
-          <Button
-            onClick={() => {
-              setEditingItem(null);
-              setShowForm(true);
-            }}
-            className="bg-emerald-600 hover:bg-emerald-700 whitespace-nowrap"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add Equipment
           </Button>
         </div>
 
