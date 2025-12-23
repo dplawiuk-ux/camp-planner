@@ -168,6 +168,14 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           const Icon = config.icon;
           const isCurrentUser = member.user_email === currentUserEmail;
           const isPending = member.status === 'pending';
+          
+          // Check tent allocation
+          const tents = packingItems.filter(item => item.category === 'shelter');
+          const isInTent = tents.some(tent => tent.assigned_to?.includes(member.id));
+          
+          // Check watercraft allocation
+          const watercraft = gearItems.filter(item => item.type === 'watercraft');
+          const isInWatercraft = watercraft.some(w => w.assigned_to?.includes(member.id));
 
           return (
             <motion.div
@@ -217,6 +225,14 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Badge variant="secondary" className={`${config.color} border text-xs`}>
                       {config.label}
                     </Badge>
+                    <div className="flex items-center gap-1">
+                      <div className={`p-1 rounded ${isInTent ? 'bg-green-100' : 'bg-yellow-100'}`}>
+                        <Tent className={`w-3 h-3 ${isInTent ? 'text-green-600' : 'text-yellow-600'}`} />
+                      </div>
+                      <div className={`p-1 rounded ${isInWatercraft ? 'bg-green-100' : 'bg-yellow-100'}`}>
+                        <Ship className={`w-3 h-3 ${isInWatercraft ? 'text-green-600' : 'text-yellow-600'}`} />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
