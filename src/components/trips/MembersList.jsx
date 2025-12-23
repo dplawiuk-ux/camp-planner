@@ -47,7 +47,7 @@ const roleConfig = {
   }
 };
 
-export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate }) {
+export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate, layout = "compact" }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [showChangeRole, setShowChangeRole] = useState(false);
@@ -103,7 +103,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         <CollapsibleContent>
 
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className={`grid grid-cols-1 ${layout === "expanded" ? "lg:grid-cols-3" : ""} gap-3`}>
         {sortedMembers.map((member, index) => {
           const config = roleConfig[member.role];
           const Icon = config.icon;

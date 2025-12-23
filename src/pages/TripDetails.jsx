@@ -347,6 +347,7 @@ export default function TripDetails() {
               tripCode={trip.trip_code}
               tripName={trip.name}
               tripStartDate={format(startDate, 'MMMM d, yyyy')}
+              layout={sectionFilter === 'team' ? 'expanded' : 'compact'}
             />
           </div>
 
