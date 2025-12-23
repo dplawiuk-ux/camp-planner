@@ -190,8 +190,7 @@ export default function TripDetails() {
   const tripDuration = endDate ? differenceInDays(endDate, startDate) + 1 : 1;
 
   const statusColors = {
-    planning: "bg-amber-100 text-amber-800 border-amber-200",
-    upcoming: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    planning: "bg-emerald-100 text-emerald-800 border-emerald-200",
     completed: "bg-slate-100 text-slate-600 border-slate-200"
   };
 

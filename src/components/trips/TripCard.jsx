@@ -17,8 +17,7 @@ export default function TripCard({ trip, index }) {
   const packingProgress = totalItems > 0 ? Math.round((packedCount / totalItems) * 100) : 0;
 
   const statusColors = {
-    planning: "bg-amber-100 text-amber-800 border-amber-200",
-    upcoming: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    planning: "bg-emerald-100 text-emerald-800 border-emerald-200",
     completed: "bg-slate-100 text-slate-600 border-slate-200"
   };
 

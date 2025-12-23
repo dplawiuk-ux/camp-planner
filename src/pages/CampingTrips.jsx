@@ -53,10 +53,17 @@ export default function CampingTrips() {
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
 
-  // Filter to only show trips where user is a member
+  // Filter to only show trips where user is a member and auto-set status based on end date
   const trips = allTrips.filter(trip => 
     myMemberships.some(m => m.trip_id === trip.id)
-  );
+  ).map(trip => {
+    const endDate = trip.end_date ? new Date(trip.end_date) : null;
+    const isComplete = endDate && endDate < new Date();
+    return {
+      ...trip,
+      status: isComplete ? 'completed' : 'planning'
+    };
+  });
 
   const joinTripMutation = useMutation({
     mutationFn: async (tripCode) => {
@@ -208,8 +215,7 @@ export default function CampingTrips() {
             <TabsList className="h-12 bg-white border border-slate-200 p-1 rounded-xl">
               <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
               <TabsTrigger value="planning" className="rounded-lg px-6">Planning</TabsTrigger>
-              <TabsTrigger value="upcoming" className="rounded-lg px-6">Upcoming</TabsTrigger>
-              <TabsTrigger value="completed" className="rounded-lg px-6">Completed</TabsTrigger>
+              <TabsTrigger value="completed" className="rounded-lg px-6">Complete</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
