@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 const tabs = [
   { name: 'Trips', page: 'CampingTrips', icon: Map },
   { name: 'Gear', page: 'Shed', icon: Package },
-  { name: 'Docs', page: 'Documents', icon: FileText },
   { name: 'Profile', page: 'Profile', icon: User },
 ];
 

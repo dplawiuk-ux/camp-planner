@@ -44,6 +44,7 @@ import TentAllocation from "@/components/trips/TentAllocation";
 import WatercraftAllocation from "@/components/trips/WatercraftAllocation";
 import GearList from "@/components/trips/GearList";
 import RemoveMemberDialog from "@/components/trips/RemoveMemberDialog";
+import TripDocuments from "@/components/trips/TripDocuments";
 
 export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -372,6 +373,7 @@ export default function TripDetails() {
               currentUserRole={currentUserRole}
               currentUserEmail={user?.email}
             />
+            <TripDocuments tripId={tripId} />
           </div>
 
           {/* Right Column - Chat */}
