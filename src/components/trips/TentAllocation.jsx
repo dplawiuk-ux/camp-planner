@@ -141,7 +141,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
 
   const getMemberName = (memberId) => {
     const member = allMembers.find(m => m.id === memberId);
-    return member?.user_name || member?.user_email || 'Unknown';
+    return member?.user_name || 'Unknown';
   };
 
   const totalCapacity = tents.reduce((sum, tent) => sum + (tent.capacity || 0), 0);
@@ -273,7 +273,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                         <SelectContent>
                           {availableMembers.map((member) => (
                             <SelectItem key={member.id} value={member.id}>
-                              {member.user_name || member.user_email || 'Unnamed'}
+                              {member.user_name || 'Unnamed'}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -294,7 +294,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
             <div className="flex flex-wrap gap-2">
               {unassignedMembers.map((member) => (
                 <Badge key={member.id} variant="outline">
-                  {member.user_name || member.user_email || 'Unnamed'}
+                  {member.user_name || 'Unnamed'}
                 </Badge>
               ))}
             </div>

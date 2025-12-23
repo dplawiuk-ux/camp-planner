@@ -288,7 +288,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                                             <SelectItem value={null}>Unassigned</SelectItem>
                                             {members.map((member) => (
                                               <SelectItem key={member.id} value={member.id}>
-                                                {member.user_name || member.user_email}
+                                                {member.user_name || 'Unnamed'}
                                               </SelectItem>
                                             ))}
                                           </SelectContent>
@@ -401,7 +401,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                             <SelectContent>
                               {members.map((member) => (
                                 <SelectItem key={member.id} value={member.id}>
-                                  {member.user_name || member.user_email}
+                                  {member.user_name || 'Unnamed'}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -527,7 +527,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                   <SelectItem value={null}>Unassigned</SelectItem>
                   {members.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
-                      {member.user_name || member.user_email}
+                      {member.user_name || 'Unnamed'}
                     </SelectItem>
                   ))}
                 </SelectContent>
