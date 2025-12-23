@@ -202,34 +202,39 @@ export default function TripDetails() {
   ];
 
   const rightActions = (canEdit || canDelete) ? (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <div className="flex gap-2">
+      {canEdit && (
         <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/10"
+          onClick={() => setShowEditForm(true)}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
         >
-          <MoreVertical className="w-5 h-5" />
+          <Edit3 className="w-4 h-4 mr-2" />
+          Edit Trip
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {canEdit && (
-          <DropdownMenuItem onClick={() => setShowEditForm(true)}>
-            <Edit3 className="w-4 h-4 mr-2" />
-            Edit Trip
-          </DropdownMenuItem>
-        )}
-        {canDelete && (
-          <DropdownMenuItem 
-            onClick={() => setShowDeleteDialog(true)}
-            className="text-red-600"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete Trip
-          </DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      )}
+      {canDelete && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={() => setShowDeleteDialog(true)}
+              className="text-red-600"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Trip
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </div>
   ) : null;
 
   return (
