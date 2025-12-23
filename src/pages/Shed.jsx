@@ -124,9 +124,7 @@ export default function Shed() {
     return acc;
   }, {});
 
-  const uniqueTypes = typeOrder.filter(type => 
-    equipment.some(item => item.type === type)
-  );
+  const uniqueTypes = typeOrder;
 
   const headerActions = (
     <Button
@@ -185,12 +183,13 @@ export default function Shed() {
             return (
               <Button
                 key={type}
+                size="icon"
                 variant={typeFilter === type ? "default" : "outline"}
                 onClick={() => setTypeFilter(type)}
                 className={typeFilter === type ? "bg-emerald-600" : ""}
+                title={type.charAt(0).toUpperCase() + type.slice(1)}
               >
-                {Icon && <Icon className="w-4 h-4 mr-2" />}
-                {type.charAt(0).toUpperCase() + type.slice(1)}
+                {Icon && <Icon className="w-4 h-4" />}
               </Button>
             );
           })}
