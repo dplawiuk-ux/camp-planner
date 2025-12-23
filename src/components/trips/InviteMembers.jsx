@@ -71,6 +71,45 @@ Then use this Trip Code: ${tripCode}`;
           Members use this code at the app to join your trip
         </p>
       </div>
-    </div>
+      </TabsContent>
+
+      <TabsContent value="offline" className="space-y-4">
+        <div>
+          <Label className="text-sm font-medium text-slate-700 flex items-center gap-2 mb-2">
+            <UserPlus className="w-4 h-4 text-emerald-600" />
+            Add Camper Without Account
+          </Label>
+          <p className="text-xs text-slate-500 mb-4">
+            Perfect for children or anyone without a phone. They'll be added as a Camper to your trip.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="offline-name">Camper Name</Label>
+            <Input
+              id="offline-name"
+              placeholder="e.g., Sarah (age 8)"
+              value={offlineMemberName}
+              onChange={(e) => setOfflineMemberName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && offlineMemberName.trim()) {
+                  handleAddOfflineMember();
+                }
+              }}
+              className="mt-2"
+            />
+          </div>
+
+          <Button
+            onClick={handleAddOfflineMember}
+            disabled={!offlineMemberName.trim() || isAdding}
+            className="w-full bg-emerald-600 hover:bg-emerald-700"
+          >
+            {isAdding ? "Adding..." : "Add Camper"}
+          </Button>
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 }

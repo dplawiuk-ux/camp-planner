@@ -336,7 +336,15 @@ export default function TripDetails() {
                 setMemberToRemove(member);
                 setShowRemoveMemberDialog(true);
               } : null}
-              onInvite={canEdit}
+              onInvite={canEdit ? async (memberName) => {
+                await base44.entities.TripMember.create({
+                  trip_id: tripId,
+                  user_name: memberName,
+                  role: 'guest',
+                  status: 'accepted'
+                });
+                queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
+              } : null}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}
               onUpdateRole={(memberId, role) => updateMemberRoleMutation.mutate({ memberId, role })}

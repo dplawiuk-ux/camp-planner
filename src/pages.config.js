@@ -1,7 +1,7 @@
 import CampingTrips from './pages/CampingTrips';
 import Documents from './pages/Documents';
-import Shed from './pages/Shed';
 import Profile from './pages/Profile';
+import Shed from './pages/Shed';
 import TripDetails from './pages/TripDetails';
 import __Layout from './Layout.jsx';
 
@@ -9,8 +9,8 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "CampingTrips": CampingTrips,
     "Documents": Documents,
-    "Shed": Shed,
     "Profile": Profile,
+    "Shed": Shed,
     "TripDetails": TripDetails,
 }
 

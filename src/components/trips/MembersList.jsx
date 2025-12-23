@@ -215,13 +215,14 @@ export default function MembersList({ members = [], currentUserRole, currentUser
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Share Trip Invite</DialogTitle>
+            <DialogTitle>Add Trip Members</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <InviteMembers
               tripCode={tripCode}
               tripName={tripName}
               tripStartDate={tripStartDate}
+              onAddOfflineMember={onInvite}
             />
           </div>
           <DialogFooter>
