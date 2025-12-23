@@ -102,7 +102,8 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
         <CollapsibleContent>
 
-      <CardContent className="space-y-2">
+      <CardContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {sortedMembers.map((member, index) => {
           const config = roleConfig[member.role];
           const Icon = config.icon;
@@ -198,6 +199,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           );
         })}
 
+        </div>
         {members.length === 0 && (
           <div className="text-center py-8">
             <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
