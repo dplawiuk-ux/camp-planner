@@ -365,21 +365,14 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="capacity">Capacity (people)</Label>
-                <Select 
-                  value={newTent.capacity.toString()} 
-                  onValueChange={(value) => setNewTent({ ...newTent, capacity: parseInt(value) })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 21 }, (_, i) => i).map(num => (
-                      <SelectItem key={num} value={num.toString()}>
-                        {num} {num === 1 ? 'person' : 'people'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="capacity"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={newTent.capacity}
+                  onChange={(e) => setNewTent({ ...newTent, capacity: parseInt(e.target.value) || 2 })}
+                />
               </div>
               <Button
                 onClick={handleAddTent}
