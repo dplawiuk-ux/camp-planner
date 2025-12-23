@@ -56,6 +56,7 @@ export default function TripDetails() {
   const [showRemoveMemberDialog, setShowRemoveMemberDialog] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState(null);
   const [sectionFilter, setSectionFilter] = useState("all");
+  const [showMap, setShowMap] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -260,10 +261,13 @@ export default function TripDetails() {
             </Badge>
 
             <div className="flex flex-wrap items-center gap-4 text-white/90">
-              <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setShowMap(!showMap)}
+                className="flex items-center gap-2 hover:text-white transition-colors"
+              >
                 <MapPin className="w-5 h-5" />
                 <span>{trip.location}</span>
-              </div>
+              </button>
 
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
@@ -336,7 +340,7 @@ export default function TripDetails() {
             )}
 
             {/* Map */}
-            {trip.location_lat && trip.location_lng && (
+            {showMap && trip.location_lat && trip.location_lng && (
               <TripMap
                 location={trip.location}
                 lat={trip.location_lat}
