@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import TripCard from "@/components/trips/TripCard";
 import TripForm from "@/components/trips/TripForm";
 import JoinTripDialog from "@/components/trips/JoinTripDialog";
+import TopNavBar from "@/components/layout/TopNavBar";
 
 export default function CampingTrips() {
   const [showForm, setShowForm] = useState(false);
@@ -135,91 +136,53 @@ export default function CampingTrips() {
     return matchesSearch && matchesStatus;
   });
 
+  const headerActions = (
+    <Button
+      onClick={() => setShowForm(true)}
+      size="icon"
+      className="bg-emerald-600 hover:bg-emerald-700"
+    >
+      <Plus className="w-5 h-5" />
+    </Button>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30">
+      <TopNavBar title="Trips" rightActions={headerActions} />
+      
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-800 to-emerald-900 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-800 to-emerald-900 text-white pt-14">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-20 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+        <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 mb-4"
-          >
-            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-2xl">
-              <Tent className="w-8 h-8" />
-            </div>
-            <span className="text-emerald-200 font-medium">Adventure Awaits</span>
-          </motion.div>
-          
-          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold mb-4"
-          >
-            Your Camping
-            <br />
-            <span className="text-amber-300">Adventures</span>
-          </motion.h1>
-          
-          <motion.p
+            className="text-emerald-100 text-base max-w-xl mb-6"
+            >
+            Plan your perfect outdoor escape. Track gear, organize trips, and never forget essentials again.
+            </motion.p>
+
+            <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-emerald-100 text-lg max-w-xl mb-8"
-          >
-            Plan your perfect outdoor escape. Track gear, organize trips, and never forget essentials again.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
             className="flex flex-wrap gap-3"
-          >
-            <Button
-              onClick={() => setShowForm(true)}
-              size="lg"
-              className="bg-white text-emerald-800 hover:bg-emerald-50 font-semibold px-8 h-14 rounded-xl shadow-lg shadow-emerald-900/30"
             >
-              <Plus className="w-5 h-5 mr-2" />
-              Plan New Trip
-            </Button>
             <Button
               onClick={() => setShowJoinDialog(true)}
               size="lg"
               variant="outline"
-              className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
+              className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-6 h-12 rounded-xl"
             >
               <Ticket className="w-5 h-5 mr-2" />
               Join a Trip
             </Button>
-            <Link to={createPageUrl("Shed")}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
-              >
-                <Package className="w-5 h-5 mr-2" />
-                Gear Shed
-              </Button>
-            </Link>
-            <Link to={createPageUrl("Documents")}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-md text-white border-white/30 hover:bg-white/20 font-semibold px-8 h-14 rounded-xl"
-              >
-                <FileText className="w-5 h-5 mr-2" />
-                Documents
-              </Button>
-            </Link>
-          </motion.div>
+            </motion.div>
         </div>
         
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-stone-50 to-transparent" />

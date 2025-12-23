@@ -17,6 +17,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import TopNavBar from "@/components/layout/TopNavBar";
+import { Edit3, Trash2, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -191,6 +199,37 @@ export default function TripDetails() {
     "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?w=1200&q=80"
   ];
 
+  const rightActions = (canEdit || canDelete) ? (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/10"
+        >
+          <MoreVertical className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {canEdit && (
+          <DropdownMenuItem onClick={() => setShowEditForm(true)}>
+            <Edit3 className="w-4 h-4 mr-2" />
+            Edit Trip
+          </DropdownMenuItem>
+        )}
+        {canDelete && (
+          <DropdownMenuItem 
+            onClick={() => setShowDeleteDialog(true)}
+            className="text-red-600"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete Trip
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ) : null;
+
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Hero Header */}
@@ -202,17 +241,13 @@ export default function TripDetails() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
-        <div className="absolute top-6 left-6">
-          <Link to={createPageUrl("CampingTrips")}>
-            <Button 
-              variant="ghost" 
-              className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20 border-0"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
-        </div>
+        <TopNavBar 
+          title={trip.name}
+          showBack={true}
+          backTo="CampingTrips"
+          rightActions={rightActions}
+          transparent={true}
+        />
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
           <motion.div
@@ -223,47 +258,18 @@ export default function TripDetails() {
               {trip.status}
             </Badge>
 
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-              {trip.name}
-            </h1>
-
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-4 text-white/90">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  <span>{trip.location}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>
-                    {format(startDate, "MMM d")}
-                    {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
-                  </span>
-                </div>
+            <div className="flex flex-wrap items-center gap-4 text-white/90">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                <span>{trip.location}</span>
               </div>
 
-              <div className="flex gap-2">
-                {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowEditForm(true)}
-                    className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                )}
-                {canDelete && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowDeleteDialog(true)}
-                    className="bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                <span>
+                  {format(startDate, "MMM d")}
+                  {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
+                </span>
               </div>
             </div>
           </motion.div>
