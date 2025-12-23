@@ -58,6 +58,11 @@ export default function Documents() {
     queryFn: () => base44.entities.Document.list('-created_date'),
   });
 
+  const { data: allTrips = [] } = useQuery({
+    queryKey: ['trips'],
+    queryFn: () => base44.entities.Trip.list('-created_date'),
+  });
+
   // Filter documents: show if user is member of the trip (and not locked out) OR if no trip assigned and user created it
   const documents = allDocuments.filter(doc => {
     if (doc.trip_id) {
@@ -76,11 +81,6 @@ export default function Documents() {
       return true;
     }
     return doc.created_by === user?.email;
-  });
-
-  const { data: allTrips = [] } = useQuery({
-    queryKey: ['trips'],
-    queryFn: () => base44.entities.Trip.list('-created_date'),
   });
 
   // Filter to only show trips user is a member of (and not locked out)
