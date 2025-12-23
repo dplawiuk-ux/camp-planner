@@ -299,31 +299,6 @@ export default function TripDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Column - Trip Info & Members */}
           <div className={`lg:col-span-1 space-y-6 ${(sectionFilter !== 'all' && sectionFilter !== 'team') ? 'hidden' : ''}`}>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="border-0 shadow-sm">
-                <CardContent className="p-5 text-center">
-                  <div className="text-3xl font-bold text-emerald-600 mb-1">
-                    {tripDuration}
-                  </div>
-                  <div className="text-sm text-slate-500">
-                    {tripDuration === 1 ? "Day" : "Days"}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-0 shadow-sm">
-                <CardContent className="p-5 text-center">
-                  <div className="text-3xl font-bold text-amber-600 mb-1">
-                    {daysUntil > 0 ? daysUntil : trip.status === 'completed' ? '✓' : 'Now'}
-                  </div>
-                  <div className="text-sm text-slate-500">
-                    {daysUntil > 0 ? "Days Until" : trip.status === 'completed' ? "Complete" : "Today!"}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Notes */}
             {trip.notes && (
               <Card className="border-0 shadow-sm">
