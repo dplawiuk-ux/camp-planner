@@ -143,14 +143,14 @@ export default function Shed() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Actions Bar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
-          <div className="relative flex-1">
+        <div className="flex gap-3 mb-10">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <Input
               placeholder="Search My Gear"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 bg-white border-slate-200 rounded-xl"
+              className="pl-12 h-11 bg-white border-slate-200 rounded-xl"
             />
           </div>
 
@@ -160,35 +160,35 @@ export default function Shed() {
               setShowForm(true);
             }}
             size="icon"
-            className="h-12 w-12 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+            className="h-11 w-11 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
           >
             <Plus className="w-5 h-5" />
           </Button>
 
-          <div className="flex gap-2 overflow-x-auto">
-            <Button
-              variant={typeFilter === "all" ? "default" : "outline"}
-              onClick={() => setTypeFilter("all")}
-              className={typeFilter === "all" ? "bg-slate-800" : ""}
-            >
-              All
-            </Button>
-            {uniqueTypes.map((type) => (
-              <Button
-                key={type}
-                variant={typeFilter === type ? "default" : "outline"}
-                onClick={() => setTypeFilter(type)}
-                className={typeFilter === type ? "bg-emerald-600" : ""}
-              >
-                {type.replace(/_/g, ' ')}
-              </Button>
-            ))}
-          </div>
+        </div>
 
+        <div className="flex flex-wrap gap-2 mb-10">
+          <Button
+            variant={typeFilter === "all" ? "default" : "outline"}
+            onClick={() => setTypeFilter("all")}
+            className={typeFilter === "all" ? "bg-slate-800" : ""}
+          >
+            All
+          </Button>
+          {uniqueTypes.map((type) => (
+            <Button
+              key={type}
+              variant={typeFilter === type ? "default" : "outline"}
+              onClick={() => setTypeFilter(type)}
+              className={typeFilter === type ? "bg-emerald-600" : ""}
+            >
+              {type.replace(/_/g, ' ')}
+            </Button>
+          ))}
           <Button
             onClick={() => setShowPhotoRecognition(true)}
             variant="outline"
-            className="whitespace-nowrap h-12"
+            className="whitespace-nowrap"
           >
             <Camera className="w-5 h-5 mr-2" />
             Scan Photo
