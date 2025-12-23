@@ -37,6 +37,8 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
   const [newSharedItem, setNewSharedItem] = useState({ item_name: '' });
   const [isOpen, setIsOpen] = useState(true);
   const [isSharedOpen, setIsSharedOpen] = useState(true);
+  const [editingItem, setEditingItem] = useState(null);
+  const [editValue, setEditValue] = useState('');
 
   const queryClient = useQueryClient();
 
@@ -109,6 +111,34 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
     });
   };
 
+  const handleStartEdit = (item) => {
+    setEditingItem(item.id);
+    setEditValue(item.item_name);
+  };
+
+  const handleSaveEdit = (item) => {
+    if (editValue.trim() && editValue !== item.item_name) {
+      updateMutation.mutate({
+        id: item.id,
+        data: { item_name: editValue.trim() }
+      });
+    }
+    setEditingItem(null);
+    setEditValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingItem(null);
+    setEditValue('');
+  };
+
+  const handleUpdateAssignment = (itemId, memberId) => {
+    updateMutation.mutate({
+      id: itemId,
+      data: { assigned_member_id: memberId || null }
+    });
+  };
+
   const getMemberName = (memberId) => {
     const member = members.find(m => m.id === memberId);
     return member?.user_name || member?.user_email || 'Unassigned';
@@ -177,22 +207,77 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                                   exit={{ opacity: 0, x: 10 }}
                                   className="flex items-center justify-between py-1 group"
                                 >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm text-slate-700">• {item.item_name}</span>
-                                    {item.assigned_member_id && (
-                                      <Badge variant="secondary" className="text-xs">
-                                        {getMemberName(item.assigned_member_id)}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => deleteMutation.mutate(item.id)}
-                                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
+                                  {editingItem === item.id ? (
+                                    <div className="flex items-center gap-2 flex-1">
+                                      <Input
+                                        value={editValue}
+                                        onChange={(e) => setEditValue(e.target.value)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') handleSaveEdit(item);
+                                          if (e.key === 'Escape') handleCancelEdit();
+                                        }}
+                                        className="h-7 text-sm"
+                                        autoFocus
+                                      />
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => handleSaveEdit(item)}
+                                        className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                      >
+                                        <Check className="w-3 h-3" />
+                                      </Button>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={handleCancelEdit}
+                                        className="h-6 w-6 text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div className="flex items-center gap-2 flex-1">
+                                        <button
+                                          onClick={() => handleStartEdit(item)}
+                                          className="text-sm text-slate-700 hover:text-slate-900 text-left"
+                                        >
+                                          • {item.item_name}
+                                        </button>
+                                        <Select
+                                          value={item.assigned_member_id || ""}
+                                          onValueChange={(value) => handleUpdateAssignment(item.id, value)}
+                                        >
+                                          <SelectTrigger className="h-6 w-32 text-xs border-0 bg-transparent hover:bg-slate-100">
+                                            <SelectValue placeholder="Assign">
+                                              {item.assigned_member_id && (
+                                                <Badge variant="secondary" className="text-xs">
+                                                  {getMemberName(item.assigned_member_id)}
+                                                </Badge>
+                                              )}
+                                            </SelectValue>
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value={null}>Unassigned</SelectItem>
+                                            {members.map((member) => (
+                                              <SelectItem key={member.id} value={member.id}>
+                                                {member.user_name || member.user_email}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => deleteMutation.mutate(item.id)}
+                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </Button>
+                                    </>
+                                  )}
                                 </motion.div>
                               ))}
                             </AnimatePresence>
