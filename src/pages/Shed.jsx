@@ -20,6 +20,12 @@ import {
   Camera,
   UtensilsCrossed
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import EquipmentForm from "@/components/shed/EquipmentForm";
 import PhotoRecognition from "@/components/shed/PhotoRecognition";
@@ -127,16 +133,29 @@ export default function Shed() {
   const uniqueTypes = typeOrder;
 
   const headerActions = (
-    <Button
-      onClick={() => {
-        setEditingItem(null);
-        setShowForm(true);
-      }}
-      size="icon"
-      className="bg-emerald-600 hover:bg-emerald-700"
-    >
-      <Plus className="w-5 h-5" />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="icon"
+          className="bg-emerald-600 hover:bg-emerald-700"
+        >
+          <Plus className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => {
+          setEditingItem(null);
+          setShowForm(true);
+        }}>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Gear
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setShowPhotoRecognition(true)}>
+          <Camera className="w-4 h-4 mr-2" />
+          Scan Photo
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
@@ -157,16 +176,29 @@ export default function Shed() {
             />
           </div>
 
-          <Button
-            onClick={() => {
-              setEditingItem(null);
-              setShowForm(true);
-            }}
-            size="icon"
-            className="h-11 w-11 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
-          >
-            <Plus className="w-5 h-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                className="h-11 w-11 bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => {
+                setEditingItem(null);
+                setShowForm(true);
+              }}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Gear
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowPhotoRecognition(true)}>
+                <Camera className="w-4 h-4 mr-2" />
+                Scan Photo
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
         </div>
 
@@ -193,14 +225,6 @@ export default function Shed() {
               </Button>
             );
           })}
-          <Button
-            onClick={() => setShowPhotoRecognition(true)}
-            variant="outline"
-            className="whitespace-nowrap"
-          >
-            <Camera className="w-5 h-5 mr-2" />
-            Scan Photo
-          </Button>
         </div>
 
         {/* Equipment Grid */}
