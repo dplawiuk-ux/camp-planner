@@ -10,11 +10,11 @@ import ImageUpload from "@/components/shared/ImageUpload";
 
 const equipmentTypes = [
   { value: "tents", label: "Tents" },
-  { value: "sleeping_pads", label: "Sleeping Pads" },
-  { value: "sleeping_bags", label: "Sleeping Bags" },
-  { value: "kitchen", label: "Kitchen" },
-  { value: "fire", label: "Fire" },
   { value: "watercraft", label: "Watercraft" },
+  { value: "sleeping", label: "Sleeping" },
+  { value: "fire", label: "Fire" },
+  { value: "water", label: "Water" },
+  { value: "kitchen", label: "Kitchen" },
   { value: "other", label: "Other" }
 ];
 
