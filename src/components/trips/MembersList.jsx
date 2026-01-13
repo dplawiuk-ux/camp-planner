@@ -100,6 +100,11 @@ export default function MembersList({ members = [], currentUserRole, currentUser
     if (onUpdateRole) {
       const member = members.find(m => m.id === memberId);
       onUpdateRole(memberId, member.role, { excluded_from_expenses: !currentValue });
+      // Update local state for immediate UI feedback
+      setSelectedMember(prev => ({
+        ...prev,
+        excluded_from_expenses: !currentValue
+      }));
     }
   };
 
