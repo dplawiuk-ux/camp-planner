@@ -475,7 +475,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     </Badge>
                   </div>
 
-                  {canManageMembers && !isCurrentUser && (
+                  {canManageMembers && selectedMember.user_email !== currentUserEmail && (
                     <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-slate-500" />
