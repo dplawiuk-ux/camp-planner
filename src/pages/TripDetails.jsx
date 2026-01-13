@@ -290,9 +290,9 @@ export default function TripDetails() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Section Filter */}
-        <div className="mb-8 flex justify-center">
+        <div className="mb-8 flex justify-center overflow-x-auto">
           <Tabs value={sectionFilter} onValueChange={setSectionFilter}>
-            <TabsList className="bg-white border border-slate-200 p-1 rounded-xl">
+            <TabsList className="bg-white border border-slate-200 p-1 rounded-xl min-w-max">
               <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
               <TabsTrigger value="team" className="rounded-lg px-6">Team</TabsTrigger>
               <TabsTrigger value="gear" className="rounded-lg px-6">Gear</TabsTrigger>
