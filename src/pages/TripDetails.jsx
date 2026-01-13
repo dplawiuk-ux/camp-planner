@@ -137,8 +137,8 @@ export default function TripDetails() {
   });
 
   const updateMemberRoleMutation = useMutation({
-    mutationFn: ({ memberId, role }) => 
-      base44.entities.TripMember.update(memberId, { role }),
+    mutationFn: ({ memberId, role, extraData }) => 
+      base44.entities.TripMember.update(memberId, { role, ...extraData }),
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['tripMembers', tripId] });
     }
@@ -355,7 +355,7 @@ export default function TripDetails() {
               } : null}
               onUpdateName={(memberId, name) => updateMemberNameMutation.mutate({ memberId, name })}
               isUpdatingName={updateMemberNameMutation.isPending}
-              onUpdateRole={(memberId, role) => updateMemberRoleMutation.mutate({ memberId, role })}
+              onUpdateRole={(memberId, role, extraData) => updateMemberRoleMutation.mutate({ memberId, role, extraData })}
               isUpdatingRole={updateMemberRoleMutation.isPending}
               packingItems={trip.packing_items || []}
               gearItems={trip.gear_items || []}

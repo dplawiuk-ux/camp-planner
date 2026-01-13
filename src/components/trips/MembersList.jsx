@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
+import { DollarSign } from "lucide-react";
 import InviteMembers from "./InviteMembers";
 import EditDisplayName from "./EditDisplayName";
 import ChangeRoleDialog from "./ChangeRoleDialog";
@@ -93,6 +94,13 @@ export default function MembersList({ members = [], currentUserRole, currentUser
     setMultiSelectMode(false);
     setSelectedMembers([]);
     setShowBulkChangeRole(false);
+  };
+
+  const handleToggleExpenseExclusion = (memberId, currentValue) => {
+    if (onUpdateRole) {
+      const member = members.find(m => m.id === memberId);
+      onUpdateRole(memberId, member.role, { excluded_from_expenses: !currentValue });
+    }
   };
 
   return (
@@ -225,6 +233,11 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Badge variant="secondary" className={`${config.color} border text-xs`}>
                       {config.label}
                     </Badge>
+                    {member.excluded_from_expenses && (
+                      <Badge variant="outline" className="text-xs bg-slate-50 text-slate-600">
+                        No Expenses
+                      </Badge>
+                    )}
                     <div className="flex items-center gap-1">
                       <div className={`p-1 rounded ${isInTent ? 'bg-green-100' : 'bg-yellow-100'}`}>
                         <Tent className={`w-3 h-3 ${isInTent ? 'text-green-600' : 'text-yellow-600'}`} />
@@ -461,6 +474,19 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       {config.label}
                     </Badge>
                   </div>
+
+                  {canManageMembers && !isCurrentUser && (
+                    <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-slate-500" />
+                        <span className="text-sm text-slate-700">Exclude from expenses</span>
+                      </div>
+                      <Checkbox
+                        checked={selectedMember.excluded_from_expenses || false}
+                        onCheckedChange={() => handleToggleExpenseExclusion(selectedMember.id, selectedMember.excluded_from_expenses)}
+                      />
+                    </div>
+                  )}
 
 
 

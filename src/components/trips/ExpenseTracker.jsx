@@ -172,12 +172,15 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
     }));
   };
 
+  // Filter out members excluded from expenses
+  const expenseMembers = members.filter(m => !m.excluded_from_expenses);
+  
   // Calculate totals
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
   
   // Calculate per-member breakdown
   const memberBalances = {};
-  members.forEach(member => {
+  expenseMembers.forEach(member => {
     memberBalances[member.id] = { paid: 0, owes: 0, name: member.user_name };
   });
 
@@ -437,7 +440,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                   <SelectValue placeholder="Select member" />
                 </SelectTrigger>
                 <SelectContent>
-                  {members.map((member) => (
+                  {expenseMembers.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.user_name || 'Unnamed'}
                     </SelectItem>
@@ -449,7 +452,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
             <div className="space-y-2">
               <Label>Split Between</Label>
               <div className="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-3">
-                {members.map((member) => (
+                {expenseMembers.map((member) => (
                   <div key={member.id} className="flex items-center space-x-2">
                     <Checkbox
                       id={`split-${member.id}`}
