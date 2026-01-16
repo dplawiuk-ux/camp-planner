@@ -409,7 +409,7 @@ const resources = {
       },
       "nav": {
         "trips": "Voyages",
-        "shed": "Remise",
+        "shed": "Coin matos",
         "documents": "Documents",
         "profile": "Profil"
       },
