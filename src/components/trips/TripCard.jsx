@@ -6,8 +6,10 @@ import { format, differenceInDays, isPast, isFuture } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 export default function TripCard({ trip, index }) {
+  const { t } = useTranslation();
   const startDate = new Date(trip.start_date);
   const endDate = trip.end_date ? new Date(trip.end_date) : null;
   const daysUntil = differenceInDays(startDate, new Date());
@@ -43,7 +45,7 @@ export default function TripCard({ trip, index }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <Badge className={`absolute top-4 right-4 ${statusColors[trip.status]} border`}>
-              {trip.status}
+              {t(`trip.${trip.status}`)}
             </Badge>
             {daysUntil > 0 && daysUntil <= 14 && trip.status !== 'completed' && (
               <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full">
