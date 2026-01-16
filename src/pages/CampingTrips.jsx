@@ -20,8 +20,10 @@ import TripCard from "@/components/trips/TripCard";
 import TripForm from "@/components/trips/TripForm";
 import JoinTripDialog from "@/components/trips/JoinTripDialog";
 import TopNavBar from "@/components/layout/TopNavBar";
+import { useTranslation } from 'react-i18next';
 
 export default function CampingTrips() {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -162,11 +164,11 @@ export default function CampingTrips() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setShowForm(true)}>
           <Tent className="w-4 h-4 mr-2" />
-          Create a Trip
+          {t('trip.newTrip')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setShowJoinDialog(true)}>
           <Ticket className="w-4 h-4 mr-2" />
-          Join a Trip
+          {t('trip.joinTrip')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -174,7 +176,7 @@ export default function CampingTrips() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30 pt-14">
-      <TopNavBar title="Trips" />
+      <TopNavBar title={t('trip.trips')} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -183,7 +185,7 @@ export default function CampingTrips() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <Input
-              placeholder="Search trips..."
+              placeholder={t('common.search') + " " + t('trip.trips').toLowerCase() + "..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-11 bg-white border-slate-200 rounded-xl"
@@ -202,11 +204,11 @@ export default function CampingTrips() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setShowForm(true)}>
                 <Tent className="w-4 h-4 mr-2" />
-                Create a Trip
+                {t('trip.newTrip')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowJoinDialog(true)}>
                 <Ticket className="w-4 h-4 mr-2" />
-                Join a Trip
+                {t('trip.joinTrip')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -215,9 +217,9 @@ export default function CampingTrips() {
         <div className="mb-10">
           <Tabs value={statusFilter} onValueChange={setStatusFilter}>
             <TabsList className="h-11 bg-white border border-slate-200 p-1 rounded-xl">
-              <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
-              <TabsTrigger value="planning" className="rounded-lg px-6">Planning</TabsTrigger>
-              <TabsTrigger value="completed" className="rounded-lg px-6">Complete</TabsTrigger>
+              <TabsTrigger value="all" className="rounded-lg px-6">{t('common.all')}</TabsTrigger>
+              <TabsTrigger value="planning" className="rounded-lg px-6">{t('trip.planning')}</TabsTrigger>
+              <TabsTrigger value="completed" className="rounded-lg px-6">{t('trip.completed')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
