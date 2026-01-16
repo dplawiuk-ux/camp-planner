@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Ticket } from "lucide-react";
 
 export default function JoinTripDialog({ open, onClose, onJoin, isLoading }) {
+  const { t } = useTranslation();
   const [tripCode, setTripCode] = useState("");
 
   const handleSubmit = (e) => {
@@ -29,16 +31,16 @@ export default function JoinTripDialog({ open, onClose, onJoin, isLoading }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Ticket className="w-5 h-5 text-emerald-600" />
-            Join a Trip
+            {t('trip.joinTrip')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="trip-code">Trip Code</Label>
+            <Label htmlFor="trip-code">{t('trip.tripCode')}</Label>
             <Input
               id="trip-code"
-              placeholder="Enter 8-character code"
+              placeholder={t('trip.enterCodePlaceholder', 'Enter 8-character code')}
               value={tripCode}
               onChange={handleCodeChange}
               className="h-14 text-center font-mono text-xl tracking-wider uppercase"
@@ -46,7 +48,7 @@ export default function JoinTripDialog({ open, onClose, onJoin, isLoading }) {
               autoFocus
             />
             <p className="text-xs text-slate-500">
-              Enter the 8-character code shared by the trip organizer
+              {t('trip.enterCodeHelp', 'Enter the 8-character code shared by the trip organizer')}
             </p>
           </div>
 
@@ -57,7 +59,7 @@ export default function JoinTripDialog({ open, onClose, onJoin, isLoading }) {
               onClick={onClose}
               className="flex-1"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
@@ -67,10 +69,10 @@ export default function JoinTripDialog({ open, onClose, onJoin, isLoading }) {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Joining...
+                  {t('trip.joining', 'Joining')}...
                 </>
               ) : (
-                "Join Trip"
+                t('trip.joinTrip')
               )}
             </Button>
           </DialogFooter>
