@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
+import { useTranslation } from 'react-i18next';
 
 const roleIcons = {
   lead: Crown,
@@ -31,6 +33,8 @@ const roleColors = {
 };
 
 export default function TripChat({ tripId, currentUserRole, currentUserEmail }) {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'fr' ? fr : enUS;
   const [activeTab, setActiveTab] = useState("general");
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
@@ -85,7 +89,7 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-emerald-600" />
-            Trip Chat
+            {t('chat.title')}
           </CardTitle>
         </div>
       </CardHeader>
@@ -95,12 +99,12 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
           <TabsList className="w-full bg-slate-100">
             <TabsTrigger value="general" className="flex-1 flex items-center gap-2">
               <Users className="w-4 h-4" />
-              General
+              {t('chat.general')}
             </TabsTrigger>
             {canAccessAdminChat && (
               <TabsTrigger value="admin" className="flex-1 flex items-center gap-2">
                 <Lock className="w-4 h-4" />
-                Organizers
+                {t('chat.organizers')}
               </TabsTrigger>
             )}
           </TabsList>
@@ -112,6 +116,8 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
             currentUserEmail={currentUserEmail}
             messagesEndRef={messagesEndRef}
             isLoading={isLoading}
+            dateLocale={dateLocale}
+            t={t}
           />
         </TabsContent>
 
@@ -128,6 +134,8 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
               currentUserEmail={currentUserEmail}
               messagesEndRef={messagesEndRef}
               isLoading={isLoading}
+              dateLocale={dateLocale}
+              t={t}
             />
           </TabsContent>
         )}
@@ -137,7 +145,7 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
       <div className="p-4 border-t bg-slate-50">
         <div className="flex gap-2">
           <Input
-            placeholder={`Message ${activeTab === 'admin' ? 'organizers' : 'everyone'}...`}
+            placeholder={t('chat.messageEveryone')}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
@@ -156,11 +164,11 @@ export default function TripChat({ tripId, currentUserRole, currentUserEmail }) 
   );
 }
 
-function ChatContent({ messages, currentUserEmail, messagesEndRef, isLoading }) {
+function ChatContent({ messages, currentUserEmail, messagesEndRef, isLoading, dateLocale, t }) {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center text-slate-400">
-        Loading messages...
+        {t('common.loading')}...
       </div>
     );
   }
@@ -169,8 +177,8 @@ function ChatContent({ messages, currentUserEmail, messagesEndRef, isLoading }) 
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-6">
         <MessageCircle className="w-12 h-12 mb-3 text-slate-300" />
-        <p>No messages yet</p>
-        <p className="text-sm">Start the conversation!</p>
+        <p>{t('chat.noMessages')}</p>
+        <p className="text-sm">{t('chat.startConversation', 'Start the conversation!')}</p>
       </div>
     );
   }
@@ -200,10 +208,10 @@ function ChatContent({ messages, currentUserEmail, messagesEndRef, isLoading }) 
               <div className={`flex-1 max-w-[70%] ${isCurrentUser ? 'items-end' : ''}`}>
                 <div className={`flex items-baseline gap-2 mb-1 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
                   <span className="text-sm font-medium text-slate-700">
-                    {isCurrentUser ? 'You' : (msg.user_name || msg.user_email)}
+                    {isCurrentUser ? t('chat.you', 'You') : (msg.user_name || msg.user_email)}
                   </span>
                   <span className="text-xs text-slate-400">
-                    {format(new Date(msg.created_date), 'h:mm a')}
+                    {format(new Date(msg.created_date), 'h:mm a', { locale: dateLocale })}
                   </span>
                 </div>
                 <div className={`rounded-2xl px-4 py-2.5 ${

@@ -217,7 +217,9 @@ const resources = {
         "typeMessage": "Type a message...",
         "messageEveryone": "Message everyone...",
         "send": "Send",
-        "noMessages": "No messages yet"
+        "noMessages": "No messages yet",
+        "startConversation": "Start the conversation!",
+        "you": "You"
       },
       "shed": {
         "title": "Gear Shed",
@@ -459,7 +461,9 @@ const resources = {
         "typeMessage": "Écrivez un message...",
         "messageEveryone": "Écrivez à tous...",
         "send": "Envoyer",
-        "noMessages": "Aucun message pour le moment"
+        "noMessages": "Aucun message pour le moment",
+        "startConversation": "Commencez la conversation!",
+        "you": "Vous"
       },
       "shed": {
         "title": "Remise à équipement",
