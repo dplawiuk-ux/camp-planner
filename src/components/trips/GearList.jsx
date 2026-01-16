@@ -446,8 +446,8 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                   <div className={`p-1.5 rounded-lg ${colorClass} border`}>
                     <Icon className="w-4 h-4" />
                   </div>
-                  <h3 className="font-medium text-slate-700 capitalize">
-                    {type.replace(/_/g, ' ')}
+                  <h3 className="font-medium text-slate-700">
+                    {t(`gear.types.${type}`)}
                   </h3>
                   <Badge variant="outline" className="ml-auto">{typeItems.length}</Badge>
                 </div>
