@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { MapPin, Calendar, FileText, Loader2, Ship } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 import InviteMembers from "./InviteMembers";
 import { format } from "date-fns";
 import LocationPicker from "./LocationPicker";
@@ -35,6 +36,7 @@ const generateTripCode = () => {
 };
 
 export default function TripForm({ open, onClose, onSubmit, initialData, isLoading }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(initialData || {
     name: "",
     location: "",
@@ -104,18 +106,18 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-800">
-            {initialData ? "Edit Trip" : "Plan New Adventure"}
+            {initialData ? t('trip.editTrip') : t('trip.planNewAdventure')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium text-slate-700">
-              Trip Name
+              {t('trip.tripName')}
             </Label>
             <Input
               id="name"
-              placeholder="Summer Mountain Escape"
+              placeholder={t('trip.tripNamePlaceholder', 'Summer Mountain Escape')}
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               className="h-12 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500"
@@ -140,7 +142,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             <div className="flex items-center gap-2">
               <Ship className="w-4 h-4 text-blue-600" />
               <Label htmlFor="paddle-in" className="text-sm font-medium text-slate-700 cursor-pointer">
-                Paddle In
+                {t('trip.paddleIn')}
               </Label>
             </div>
           </div>
@@ -149,7 +151,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             <div className="space-y-2">
               <Label htmlFor="start_date" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-amber-600" />
-                Start Date
+                {t('trip.startDate')}
               </Label>
               <Input
                 id="start_date"
@@ -162,7 +164,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
             </div>
             <div className="space-y-2">
               <Label htmlFor="end_date" className="text-sm font-medium text-slate-700">
-                End Date
+                {t('trip.endDate')}
               </Label>
               <Input
                 id="end_date"
@@ -176,22 +178,22 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
 
           <div className="space-y-2">
             <Label htmlFor="status" className="text-sm font-medium text-slate-700">
-              Status
+              {t('trip.status')}
             </Label>
             <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
               <SelectTrigger className="h-12 border-slate-200">
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder={t('trip.selectStatus', 'Select status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="planning">Planning</SelectItem>
-                <SelectItem value="upcoming">Upcoming</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="planning">{t('trip.planning')}</SelectItem>
+                <SelectItem value="upcoming">{t('trip.upcoming', 'Upcoming')}</SelectItem>
+                <SelectItem value="completed">{t('trip.completed')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <ImageUpload
-            label="Cover Image (optional)"
+            label={t('trip.coverImageOptional', 'Cover Image (optional)')}
             value={formData.image_url}
             onChange={(url) => handleChange("image_url", url)}
           />
@@ -199,11 +201,11 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-sm font-medium text-slate-700 flex items-center gap-2">
               <FileText className="w-4 h-4 text-slate-500" />
-              Notes
+              {t('trip.notes')}
             </Label>
             <Textarea
               id="notes"
-              placeholder="Any special plans, reservations, or reminders..."
+              placeholder={t('trip.notesPlaceholder', 'Any special plans, reservations, or reminders...')}
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
               className="min-h-24 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 resize-none"
@@ -212,7 +214,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
 
           <div className="space-y-2">
             <Label htmlFor="trip_code" className="text-sm font-medium text-slate-700">
-              Trip Code
+              {t('trip.tripCode')}
             </Label>
             <div className="flex gap-2">
               <Input
@@ -229,10 +231,10 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
                 onClick={handleGenerateTripCode}
                 className="h-12 px-4"
               >
-                Generate
+                {t('trip.generate', 'Generate')}
               </Button>
             </div>
-            <p className="text-xs text-slate-500">Members can use this code to join the trip</p>
+            <p className="text-xs text-slate-500">{t('trip.tripCodeHelp', 'Members can use this code to join the trip')}</p>
           </div>
 
           {!initialData && formData.name && formData.start_date && (
@@ -247,7 +249,7 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
 
           <DialogFooter className="gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -257,10 +259,10 @@ export default function TripForm({ open, onClose, onSubmit, initialData, isLoadi
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  {t('common.saving')}...
                 </>
               ) : (
-                initialData ? "Save Changes" : "Create Trip"
+                initialData ? t('common.saveChanges') : t('trip.createTrip')
               )}
             </Button>
           </DialogFooter>
