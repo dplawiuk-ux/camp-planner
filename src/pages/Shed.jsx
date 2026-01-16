@@ -221,7 +221,7 @@ export default function Shed() {
                 variant={typeFilter === type ? "default" : "outline"}
                 onClick={() => setTypeFilter(type)}
                 className={`h-9 w-9 flex-shrink-0 ${typeFilter === type ? "bg-emerald-600" : ""}`}
-                title={type.charAt(0).toUpperCase() + type.slice(1)}
+                title={t(`gear.types.${type}`)}
               >
                 {Icon && <Icon className="w-3.5 h-3.5" />}
               </Button>
