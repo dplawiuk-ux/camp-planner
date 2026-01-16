@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { UserPlus } from "lucide-react";
 
 export default function GearRequestDialog({ open, onClose, onSubmit, members = [] }) {
+  const { t } = useTranslation();
   const [requestData, setRequestData] = useState({
     name: "",
     type: "other",
@@ -40,14 +42,14 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Request Gear</DialogTitle>
+          <DialogTitle>{t('gear.requestGear')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div>
-            <Label>Gear Name</Label>
+            <Label>{t('gear.gearName', 'Gear Name')}</Label>
             <Input
-              placeholder="e.g., Camp Stove"
+              placeholder={t('gear.gearNamePlaceholder', 'e.g., Camp Stove')}
               value={requestData.name}
               onChange={(e) => setRequestData({...requestData, name: e.target.value})}
               className="mt-2"
@@ -55,7 +57,7 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
           </div>
 
           <div>
-            <Label>Type</Label>
+            <Label>{t('gear.gearType')}</Label>
             <Select 
               value={requestData.type} 
               onValueChange={(value) => setRequestData({...requestData, type: value})}
@@ -64,21 +66,21 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="tents">Tents</SelectItem>
-                <SelectItem value="sleeping_pads">Sleeping Pads</SelectItem>
-                <SelectItem value="sleeping_bags">Sleeping Bags</SelectItem>
-                <SelectItem value="kitchen">Kitchen</SelectItem>
-                <SelectItem value="fire">Fire</SelectItem>
-                <SelectItem value="watercraft">Watercraft</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="tents">{t('gear.types.tents')}</SelectItem>
+                <SelectItem value="sleeping_pads">{t('gear.types.sleeping_pads', 'Sleeping Pads')}</SelectItem>
+                <SelectItem value="sleeping_bags">{t('gear.types.sleeping_bags', 'Sleeping Bags')}</SelectItem>
+                <SelectItem value="kitchen">{t('gear.types.kitchen')}</SelectItem>
+                <SelectItem value="fire">{t('gear.types.fire')}</SelectItem>
+                <SelectItem value="watercraft">{t('gear.types.watercraft')}</SelectItem>
+                <SelectItem value="other">{t('gear.types.other')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label>Notes (optional)</Label>
+            <Label>{t('gear.notesOptional', 'Notes (optional)')}</Label>
             <Textarea
-              placeholder="Any specific requirements..."
+              placeholder={t('gear.specificRequirements', 'Any specific requirements...')}
               value={requestData.notes}
               onChange={(e) => setRequestData({...requestData, notes: e.target.value})}
               className="mt-2"
@@ -88,17 +90,17 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
           <div>
             <Label className="flex items-center gap-2">
               <UserPlus className="w-4 h-4" />
-              Assign to Member (optional)
+              {t('gear.assignToMemberOptional', 'Assign to Member (optional)')}
             </Label>
             <Select 
               value={requestData.assigned_to_member_id} 
               onValueChange={(value) => setRequestData({...requestData, assigned_to_member_id: value})}
             >
               <SelectTrigger className="mt-2">
-                <SelectValue placeholder="Leave open for volunteers" />
+                <SelectValue placeholder={t('gear.leaveOpenVolunteers', 'Leave open for volunteers')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={null}>Leave open for volunteers</SelectItem>
+                <SelectItem value={null}>{t('gear.leaveOpenVolunteers', 'Leave open for volunteers')}</SelectItem>
                 {members.map(member => (
                   <SelectItem key={member.id} value={member.id}>
                     {member.user_name || member.user_email || 'Unnamed'}
@@ -108,7 +110,7 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
             </Select>
             {requestData.assigned_to_member_id && (
               <p className="text-xs text-slate-500 mt-2">
-                This member will be able to confirm or decline the request
+                {t('gear.memberCanConfirm', 'This member will be able to confirm or decline the request')}
               </p>
             )}
           </div>
@@ -116,14 +118,14 @@ export default function GearRequestDialog({ open, onClose, onSubmit, members = [
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!requestData.name}
             className="bg-emerald-600 hover:bg-emerald-700"
           >
-            Create Request
+            {t('gear.createRequest', 'Create Request')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -182,8 +182,8 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
         {watercraft.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
             <Waves className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-            <p>No watercraft added yet</p>
-            <p className="text-sm">Add kayaks, canoes, or boats</p>
+            <p>{t('watercraft.noWatercraft', 'No watercraft added yet')}</p>
+            <p className="text-sm">{t('watercraft.addWatercraftHelp', 'Add kayaks, canoes, or boats')}</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -259,7 +259,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-400 italic">No one assigned yet</p>
+                    <p className="text-sm text-slate-400 italic">{t('watercraft.noOneAssigned', 'No one assigned yet')}</p>
                   )}
 
                   {/* Quick assign dropdown */}
@@ -269,7 +269,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                         onValueChange={(memberId) => handleAssignMember(craft.id, memberId)}
                       >
                         <SelectTrigger className="h-9">
-                          <SelectValue placeholder="Select member to assign" />
+                          <SelectValue placeholder={t('watercraft.selectMemberToAssign', 'Select member to assign')} />
                         </SelectTrigger>
                         <SelectContent>
                           {availableMembers.map((member) => (
@@ -290,7 +290,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
         {unassignedMembers.length > 0 && watercraft.length > 0 && (
           <div className="mt-4 pt-4 border-t border-slate-200">
             <p className="text-sm font-medium text-slate-700 mb-2">
-              Unassigned to Watercraft ({unassignedMembers.length})
+              {t('watercraft.unassignedToWatercraft', 'Unassigned to Watercraft')} ({unassignedMembers.length})
             </p>
             <div className="flex flex-wrap gap-2">
               {unassignedMembers.map((member) => (
@@ -308,19 +308,19 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Watercraft</DialogTitle>
+            <DialogTitle>{t('watercraft.addWatercraft', 'Add Watercraft')}</DialogTitle>
           </DialogHeader>
           
           <Tabs value={addMode} onValueChange={setAddMode} className="py-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="shed">From Gear Shed</TabsTrigger>
-              <TabsTrigger value="custom">Custom</TabsTrigger>
+              <TabsTrigger value="shed">{t('watercraft.fromGearShed', 'From Gear Shed')}</TabsTrigger>
+              <TabsTrigger value="custom">{t('watercraft.custom', 'Custom')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="shed" className="space-y-4 mt-4">
               {userWatercraft.length > 0 ? (
                 <>
-                  <p className="text-sm text-slate-600">Select watercraft from your gear shed:</p>
+                  <p className="text-sm text-slate-600">{t('watercraft.selectFromShed', 'Select watercraft from your gear shed:')}</p>
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {userWatercraft.map((craft) => (
                       <button
@@ -332,7 +332,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                           <div className="font-medium text-slate-800">{craft.name}</div>
                           {craft.capacity && (
                             <div className="text-sm text-slate-500">
-                              Capacity: {craft.capacity} people
+                              {t('watercraft.capacity', 'Capacity')}: {craft.capacity} {t('watercraft.people', 'people')}
                             </div>
                           )}
                         </div>
@@ -344,10 +344,10 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
               ) : (
                 <div className="text-center py-8">
                   <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p className="text-slate-600 mb-4">No watercraft in your gear shed yet</p>
+                  <p className="text-slate-600 mb-4">{t('watercraft.noWatercraftInShed', 'No watercraft in your gear shed yet')}</p>
                   <Link to={createPageUrl("Shed")}>
                     <Button variant="outline" size="sm">
-                      Go to Gear Shed
+                      {t('watercraft.goToShed', 'Go to Gear Shed')}
                     </Button>
                   </Link>
                 </div>
@@ -356,27 +356,27 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
 
             <TabsContent value="custom" className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="watercraft-name">Watercraft Name</Label>
+                <Label htmlFor="watercraft-name">{t('watercraft.watercraftName', 'Watercraft Name')}</Label>
                 <Input
                   id="watercraft-name"
-                  placeholder="e.g., Red Canoe"
+                  placeholder={t('watercraft.watercraftNamePlaceholder', 'e.g., Red Canoe')}
                   value={newWatercraft.name}
                   onChange={(e) => setNewWatercraft({ ...newWatercraft, name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity (people)</Label>
+                <Label htmlFor="capacity">{t('watercraft.capacityPeople', 'Capacity (people)')}</Label>
                 <Select 
                   value={String(newWatercraft.capacity)} 
                   onValueChange={(value) => setNewWatercraft({ ...newWatercraft, capacity: parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select capacity" />
+                    <SelectValue placeholder={t('watercraft.selectCapacity', 'Select capacity')} />
                   </SelectTrigger>
                   <SelectContent side="bottom" align="start">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <SelectItem key={num} value={String(num)}>
-                        {num} {num === 1 ? 'person' : 'people'}
+                        {num} {num === 1 ? t('watercraft.person', 'person') : t('watercraft.people', 'people')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -387,14 +387,14 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                 disabled={!newWatercraft.name}
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                Add Custom Watercraft
+                {t('watercraft.addCustomWatercraft', 'Add Custom Watercraft')}
               </Button>
             </TabsContent>
           </Tabs>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)} className="w-full">
-              Cancel
+              {t('common.cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>

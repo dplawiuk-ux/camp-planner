@@ -183,8 +183,8 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
         {tents.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
             <Tent className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-            <p>No tents added yet</p>
-            <p className="text-sm">Add tents to manage sleeping arrangements</p>
+            <p>{t('tent.noTents', 'No tents added yet')}</p>
+            <p className="text-sm">{t('tent.addTentsHelp', 'Add tents to manage sleeping arrangements')}</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -260,7 +260,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-400 italic">No one assigned yet</p>
+                    <p className="text-sm text-slate-400 italic">{t('tent.noOneAssigned', 'No one assigned yet')}</p>
                   )}
 
                   {/* Quick assign dropdown */}
@@ -270,7 +270,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                         onValueChange={(memberId) => handleAssignMember(tent.id, memberId)}
                       >
                         <SelectTrigger className="h-9">
-                          <SelectValue placeholder="Select member to assign" />
+                          <SelectValue placeholder={t('tent.selectMemberToAssign', 'Select member to assign')} />
                         </SelectTrigger>
                         <SelectContent>
                           {availableMembers.map((member) => (
@@ -291,7 +291,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
         {unassignedMembers.length > 0 && tents.length > 0 && (
           <div className="mt-4 pt-4 border-t border-slate-200">
             <p className="text-sm font-medium text-slate-700 mb-2">
-              Unassigned Members ({unassignedMembers.length})
+              {t('tent.unassignedMembers', 'Unassigned Members')} ({unassignedMembers.length})
             </p>
             <div className="flex flex-wrap gap-2">
               {unassignedMembers.map((member) => (
@@ -309,19 +309,19 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Tent</DialogTitle>
+            <DialogTitle>{t('tent.addTent', 'Add Tent')}</DialogTitle>
           </DialogHeader>
           
           <Tabs value={addMode} onValueChange={setAddMode} className="py-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="shed">From Gear Shed</TabsTrigger>
-              <TabsTrigger value="custom">Custom</TabsTrigger>
+              <TabsTrigger value="shed">{t('tent.fromGearShed', 'From Gear Shed')}</TabsTrigger>
+              <TabsTrigger value="custom">{t('tent.custom', 'Custom')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="shed" className="space-y-4 mt-4">
               {userTents.length > 0 ? (
                 <>
-                  <p className="text-sm text-slate-600">Select a tent from your gear shed:</p>
+                  <p className="text-sm text-slate-600">{t('tent.selectFromShed', 'Select a tent from your gear shed:')}</p>
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {userTents.map((tent) => (
                       <button
@@ -333,7 +333,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                           <div className="font-medium text-slate-800">{tent.name}</div>
                           {tent.capacity && (
                             <div className="text-sm text-slate-500">
-                              Capacity: {tent.capacity} people
+                              {t('tent.capacity')}: {tent.capacity} {t('tent.people', 'people')}
                             </div>
                           )}
                         </div>
@@ -345,10 +345,10 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               ) : (
                 <div className="text-center py-8">
                   <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p className="text-slate-600 mb-4">No tents in your gear shed yet</p>
+                  <p className="text-slate-600 mb-4">{t('tent.noTentsInShed', 'No tents in your gear shed yet')}</p>
                   <Link to={createPageUrl("Shed")}>
                     <Button variant="outline" size="sm">
-                      Go to Gear Shed
+                      {t('tent.goToShed', 'Go to Gear Shed')}
                     </Button>
                   </Link>
                 </div>
@@ -357,27 +357,27 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
 
             <TabsContent value="custom" className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="tent-name">Tent Name</Label>
+                <Label htmlFor="tent-name">{t('tent.tentName', 'Tent Name')}</Label>
                 <Input
                   id="tent-name"
-                  placeholder="e.g., Big Red Tent"
+                  placeholder={t('tent.tentNamePlaceholder', 'e.g., Big Red Tent')}
                   value={newTent.name}
                   onChange={(e) => setNewTent({ ...newTent, name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity (people)</Label>
+                <Label htmlFor="capacity">{t('tent.capacityPeople', 'Capacity (people)')}</Label>
                 <Select 
                   value={String(newTent.capacity)} 
                   onValueChange={(value) => setNewTent({ ...newTent, capacity: parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select capacity" />
+                    <SelectValue placeholder={t('tent.selectCapacity', 'Select capacity')} />
                   </SelectTrigger>
                   <SelectContent side="bottom" align="start">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <SelectItem key={num} value={String(num)}>
-                        {num} {num === 1 ? 'person' : 'people'}
+                        {num} {num === 1 ? t('tent.person', 'person') : t('tent.people', 'people')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -388,14 +388,14 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                 disabled={!newTent.name}
                 className="w-full bg-emerald-600 hover:bg-emerald-700"
               >
-                Add Custom Tent
+                {t('tent.addCustomTent', 'Add Custom Tent')}
               </Button>
             </TabsContent>
           </Tabs>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)} className="w-full">
-              Cancel
+              {t('common.cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>
