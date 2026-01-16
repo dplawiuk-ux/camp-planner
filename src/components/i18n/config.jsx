@@ -362,7 +362,12 @@ const resources = {
         "notesOptional": "Notes (optional)",
         "notesPlaceholder": "Brand, condition, special features...",
         "noEquipment": "No equipment yet",
-        "startBuilding": "Start building your gear collection"
+        "startBuilding": "Start building your gear collection",
+        "noEquipmentFound": "No equipment found",
+        "tryAdjusting": "Try adjusting your search or filters",
+        "gearShedEmpty": "Your gear shed is empty",
+        "startAdding": "Start adding your camping gear to organize and track it",
+        "addFirstItem": "Add Your First Item"
       },
       "profile": {
         "title": "Profile",
@@ -738,7 +743,12 @@ const resources = {
         "notesOptional": "Notes (optionnelles)",
         "notesPlaceholder": "Marque, condition, caractéristiques spéciales...",
         "noEquipment": "Aucun équipement pour le moment",
-        "startBuilding": "Commencez à bâtir votre collection"
+        "startBuilding": "Commencez à bâtir votre collection",
+        "noEquipmentFound": "Aucun équipement trouvé",
+        "tryAdjusting": "Essayez d'ajuster vos filtres ou recherche",
+        "gearShedEmpty": "Votre coin matos est vide",
+        "startAdding": "Commencez à ajouter votre équipement de camping pour l'organiser",
+        "addFirstItem": "Ajouter votre premier article"
       },
       "profile": {
         "title": "Profil",

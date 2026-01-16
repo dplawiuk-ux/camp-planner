@@ -341,13 +341,13 @@ export default function Shed() {
             </div>
             <h3 className="text-2xl font-semibold text-slate-800 mb-2">
               {searchQuery || typeFilter !== "all" 
-                ? "No equipment found" 
-                : "Your gear shed is empty"}
+                ? t('shed.noEquipmentFound')
+                : t('shed.gearShedEmpty')}
             </h3>
             <p className="text-slate-500 mb-8">
               {searchQuery || typeFilter !== "all"
-                ? "Try adjusting your search or filters"
-                : "Start adding your camping gear to organize and track it"}
+                ? t('shed.tryAdjusting')
+                : t('shed.startAdding')}
             </p>
             {!searchQuery && typeFilter === "all" && (
               <Button
@@ -355,7 +355,7 @@ export default function Shed() {
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Your First Item
+                {t('shed.addFirstItem')}
               </Button>
             )}
           </motion.div>
