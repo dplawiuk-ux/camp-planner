@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 import EquipmentForm from "@/components/shed/EquipmentForm";
 import PhotoRecognition from "@/components/shed/PhotoRecognition";
 import TopNavBar from "@/components/layout/TopNavBar";
@@ -54,6 +55,7 @@ const equipmentColors = {
 const typeOrder = ['tents', 'watercraft', 'sleeping', 'fire', 'water', 'kitchen', 'other'];
 
 export default function Shed() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
@@ -160,7 +162,7 @@ export default function Shed() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30 pt-14">
-      <TopNavBar title="Gear Shed" />
+      <TopNavBar title={t('shed.title')} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -169,7 +171,7 @@ export default function Shed() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <Input
-              placeholder="Search My Gear"
+              placeholder={t('shed.searchGear', 'Search My Gear')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-11 bg-white border-slate-200 rounded-xl"
@@ -191,11 +193,11 @@ export default function Shed() {
                 setShowForm(true);
               }}>
                 <Plus className="w-4 h-4 mr-2" />
-                Add Gear
+                {t('shed.addEquipment')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowPhotoRecognition(true)}>
                 <Camera className="w-4 h-4 mr-2" />
-                Scan Photo
+                {t('shed.scanPhoto')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -208,7 +210,7 @@ export default function Shed() {
             onClick={() => setTypeFilter("all")}
             className={`h-9 px-3 text-sm flex-shrink-0 ${typeFilter === "all" ? "bg-slate-800" : ""}`}
           >
-            All
+            {t('common.all')}
           </Button>
           {uniqueTypes.map((type) => {
             const Icon = equipmentIcons[type];
@@ -246,7 +248,7 @@ export default function Shed() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <h2 className="text-xl font-semibold text-slate-800 capitalize">
-                      {type.replace(/_/g, ' ')}
+                      {t(`gear.types.${type}`)}
                     </h2>
                     <Badge variant="outline">{items.length}</Badge>
                   </div>
@@ -273,7 +275,7 @@ export default function Shed() {
                                   </h3>
                                   {item.capacity && (
                                     <Badge variant="outline" className="text-xs">
-                                      Capacity: {item.capacity}
+                                      {t('tent.capacity')}: {item.capacity}
                                     </Badge>
                                   )}
                                 </div>

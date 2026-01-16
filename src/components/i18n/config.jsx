@@ -229,6 +229,7 @@ const resources = {
         "equipmentName": "Equipment Name",
         "equipmentType": "Equipment Type",
         "scanPhoto": "Scan Photo",
+        "searchGear": "Search My Gear",
         "noEquipment": "No equipment yet",
         "startBuilding": "Start building your gear collection"
       },
@@ -473,6 +474,7 @@ const resources = {
         "equipmentName": "Nom de l'équipement",
         "equipmentType": "Type d'équipement",
         "scanPhoto": "Scanner une photo",
+        "searchGear": "Rechercher mon équipement",
         "noEquipment": "Aucun équipement pour le moment",
         "startBuilding": "Commencez à bâtir votre collection"
       },
