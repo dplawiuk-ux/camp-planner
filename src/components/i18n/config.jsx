@@ -467,7 +467,7 @@ const resources = {
         "you": "Vous"
       },
       "shed": {
-        "title": "Remise à équipement",
+        "title": "Coin matos",
         "myGear": "Mon équipement",
         "addEquipment": "Ajouter équipement",
         "editEquipment": "Modifier équipement",
