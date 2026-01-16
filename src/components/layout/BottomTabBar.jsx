@@ -3,14 +3,16 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Map, Package, FileText, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const tabs = [
-  { name: 'Trips', page: 'CampingTrips', icon: Map },
-  { name: 'Gear', page: 'Shed', icon: Package },
-  { name: 'Profile', page: 'Profile', icon: User },
+  { name: 'Trips', page: 'CampingTrips', icon: Map, labelKey: 'nav.trips' },
+  { name: 'Gear', page: 'Shed', icon: Package, labelKey: 'nav.shed' },
+  { name: 'Profile', page: 'Profile', icon: User, labelKey: 'nav.profile' },
 ];
 
 export default function BottomTabBar({ currentPageName }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 safe-area-pb z-50">
       <div className="flex items-center justify-around h-20 max-w-7xl mx-auto px-2">
@@ -28,7 +30,7 @@ export default function BottomTabBar({ currentPageName }) {
               )}
             >
               <Icon className={cn("w-6 h-6", isActive && "fill-emerald-600")} strokeWidth={isActive ? 2 : 1.5} />
-              <span className="text-xs font-medium">{tab.name}</span>
+              <span className="text-xs font-medium">{t(tab.labelKey)}</span>
             </Link>
           );
         })}
