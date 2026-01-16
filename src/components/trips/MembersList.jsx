@@ -25,6 +25,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
 import { DollarSign } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import InviteMembers from "./InviteMembers";
 import EditDisplayName from "./EditDisplayName";
 import ChangeRoleDialog from "./ChangeRoleDialog";
@@ -33,26 +34,27 @@ const roleConfig = {
   lead: {
     icon: Crown,
     color: "bg-amber-100 text-amber-700 border-amber-200",
-    label: "Trip Leader"
+    labelKey: "members.tripLeader"
   },
   admin: {
     icon: Shield,
     color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    label: "Pack Leader"
+    labelKey: "members.packLeader"
   },
   guest: {
     icon: User,
     color: "bg-slate-100 text-slate-700 border-slate-200",
-    label: "Camper"
+    labelKey: "members.camper"
   },
   jr_camper: {
     icon: User,
     color: "bg-blue-100 text-blue-700 border-blue-200",
-    label: "Jr Camper"
+    labelKey: "members.jrCamper"
   }
 };
 
 export default function MembersList({ members = [], currentUserRole, currentUserEmail, onRemove, onInvite, isInviting, onUpdateName, isUpdatingName, onUpdateRole, isUpdatingRole, packingItems = [], gearItems = [], gearRequests = [], tripCode, tripName, tripStartDate, layout = "compact", paddleIn = false }) {
+  const { t } = useTranslation();
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [showChangeRole, setShowChangeRole] = useState(false);
@@ -118,7 +120,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
               <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
               <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-600" />
-                Trip Members
+                {t('members.title')}
                 <Badge variant="outline" className="ml-2">
                   {members.length}
                 </Badge>
@@ -136,7 +138,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                         setSelectedMembers([]);
                       }}
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button
                       size="sm"
@@ -144,10 +146,10 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                       disabled={selectedMembers.length === 0}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
-                      Change Role ({selectedMembers.length})
+                      {t('members.changeRole')} ({selectedMembers.length})
                     </Button>
                   </>
-                ) : (
+                  ) : (
                   <Button
                     size="sm"
                     variant="outline"
@@ -155,7 +157,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                   >
                     <Users className="w-4 h-4 mr-2" />
-                    Manage Roles
+                    {t('members.manageRoles')}
                   </Button>
                 )
               )}
@@ -236,11 +238,11 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                   
                   <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant="secondary" className={`${config.color} border text-xs`}>
-                      {config.label}
+                      {t(config.labelKey)}
                     </Badge>
                     {member.excluded_from_expenses && (
                       <Badge variant="outline" className="text-xs bg-slate-50 text-slate-600">
-                        No Expenses
+                        {t('members.noExpenses')}
                       </Badge>
                     )}
                     <div className="flex items-center gap-1">
@@ -288,7 +290,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
         {members.length === 0 && (
           <div className="text-center py-8">
             <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500">No members yet</p>
+            <p className="text-slate-500">{t('members.noMembers')}</p>
           </div>
         )}
         </CardContent>
@@ -300,7 +302,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add Trip Members</DialogTitle>
+            <DialogTitle>{t('members.addMembers')}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <InviteMembers
@@ -312,7 +314,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           </div>
           <DialogFooter>
             <Button onClick={() => setShowInviteDialog(false)}>
-              Done
+              {t('common.done')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -354,7 +356,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
       <Dialog open={showBulkChangeRole} onOpenChange={setShowBulkChangeRole}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Change Role for {selectedMembers.length} Member{selectedMembers.length > 1 ? 's' : ''}</DialogTitle>
+            <DialogTitle>{t('members.changeRole')} - {selectedMembers.length}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -372,7 +374,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <Shield className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-semibold">Pack Leader</div>
+                    <div className="font-semibold">{t('members.packLeader')}</div>
                     <div className="text-xs text-slate-500">Can manage trip details and members</div>
                   </div>
                 </div>
@@ -388,7 +390,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <User className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-semibold">Camper</div>
+                    <div className="font-semibold">{t('members.camper')}</div>
                     <div className="text-xs text-slate-500">Standard trip member</div>
                   </div>
                 </div>
@@ -404,7 +406,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <User className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-semibold">Jr Camper</div>
+                    <div className="font-semibold">{t('members.jrCamper')}</div>
                     <div className="text-xs text-slate-500">Non-registered member</div>
                   </div>
                 </div>
@@ -414,7 +416,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowBulkChangeRole(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -457,7 +459,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
           <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Member Details</DialogTitle>
+                <DialogTitle>{t('members.memberDetails')}</DialogTitle>
               </DialogHeader>
               
               <div className="space-y-4 py-4">
@@ -474,9 +476,9 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
                 <div className="space-y-3 pt-4 border-t border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Member Level</span>
+                    <span className="text-sm text-slate-600">{t('members.memberLevel')}</span>
                     <Badge className={`${config.color} border`}>
-                      {config.label}
+                      {t(config.labelKey)}
                     </Badge>
                   </div>
 
@@ -484,7 +486,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                     <div className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm text-slate-700">Exclude from expenses</span>
+                        <span className="text-sm text-slate-700">{t('members.excludeFromExpenses')}</span>
                       </div>
                       <Checkbox
                         checked={selectedMember.excluded_from_expenses || false}
@@ -496,14 +498,14 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
 
                   <div className="pt-3 border-t border-slate-200">
-                    <p className="text-sm font-medium text-slate-700 mb-3">Allocations</p>
+                    <p className="text-sm font-medium text-slate-700 mb-3">{t('members.allocations')}</p>
                     <div className="flex gap-4">
                       <div className="flex flex-col items-center gap-2 flex-1">
                         <div className={`p-3 rounded-lg ${isInTent ? 'bg-emerald-100' : 'bg-orange-100'}`}>
                           <Tent className={`w-5 h-5 ${isInTent ? 'text-emerald-600' : 'text-orange-600'}`} />
                         </div>
                         <span className="text-xs text-slate-600 text-center">
-                          {isInTent ? 'Tent Assigned' : 'No Tent'}
+                          {isInTent ? t('members.tentAssigned') : t('members.noTent')}
                         </span>
                       </div>
                       <div className="flex flex-col items-center gap-2 flex-1">
@@ -511,7 +513,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                           <Ship className={`w-5 h-5 ${isInWatercraft ? 'text-emerald-600' : 'text-orange-600'}`} />
                         </div>
                         <span className="text-xs text-slate-600 text-center">
-                          {isInWatercraft ? 'Watercraft Assigned' : 'No Watercraft'}
+                          {isInWatercraft ? t('members.watercraftAssigned') : t('members.noWatercraft')}
                         </span>
                       </div>
                     </div>
@@ -519,7 +521,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
                   {hasGearCommitments && (
                     <div className="pt-3 border-t border-slate-200">
-                      <p className="text-sm font-medium text-slate-700 mb-3">Committed to Bring</p>
+                      <p className="text-sm font-medium text-slate-700 mb-3">{t('members.committedToBring')}</p>
                       <div className="space-y-2">
                         {memberTents.map(tent => (
                           <div key={tent.id} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
@@ -527,7 +529,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                             <span className="text-sm text-slate-700">{tent.name}</span>
                             {tent.capacity && (
                               <Badge variant="outline" className="text-xs ml-auto">
-                                {tent.capacity} people
+                                {tent.capacity} {t('tent.people')}
                               </Badge>
                             )}
                           </div>
@@ -539,7 +541,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                             <span className="text-sm text-slate-700">{craft.name}</span>
                             {craft.capacity && (
                               <Badge variant="outline" className="text-xs ml-auto">
-                                {craft.capacity} people
+                                {craft.capacity} {t('watercraft.people')}
                               </Badge>
                             )}
                           </div>
@@ -551,7 +553,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                             <span className="text-sm text-slate-700">{gear.name}</span>
                             {gear.is_rental && (
                               <Badge variant="outline" className="text-xs ml-auto border-amber-300 bg-amber-50 text-amber-700">
-                                Rental
+                                {t('gear.rental')}
                               </Badge>
                             )}
                           </div>
@@ -562,7 +564,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
                             <Package className="w-4 h-4 text-emerald-600" />
                             <span className="text-sm text-slate-700">{req.name}</span>
                             <Badge variant="outline" className="text-xs ml-auto bg-emerald-100 text-emerald-700 border-emerald-300">
-                              Confirmed
+                              {t('gear.confirmed')}
                             </Badge>
                           </div>
                         ))}
@@ -574,7 +576,7 @@ export default function MembersList({ members = [], currentUserRole, currentUser
 
               <DialogFooter>
                 <Button onClick={() => setSelectedMember(null)} className="w-full">
-                  Close
+                  {t('common.close')}
                 </Button>
               </DialogFooter>
             </DialogContent>

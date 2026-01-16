@@ -35,7 +35,9 @@ import {
   Tent
 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 import TripForm from "@/components/trips/TripForm";
 import MembersList from "@/components/trips/MembersList";
@@ -50,6 +52,9 @@ import MealPlanner from "@/components/trips/MealPlanner";
 import ExpenseTracker from "@/components/trips/ExpenseTracker";
 
 export default function TripDetails() {
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'fr' ? fr : enUS;
+  
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
   
@@ -175,11 +180,11 @@ export default function TripDetails() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50">
         <Tent className="w-16 h-16 text-slate-300 mb-4" />
-        <h2 className="text-xl font-semibold text-slate-800 mb-2">Trip not found</h2>
+        <h2 className="text-xl font-semibold text-slate-800 mb-2">{t('trip.tripNotFound')}</h2>
         <Link to={createPageUrl("CampingTrips")}>
           <Button variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Trips
+            {t('trip.backToTrips')}
           </Button>
         </Link>
       </div>
@@ -210,7 +215,7 @@ export default function TripDetails() {
           className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
         >
           <Edit3 className="w-4 h-4 mr-2" />
-          Edit Trip
+          {t('trip.editTrip')}
         </Button>
       )}
       {canDelete && (
@@ -230,7 +235,7 @@ export default function TripDetails() {
               className="text-red-600"
             >
               <Trash2 className="w-4 h-4 mr-2" />
-              Delete Trip
+              {t('trip.deleteTrip')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -263,7 +268,7 @@ export default function TripDetails() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Badge className={`${statusColors[trip.status]} border mb-4`}>
-              {trip.status}
+              {t(`trip.${trip.status}`)}
             </Badge>
 
             <div className="flex flex-wrap items-center gap-4 text-white/90">
@@ -278,8 +283,8 @@ export default function TripDetails() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 <span>
-                  {format(startDate, "MMM d")}
-                  {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
+                  {format(startDate, "MMM d", { locale: dateLocale })}
+                  {endDate && ` - ${format(endDate, "MMM d, yyyy", { locale: dateLocale })}`}
                 </span>
               </div>
             </div>
@@ -293,13 +298,13 @@ export default function TripDetails() {
         <div className="mb-8 flex justify-center overflow-x-auto">
           <Tabs value={sectionFilter} onValueChange={setSectionFilter}>
             <TabsList className="bg-white border border-slate-200 p-1 rounded-xl min-w-max">
-              <TabsTrigger value="all" className="rounded-lg px-6">All</TabsTrigger>
-              <TabsTrigger value="team" className="rounded-lg px-6">Team</TabsTrigger>
-              <TabsTrigger value="gear" className="rounded-lg px-6">Gear</TabsTrigger>
-              <TabsTrigger value="meals" className="rounded-lg px-6">Meals</TabsTrigger>
-              <TabsTrigger value="expenses" className="rounded-lg px-6">Expenses</TabsTrigger>
-              <TabsTrigger value="documents" className="rounded-lg px-6">Documents</TabsTrigger>
-              <TabsTrigger value="chat" className="rounded-lg px-6">Chat</TabsTrigger>
+              <TabsTrigger value="all" className="rounded-lg px-6">{t('common.all')}</TabsTrigger>
+              <TabsTrigger value="team" className="rounded-lg px-6">{t('sections.team')}</TabsTrigger>
+              <TabsTrigger value="gear" className="rounded-lg px-6">{t('sections.gear')}</TabsTrigger>
+              <TabsTrigger value="meals" className="rounded-lg px-6">{t('sections.meals')}</TabsTrigger>
+              <TabsTrigger value="expenses" className="rounded-lg px-6">{t('sections.expenses')}</TabsTrigger>
+              <TabsTrigger value="documents" className="rounded-lg px-6">{t('sections.documents')}</TabsTrigger>
+              <TabsTrigger value="chat" className="rounded-lg px-6">{t('sections.chat')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -317,7 +322,7 @@ export default function TripDetails() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <FileText className="w-5 h-5 text-slate-400" />
-                    <h3 className="font-semibold text-slate-800">Notes</h3>
+                    <h3 className="font-semibold text-slate-800">{t('common.notes')}</h3>
                   </div>
                   <p className="text-slate-600 whitespace-pre-wrap leading-relaxed">
                     {trip.notes}
@@ -473,14 +478,13 @@ export default function TripDetails() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this trip?</AlertDialogTitle>
+            <AlertDialogTitle>{t('trip.deleteTrip')}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete "{trip.name}" and all its packing items. 
-              This action cannot be undone.
+              {t('trip.deleteTripConfirm', { name: trip.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate()}
               className="bg-red-600 hover:bg-red-700"
@@ -488,7 +492,7 @@ export default function TripDetails() {
               {deleteMutation.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                "Delete Trip"
+                t('trip.deleteTrip')
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
