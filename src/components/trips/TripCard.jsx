@@ -3,13 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, CheckCircle2, Circle } from "lucide-react";
 import { format, differenceInDays, isPast, isFuture } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 
 export default function TripCard({ trip, index }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language === 'fr' ? fr : enUS;
   const startDate = new Date(trip.start_date);
   const endDate = trip.end_date ? new Date(trip.end_date) : null;
   const daysUntil = differenceInDays(startDate, new Date());
@@ -69,8 +71,8 @@ export default function TripCard({ trip, index }) {
             <div className="flex items-center gap-2 text-slate-500 mb-4">
               <Calendar className="w-4 h-4 text-amber-600" />
               <span className="text-sm">
-                {format(startDate, "MMM d")}
-                {endDate && ` - ${format(endDate, "MMM d, yyyy")}`}
+                {format(startDate, "MMM d", { locale: dateLocale })}
+                {endDate && ` - ${format(endDate, "MMM d, yyyy", { locale: dateLocale })}`}
               </span>
             </div>
           </CardContent>
