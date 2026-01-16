@@ -19,6 +19,7 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 import DocumentUpload from "@/components/documents/DocumentUpload";
 import PhotoUpload from "@/components/documents/PhotoUpload";
 import {
@@ -49,6 +50,7 @@ const categoryColors = {
 };
 
 export default function TripDocuments({ tripId }) {
+  const { t } = useTranslation();
   const [showUpload, setShowUpload] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
@@ -90,7 +92,7 @@ export default function TripDocuments({ tripId }) {
                 <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
                 <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-emerald-600" />
-                  Documents & Photos
+                  {t('documents.title')}
                   {documents.length > 0 && (
                     <Badge variant="outline">{documents.length}</Badge>
                   )}
@@ -100,17 +102,17 @@ export default function TripDocuments({ tripId }) {
                 <DropdownMenuTrigger asChild>
                   <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
                     <Plus className="w-4 h-4 mr-2" />
-                    Add
+                    {t('common.add')}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setShowUpload(true)}>
                     <FileText className="w-4 h-4 mr-2" />
-                    Upload Document
+                    {t('documents.uploadDocument')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setShowPhotoUpload(true)}>
                     <Camera className="w-4 h-4 mr-2" />
-                    Upload Photo
+                    {t('documents.uploadPhoto', 'Upload Photo')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -124,7 +126,7 @@ export default function TripDocuments({ tripId }) {
                 <div>
                   <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
                     <Camera className="w-5 h-5 text-pink-600" />
-                    Photos
+                    {t('documents.photos', 'Photos')}
                     <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
                       {photos.length}
                     </Badge>
@@ -175,7 +177,7 @@ export default function TripDocuments({ tripId }) {
                 <div>
                   <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
                     <FileText className="w-5 h-5 text-emerald-600" />
-                    Documents
+                    {t('documents.title')}
                     <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
                       {files.length}
                     </Badge>
@@ -204,7 +206,7 @@ export default function TripDocuments({ tripId }) {
                                   <p className="font-medium text-slate-800 truncate">{doc.name}</p>
                                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                                     <Badge variant="outline" className={`text-xs ${colorClass} border`}>
-                                      {doc.category.replace('_', ' ')}
+                                      {t(`documents.categories.${doc.category}`)}
                                     </Badge>
                                   </div>
                                   {doc.notes && (
