@@ -109,7 +109,8 @@ const resources = {
         "unassigned": "Unassigned Members",
         "summary": "Watercraft Summary",
         "totalCapacity": "Total Capacity",
-        "totalAssigned": "Total Assigned"
+        "totalAssigned": "Total Assigned",
+        "full": "Full"
       },
       "gear": {
         "title": "Shared Gear",
@@ -346,7 +347,8 @@ const resources = {
         "unassigned": "Membres non assignés",
         "summary": "Résumé des embarcations",
         "totalCapacity": "Capacité totale",
-        "totalAssigned": "Total assigné"
+        "totalAssigned": "Total assigné",
+        "full": "Complet"
       },
       "gear": {
         "title": "Équipement partagé",

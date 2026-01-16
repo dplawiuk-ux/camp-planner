@@ -37,6 +37,7 @@ import {
   UserPlus
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 import GearRequestDialog from "./GearRequestDialog";
 import ConfirmGearDialog from "./ConfirmGearDialog";
 
@@ -61,6 +62,7 @@ const gearColors = {
 };
 
 export default function GearList({ items = [], onUpdate, members = [], requests = [], onUpdateRequests, currentUserRole, currentUserEmail }) {
+  const { t } = useTranslation();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -251,7 +253,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
               <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
               <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                 <Package className="w-5 h-5 text-emerald-600" />
-                Shared Gear
+                {t('gear.title')}
                 {filteredItems.length > 0 && (
                   <Badge variant="outline">{filteredItems.length}</Badge>
                 )}
@@ -287,7 +289,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-800 flex items-center gap-2">
               <MessageSquarePlus className="w-5 h-5 text-amber-600" />
-              Gear Requests
+              {t('gear.requests')}
               <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
                 {filteredRequests.filter(r => r.status === 'open' || r.status === 'assigned').length}
               </Badge>
@@ -328,7 +330,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                             <p className="font-medium text-slate-800">{request.name}</p>
                             {request.status === 'open' && (
                               <Badge className="bg-amber-100 text-amber-800 border-amber-200">
-                                Open
+                                {t('gear.openRequests', 'Open')}
                               </Badge>
                             )}
                             {request.status === 'assigned' && (
@@ -391,7 +393,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                               className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 h-8 mt-2"
                             >
                               <UserPlus className="w-3 h-3 mr-1" />
-                              I'll bring this
+                              {t('gear.volunteer')}
                             </Button>
                           )}
                         </div>

@@ -30,8 +30,10 @@ import { Waves, Plus, Users, Trash2, UserPlus, X, Package, ChevronDown } from "l
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useTranslation } from 'react-i18next';
 
 export default function WatercraftAllocation({ gearItems = [], members = [], onUpdate }) {
+  const { t } = useTranslation();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newWatercraft, setNewWatercraft] = useState({ name: '', capacity: 2 });
   const [assigningTo, setAssigningTo] = useState(null);
@@ -157,10 +159,10 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
               <div>
                 <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                   <Waves className="w-5 h-5 text-blue-600" />
-                  Watercraft
+                  {t('watercraft.title')}
                 </CardTitle>
                 <p className="text-sm text-slate-500 mt-1">
-                  {totalAssigned} of {allMembers.length} members assigned • {totalCapacity} total capacity
+                  {totalAssigned} {t('watercraft.assigned').toLowerCase()} / {allMembers.length} • {totalCapacity} {t('watercraft.totalCapacity').toLowerCase()}
                 </p>
               </div>
             </CollapsibleTrigger>
@@ -211,7 +213,7 @@ export default function WatercraftAllocation({ gearItems = [], members = [], onU
                         </Badge>
                         {isFull && (
                           <Badge className="text-xs bg-blue-100 text-blue-700">
-                            Full
+                            {t('watercraft.full', 'Full')}
                           </Badge>
                         )}
                       </div>

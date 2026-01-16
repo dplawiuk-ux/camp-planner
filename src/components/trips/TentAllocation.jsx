@@ -30,8 +30,10 @@ import { Tent, Plus, Users, Trash2, UserPlus, X, Package, ChevronDown } from "lu
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useTranslation } from 'react-i18next';
 
 export default function TentAllocation({ items = [], members = [], onUpdate }) {
+  const { t } = useTranslation();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newTent, setNewTent] = useState({ name: '', capacity: 2 });
   const [assigningTo, setAssigningTo] = useState(null);
@@ -158,10 +160,10 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
               <div>
                 <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                   <Tent className="w-5 h-5 text-emerald-600" />
-                  Sleeping Arrangements
+                  {t('tent.title')}
                 </CardTitle>
                 <p className="text-sm text-slate-500 mt-1">
-                  {totalAssigned} of {allMembers.length} members assigned • {totalCapacity} total capacity
+                  {totalAssigned} {t('tent.assigned').toLowerCase()} / {allMembers.length} • {totalCapacity} {t('tent.totalCapacity').toLowerCase()}
                 </p>
               </div>
             </CollapsibleTrigger>
@@ -212,7 +214,7 @@ export default function TentAllocation({ items = [], members = [], onUpdate }) {
                         </Badge>
                         {isFull && (
                           <Badge className="text-xs bg-emerald-100 text-emerald-700">
-                            Full
+                            {t('watercraft.full', 'Full')}
                           </Badge>
                         )}
                       </div>

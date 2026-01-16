@@ -27,10 +27,12 @@ import {
 } from "@/components/ui/collapsible";
 import { UtensilsCrossed, Plus, Trash2, ChevronDown, Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'dessert'];
 
 export default function MealPlanner({ tripId, members = [], startDate, endDate }) {
+  const { t } = useTranslation();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showSharedDialog, setShowSharedDialog] = useState(false);
   const [newItem, setNewItem] = useState({ item_name: '', day_number: 1, meal_type: 'breakfast', assigned_member_id: '' });
@@ -196,7 +198,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                 <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? '' : '-rotate-90'}`} />
                 <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                   <UtensilsCrossed className="w-5 h-5 text-orange-600" />
-                  Meal Plan
+                  {t('meals.title')}
                 </CardTitle>
               </CollapsibleTrigger>
               <Button
@@ -213,13 +215,13 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
             <CardContent className="space-y-6">
               {Array.from({ length: tripDays }, (_, i) => i + 1).map((day) => (
                 <div key={day} className="border border-slate-200 rounded-lg p-4 bg-white">
-                  <h3 className="font-semibold text-slate-800 mb-4">Day {day}</h3>
+                  <h3 className="font-semibold text-slate-800 mb-4">{t('meals.dayNumber', { number: day })}</h3>
                   <div className="space-y-4">
                     {mealTypes.map((mealType) => (
                       <div key={mealType} className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="capitalize">
-                            {mealType}
+                            {t(`meals.types.${mealType}`)}
                           </Badge>
                         </div>
                         <div className="ml-4 space-y-1">
@@ -345,7 +347,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                               className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1"
                             >
                               <Plus className="w-3 h-3" />
-                              Add item
+                              {t('common.add')} {t('meals.itemName').toLowerCase()}
                             </button>
                           )}
                         </div>
@@ -366,7 +368,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
             <div className="flex items-center justify-between">
               <CollapsibleTrigger className="flex items-center gap-2 hover:opacity-70 transition-opacity">
                 <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isSharedOpen ? '' : '-rotate-90'}`} />
-                <CardTitle className="text-xl font-semibold text-slate-800">Shared Food</CardTitle>
+                <CardTitle className="text-xl font-semibold text-slate-800">{t('meals.sharedFood')}</CardTitle>
               </CollapsibleTrigger>
               <Button
                 onClick={() => setShowSharedDialog(true)}
@@ -383,7 +385,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
               {/* Open Requests */}
               {sharedFoodRequests.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-700 mb-3">Open Requests</h4>
+                  <h4 className="text-sm font-medium text-slate-700 mb-3">{t('meals.openRequests')}</h4>
                   <div className="space-y-2">
                     {sharedFoodRequests.map((item) => (
                       <div
@@ -396,7 +398,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
                             onValueChange={(memberId) => handleAcceptRequest(item.id, memberId)}
                           >
                             <SelectTrigger className="h-8 w-32 text-xs">
-                              <SelectValue placeholder="I'll bring it" />
+                              <SelectValue placeholder={t('gear.volunteer')} />
                             </SelectTrigger>
                             <SelectContent>
                               {members.map((member) => (
@@ -424,7 +426,7 @@ export default function MealPlanner({ tripId, members = [], startDate, endDate }
               {/* Confirmed Items */}
               {sharedFoodConfirmed.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-700 mb-3">Confirmed</h4>
+                  <h4 className="text-sm font-medium text-slate-700 mb-3">{t('meals.confirmedItems')}</h4>
                   <div className="space-y-2">
                     {sharedFoodConfirmed.map((item) => (
                       <div
