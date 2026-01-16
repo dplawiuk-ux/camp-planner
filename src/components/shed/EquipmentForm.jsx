@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Package } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import ImageUpload from "@/components/shared/ImageUpload";
 
 const equipmentTypes = [
@@ -19,6 +20,7 @@ const equipmentTypes = [
 ];
 
 export default function EquipmentForm({ open, onClose, onSubmit, initialData, isLoading }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(initialData || {
     name: "",
     type: "tents",
@@ -62,16 +64,16 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
             <Package className="w-5 h-5 text-emerald-600" />
-            {initialData ? "Edit Equipment" : "Add Equipment"}
+            {initialData ? t('shed.editEquipment') : t('shed.addEquipment')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Equipment Name</Label>
+            <Label htmlFor="name">{t('shed.equipmentName')}</Label>
             <Input
               id="name"
-              placeholder="e.g., Big Red Tent"
+              placeholder={t('shed.namePlaceholder', 'e.g., Big Red Tent')}
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               className="h-11"
@@ -80,15 +82,15 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
+            <Label htmlFor="type">{t('shed.equipmentType')}</Label>
             <Select value={formData.type} onValueChange={(value) => handleChange("type", value)}>
               <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder={t('shed.selectType', 'Select type')} />
               </SelectTrigger>
               <SelectContent>
                 {equipmentTypes.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
-                    {type.label}
+                    {t(`gear.types.${type.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -98,20 +100,20 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
           {showCapacity && (
             <div className="space-y-2">
               <Label htmlFor="capacity">
-                Capacity {formData.type === 'tents' && "(people)"}
-                {formData.type === 'watercraft' && "(people)"}
+                {t('tent.capacity')} {formData.type === 'tents' && `(${t('common.people', 'people')})`}
+                {formData.type === 'watercraft' && `(${t('common.people', 'people')})`}
               </Label>
               <Select 
                 value={String(formData.capacity || 2)} 
                 onValueChange={(value) => handleChange("capacity", parseInt(value))}
               >
                 <SelectTrigger className="h-11">
-                  <SelectValue placeholder="Select capacity" />
+                  <SelectValue placeholder={t('shed.selectCapacity', 'Select capacity')} />
                 </SelectTrigger>
                 <SelectContent side="bottom" align="start">
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <SelectItem key={num} value={String(num)}>
-                      {num} {num === 1 ? 'person' : 'people'}
+                      {num} {num === 1 ? t('common.person', 'person') : t('common.people', 'people')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -120,16 +122,16 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
           )}
 
           <ImageUpload
-            label="Image (optional)"
+            label={t('shed.imageOptional', 'Image (optional)')}
             value={formData.image_url}
             onChange={(url) => handleChange("image_url", url)}
           />
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
+            <Label htmlFor="notes">{t('shed.notesOptional', 'Notes (optional)')}</Label>
             <Textarea
               id="notes"
-              placeholder="Brand, condition, special features..."
+              placeholder={t('shed.notesPlaceholder', 'Brand, condition, special features...')}
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
               className="min-h-20 resize-none"
@@ -138,7 +140,7 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
 
           <DialogFooter className="gap-3 pt-2 pb-6">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -148,10 +150,10 @@ export default function EquipmentForm({ open, onClose, onSubmit, initialData, is
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  {t('common.saving')}...
                 </>
               ) : (
-                initialData ? "Save Changes" : "Add Equipment"
+                initialData ? t('common.saveChanges') : t('shed.addEquipment')
               )}
             </Button>
           </DialogFooter>
