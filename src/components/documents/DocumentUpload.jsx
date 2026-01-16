@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Upload, FileText } from "lucide-react";
 
 export default function DocumentUpload({ open, onClose, onSubmit, isLoading, trips = [] }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     category: "other",
@@ -88,13 +90,13 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
             <FileText className="w-5 h-5 text-emerald-600" />
-            Upload Document
+            {t('documents.uploadDocument')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 py-4">
           <div className="space-y-2">
-            <Label htmlFor="file">File</Label>
+            <Label htmlFor="file">{t('documents.file', 'File')}</Label>
             <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -125,7 +127,7 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
                 ) : (
                   <div>
                     <p className="text-slate-700 mb-1">
-                      <span className="font-medium text-emerald-600">Click to upload</span> or drag and drop
+                      <span className="font-medium text-emerald-600">{t('documents.clickToUpload', 'Click to upload')}</span> {t('documents.orDragDrop', 'or drag and drop')}
                     </p>
                     <p className="text-xs text-slate-500">
                       PDF, JPG, PNG, GIF, WEBP
@@ -137,10 +139,10 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Document Name</Label>
+            <Label htmlFor="name">{t('documents.documentName')}</Label>
             <Input
               id="name"
-              placeholder="e.g., Park Entry Permit"
+              placeholder={t('documents.documentNamePlaceholder', 'e.g., Park Entry Permit')}
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               className="h-11"
@@ -149,30 +151,30 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t('expenses.category')}</Label>
             <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
               <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder={t('documents.selectCategory', 'Select category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="permit">Permit</SelectItem>
-                <SelectItem value="booking">Booking/Reservation</SelectItem>
-                <SelectItem value="parking_pass">Parking Pass</SelectItem>
-                <SelectItem value="map">Map</SelectItem>
-                <SelectItem value="directions">Directions</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="permit">{t('documents.categories.permit')}</SelectItem>
+                <SelectItem value="booking">{t('documents.categories.booking')}</SelectItem>
+                <SelectItem value="parking_pass">{t('documents.categories.parking_pass')}</SelectItem>
+                <SelectItem value="map">{t('documents.categories.map')}</SelectItem>
+                <SelectItem value="directions">{t('documents.categories.directions')}</SelectItem>
+                <SelectItem value="other">{t('documents.categories.other')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trip">Associated Trip (optional)</Label>
+            <Label htmlFor="trip">{t('documents.associatedTrip', 'Associated Trip (optional)')}</Label>
             <Select value={formData.trip_id} onValueChange={(value) => handleChange("trip_id", value)}>
               <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select trip (optional)" />
+                <SelectValue placeholder={t('documents.selectTripOptional', 'Select trip (optional)')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={null}>No trip</SelectItem>
+                <SelectItem value={null}>{t('documents.noTrip', 'No trip')}</SelectItem>
                 {trips.map((trip) => (
                   <SelectItem key={trip.id} value={trip.id}>
                     {trip.name}
@@ -183,10 +185,10 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
+            <Label htmlFor="notes">{t('documents.notesOptional', 'Notes (optional)')}</Label>
             <Textarea
               id="notes"
-              placeholder="Additional details..."
+              placeholder={t('documents.additionalDetails', 'Additional details...')}
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
               className="min-h-20 resize-none"
@@ -201,7 +203,7 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
               className="flex-1"
               disabled={uploading || isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -211,10 +213,10 @@ export default function DocumentUpload({ open, onClose, onSubmit, isLoading, tri
               {uploading || isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Uploading...
+                  {t('documents.uploading', 'Uploading')}...
                 </>
               ) : (
-                "Upload Document"
+                t('documents.uploadDocument')
               )}
             </Button>
           </DialogFooter>
