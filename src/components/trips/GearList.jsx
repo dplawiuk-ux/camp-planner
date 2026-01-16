@@ -335,12 +335,12 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                             )}
                             {request.status === 'assigned' && (
                               <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                                Assigned
+                                {t('gear.assigned', 'Assigned')}
                               </Badge>
                             )}
                             {request.status === 'confirmed' && (
                               <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
-                                Confirmed
+                                {t('gear.confirmed')}
                               </Badge>
                             )}
                           </div>
@@ -370,7 +370,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                                 className="bg-emerald-600 hover:bg-emerald-700 h-8"
                               >
                                 <Check className="w-3 h-3 mr-1" />
-                                Confirm
+                                {t('common.confirm')}
                               </Button>
                               <Button
                                 size="sm"
@@ -379,7 +379,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                                 className="border-red-300 text-red-700 hover:bg-red-50 h-8"
                               >
                                 <X className="w-3 h-3 mr-1" />
-                                Decline
+                                {t('meals.decline')}
                               </Button>
                             </div>
                           )}
@@ -411,7 +411,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                                 className="text-red-600"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Remove Request
+                                {t('gear.removeRequest', 'Remove Request')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -431,8 +431,8 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-2xl mb-4">
               <Package className="w-8 h-8 text-slate-400" />
             </div>
-            <p className="text-slate-600 mb-2">No shared gear or requests yet</p>
-            <p className="text-sm text-slate-500">Add items from your gear shed or create new ones</p>
+            <p className="text-slate-600 mb-2">{t('gear.noGearOrRequests', 'No shared gear or requests yet')}</p>
+            <p className="text-sm text-slate-500">{t('gear.addItemsHelp', 'Add items from your gear shed or create new ones')}</p>
           </div>
         ) : filteredItems.length > 0 ? (
           <div className="space-y-6">
@@ -469,12 +469,12 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                               <p className="font-medium text-slate-800">{item.name}</p>
                               {item.is_rental && (
                                 <Badge variant="outline" className="text-xs border-amber-300 bg-amber-50 text-amber-700">
-                                  Rental
+                                  {t('gear.rental')}
                                 </Badge>
                               )}
                               {item.capacity && (
                                 <Badge variant="outline" className="text-xs">
-                                  Capacity: {item.capacity}
+                                  {t('tent.capacity')}: {item.capacity}
                                 </Badge>
                               )}
                             </div>
@@ -507,14 +507,14 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => setAssigningItem(item)}>
                                 <Users className="w-4 h-4 mr-2" />
-                                Assign Members
+                                {t('gear.assignMembers')}
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => handleRemove(item.id)}
                                 className="text-red-600"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Remove
+                                {t('common.remove')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -535,15 +535,15 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Shared Gear</DialogTitle>
+            <DialogTitle>{t('gear.addGear')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             {/* Search Gear Shed */}
             <div>
-              <Label>From Your Gear Shed</Label>
+              <Label>{t('gear.fromYourShed', 'From Your Gear Shed')}</Label>
               <Input
-                placeholder="Search your gear..."
+                placeholder={t('gear.searchYourGear', 'Search your gear...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="mt-2"
@@ -562,7 +562,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                       </button>
                     ))
                   ) : (
-                    <p className="text-sm text-slate-500 p-3">No matching items in your gear shed</p>
+                    <p className="text-sm text-slate-500 p-3">{t('gear.noMatchingItems', 'No matching items in your gear shed')}</p>
                   )}
                 </div>
               )}
@@ -573,16 +573,16 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-slate-500">Or add new</span>
+                <span className="bg-white px-2 text-slate-500">{t('gear.orAddNew', 'Or add new')}</span>
               </div>
             </div>
 
             {/* Add New Shared Gear */}
             <div className="space-y-4">
               <div>
-                <Label>Item Name</Label>
+                <Label>{t('gear.itemName', 'Item Name')}</Label>
                 <Input
-                  placeholder="e.g., Coleman Stove"
+                  placeholder={t('gear.itemNamePlaceholder', 'e.g., Coleman Stove')}
                   value={newItemData.name}
                   onChange={(e) => setNewItemData({...newItemData, name: e.target.value})}
                   className="mt-2"
@@ -590,7 +590,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
               </div>
 
               <div>
-                <Label>Type</Label>
+                <Label>{t('gear.gearType')}</Label>
                 <Select 
                   value={newItemData.type} 
                   onValueChange={(value) => setNewItemData({...newItemData, type: value})}
@@ -599,24 +599,24 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tents">Tents</SelectItem>
-                    <SelectItem value="sleeping_pads">Sleeping Pads</SelectItem>
-                    <SelectItem value="sleeping_bags">Sleeping Bags</SelectItem>
-                    <SelectItem value="kitchen">Kitchen</SelectItem>
-                    <SelectItem value="fire">Fire</SelectItem>
-                    <SelectItem value="watercraft">Watercraft</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="tents">{t('gear.types.tents')}</SelectItem>
+                    <SelectItem value="sleeping_pads">{t('gear.types.sleeping_pads', 'Sleeping Pads')}</SelectItem>
+                    <SelectItem value="sleeping_bags">{t('gear.types.sleeping_bags', 'Sleeping Bags')}</SelectItem>
+                    <SelectItem value="kitchen">{t('gear.types.kitchen')}</SelectItem>
+                    <SelectItem value="fire">{t('gear.types.fire')}</SelectItem>
+                    <SelectItem value="watercraft">{t('gear.types.watercraft')}</SelectItem>
+                    <SelectItem value="other">{t('gear.types.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {['tents', 'watercraft'].includes(newItemData.type) && (
                 <div>
-                  <Label>Capacity (people)</Label>
+                  <Label>{t('gear.capacityPeople', 'Capacity (people)')}</Label>
                   <Input
                     type="number"
                     min="1"
-                    placeholder="e.g., 4"
+                    placeholder={t('gear.capacityPlaceholder', 'e.g., 4')}
                     value={newItemData.capacity}
                     onChange={(e) => setNewItemData({...newItemData, capacity: e.target.value})}
                     className="mt-2"
@@ -631,7 +631,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                   onCheckedChange={(checked) => setNewItemData({...newItemData, is_rental: checked})}
                 />
                 <Label htmlFor="is_rental" className="text-sm font-normal cursor-pointer">
-                  This is a rental
+                  {t('gear.isRental', 'This is a rental')}
                 </Label>
               </div>
 
@@ -642,7 +642,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                   onCheckedChange={(checked) => setNewItemData({...newItemData, add_to_shed: checked})}
                 />
                 <Label htmlFor="add_to_shed" className="text-sm font-normal cursor-pointer">
-                  Add to my Gear Shed
+                  {t('gear.addToMyShed', 'Add to my Gear Shed')}
                 </Label>
               </div>
             </div>
@@ -650,14 +650,14 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleAddNew}
               disabled={!newItemData.name}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
-              Add to Trip
+              {t('gear.addToTrip', 'Add to Trip')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -667,7 +667,7 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
       <Dialog open={!!assigningItem} onOpenChange={() => setAssigningItem(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Assign Members to {assigningItem?.name}</DialogTitle>
+            <DialogTitle>{t('gear.assignMembersTo', 'Assign Members to')} {assigningItem?.name}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-2 py-4">
@@ -690,12 +690,12 @@ export default function GearList({ items = [], onUpdate, members = [], requests 
                 );
               })
             ) : (
-              <p className="text-sm text-slate-500 text-center py-8">No members to assign</p>
+              <p className="text-sm text-slate-500 text-center py-8">{t('gear.noMembersToAssign', 'No members to assign')}</p>
             )}
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setAssigningItem(null)}>Done</Button>
+            <Button onClick={() => setAssigningItem(null)}>{t('common.done')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
