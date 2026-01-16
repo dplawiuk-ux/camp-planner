@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,17 +32,18 @@ import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import ImageUpload from "@/components/shared/ImageUpload";
 
-const categoryConfig = {
-  food: { label: "Food", color: "bg-orange-100 text-orange-700 border-orange-200" },
-  accommodation: { label: "Accommodation", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  gear_rental: { label: "Gear Rental", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  transportation: { label: "Transportation", color: "bg-green-100 text-green-700 border-green-200" },
-  permits: { label: "Permits", color: "bg-amber-100 text-amber-700 border-amber-200" },
-  activities: { label: "Activities", color: "bg-pink-100 text-pink-700 border-pink-200" },
-  other: { label: "Other", color: "bg-slate-100 text-slate-700 border-slate-200" }
-};
-
 export default function ExpenseTracker({ tripId, members = [], currentUserEmail }) {
+  const { t } = useTranslation();
+  
+  const categoryConfig = {
+    food: { label: t('expenses.categories.food'), color: "bg-orange-100 text-orange-700 border-orange-200" },
+    accommodation: { label: t('expenses.categories.accommodation'), color: "bg-purple-100 text-purple-700 border-purple-200" },
+    gear_rental: { label: t('expenses.categories.gear_rental'), color: "bg-blue-100 text-blue-700 border-blue-200" },
+    transportation: { label: t('expenses.categories.transportation'), color: "bg-green-100 text-green-700 border-green-200" },
+    permits: { label: t('expenses.categories.permits'), color: "bg-amber-100 text-amber-700 border-amber-200" },
+    activities: { label: t('expenses.categories.activities'), color: "bg-pink-100 text-pink-700 border-pink-200" },
+    other: { label: t('expenses.categories.other'), color: "bg-slate-100 text-slate-700 border-slate-200" }
+  };
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [newExpense, setNewExpense] = useState({
@@ -220,10 +222,10 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                 <div>
                   <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-green-600" />
-                    Expense Tracker
+                    {t('expenses.title')}
                   </CardTitle>
                   <p className="text-sm text-slate-500 mt-1">
-                    ${totalExpenses.toFixed(2)} total • {expenses.length} expense{expenses.length !== 1 ? 's' : ''}
+                    ${totalExpenses.toFixed(2)} {t('expenses.total')} • {expenses.length} {t('expenses.expense', { count: expenses.length })}
                   </p>
                 </div>
               </CollapsibleTrigger>
@@ -236,7 +238,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                   className="h-8"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? 'Exporting...' : 'Export'}
+                  {isExporting ? t('expenses.exporting', 'Exporting') : t('expenses.export')}
                 </Button>
                 <Button
                   onClick={() => setShowAddDialog(true)}
@@ -256,7 +258,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                 <div className="bg-slate-50 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                     <Users className="w-4 h-4" />
-                    Member Balances
+                    {t('expenses.memberBalances')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {Object.values(memberBalances).map((balance) => {
@@ -266,15 +268,15 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                           <p className="font-medium text-slate-800 text-sm mb-2">{balance.name}</p>
                           <div className="space-y-1 text-xs">
                             <div className="flex justify-between text-slate-600">
-                              <span>Paid:</span>
+                              <span>{t('expenses.paid')}:</span>
                               <span className="font-medium">${balance.paid.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-slate-600">
-                              <span>Owes:</span>
+                              <span>{t('expenses.owes')}:</span>
                               <span className="font-medium">${balance.owes.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between pt-1 border-t border-slate-200">
-                              <span className="font-semibold">Balance:</span>
+                              <span className="font-semibold">{t('expenses.balance')}:</span>
                               <span className={`font-semibold ${netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 {netBalance >= 0 ? '+' : ''}{netBalance.toFixed(2)}
                               </span>
@@ -291,7 +293,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
               {expenses.length === 0 ? (
                 <div className="text-center py-8 text-slate-500">
                   <DollarSign className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p>No expenses yet</p>
+                  <p>{t('expenses.noExpenses')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -329,9 +331,9 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                                     )}
                                   </div>
                                   <div className="flex items-center gap-3 text-xs text-slate-500">
-                                    <span>Paid by {getMemberName(expense.paid_by_member_id)}</span>
+                                    <span>{t('expenses.paidBy')} {getMemberName(expense.paid_by_member_id)}</span>
                                     {expense.split_between?.length > 0 && (
-                                      <span>• Split {expense.split_between.length} ways</span>
+                                      <span>• {t('expenses.splitWays', { count: expense.split_between.length })}</span>
                                     )}
                                     {expense.date && (
                                       <span>• {format(new Date(expense.date), 'MMM d')}</span>
@@ -375,14 +377,14 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
       }}>
         <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingExpense ? 'Edit Expense' : 'Add Expense'}</DialogTitle>
+            <DialogTitle>{editingExpense ? t('expenses.editExpense') : t('expenses.addExpense')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('expenses.description')}</Label>
               <Input
                 id="description"
-                placeholder="e.g., Groceries at camp"
+                placeholder={t('expenses.descriptionPlaceholder', 'e.g., Groceries at camp')}
                 value={newExpense.description}
                 onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
               />
@@ -390,7 +392,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="amount">Amount ($)</Label>
+                <Label htmlFor="amount">{t('expenses.amount')}</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -401,7 +403,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">{t('expenses.date')}</Label>
                 <Input
                   id="date"
                   type="date"
@@ -412,13 +414,13 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">{t('expenses.category')}</Label>
               <Select
                 value={newExpense.category}
                 onValueChange={(value) => setNewExpense({ ...newExpense, category: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t('expenses.selectCategory', 'Select category')} />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(categoryConfig).map(([key, config]) => (
@@ -431,13 +433,13 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="paid-by">Paid By</Label>
+              <Label htmlFor="paid-by">{t('expenses.paidBy')}</Label>
               <Select
                 value={newExpense.paid_by_member_id}
                 onValueChange={(value) => setNewExpense({ ...newExpense, paid_by_member_id: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select member" />
+                  <SelectValue placeholder={t('expenses.selectMember', 'Select member')} />
                 </SelectTrigger>
                 <SelectContent>
                   {expenseMembers.map((member) => (
@@ -450,7 +452,7 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
             </div>
 
             <div className="space-y-2">
-              <Label>Split Between</Label>
+              <Label>{t('expenses.splitBetween')}</Label>
               <div className="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-3">
                 {expenseMembers.map((member) => (
                   <div key={member.id} className="flex items-center space-x-2">
@@ -470,13 +472,13 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
               </div>
               {newExpense.split_between.length > 0 && (
                 <p className="text-xs text-slate-500">
-                  ${newExpense.amount ? (parseFloat(newExpense.amount) / newExpense.split_between.length).toFixed(2) : '0.00'} per person
+                  ${newExpense.amount ? (parseFloat(newExpense.amount) / newExpense.split_between.length).toFixed(2) : '0.00'} {t('expenses.perPerson')}
                 </p>
               )}
             </div>
 
             <ImageUpload
-              label="Receipt (optional)"
+              label={t('expenses.receiptOptional', 'Receipt (optional)')}
               value={newExpense.receipt_url}
               onChange={(url) => setNewExpense({ ...newExpense, receipt_url: url })}
             />
@@ -487,14 +489,14 @@ export default function ExpenseTracker({ tripId, members = [], currentUserEmail 
               setEditingExpense(null);
               resetForm();
             }}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={!newExpense.description || !newExpense.amount || !newExpense.paid_by_member_id || createMutation.isPending || updateMutation.isPending}
               className="bg-green-600 hover:bg-green-700"
             >
-              {editingExpense ? 'Update' : 'Add'} Expense
+              {editingExpense ? t('common.update') : t('common.add')} {t('expenses.expense', { count: 1 })}
             </Button>
           </DialogFooter>
         </DialogContent>
