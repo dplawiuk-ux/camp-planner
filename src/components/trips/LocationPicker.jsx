@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { useTranslation } from 'react-i18next';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ function LocationMarker({ position, onPositionChange }) {
 }
 
 export default function LocationPicker({ location, lat, lng, onChange }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState(location || "");
   const [position, setPosition] = useState(
     lat && lng ? { lat, lng } : { lat: 37.7749, lng: -122.4194 } // Default to SF
@@ -114,13 +116,13 @@ export default function LocationPicker({ location, lat, lng, onChange }) {
     <div className="space-y-3">
       <Label htmlFor="location" className="text-sm font-medium text-slate-700 flex items-center gap-2">
         <MapPin className="w-4 h-4 text-emerald-600" />
-        Location
+        {t('trip.location')}
       </Label>
       
       <div className="flex gap-2">
         <Input
           id="location"
-          placeholder="Search for a place..."
+          placeholder={t('trip.searchPlacePlaceholder', 'Search for a place...')}
           value={searchQuery}
           onChange={(e) => {
             const newValue = e.target.value;
@@ -147,7 +149,7 @@ export default function LocationPicker({ location, lat, lng, onChange }) {
           variant="outline"
           onClick={handleCurrentLocation}
           className="h-11"
-          title="Use current location"
+          title={t('trip.useCurrentLocation', 'Use current location')}
         >
           <Locate className="w-4 h-4" />
         </Button>
@@ -171,7 +173,7 @@ export default function LocationPicker({ location, lat, lng, onChange }) {
       </div>
       
       <p className="text-xs text-slate-500">
-        Click on the map to drop a pin or search for a location
+        {t('trip.mapInstructions', 'Click on the map to drop a pin or search for a location')}
       </p>
     </div>
   );
