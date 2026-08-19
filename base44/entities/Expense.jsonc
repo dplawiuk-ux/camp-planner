@@ -1,0 +1,60 @@
+{
+  "name": "Expense",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string",
+      "description": "ID of the trip"
+    },
+    "description": {
+      "type": "string",
+      "description": "What was purchased"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Cost in dollars"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "food",
+        "accommodation",
+        "gear_rental",
+        "transportation",
+        "permits",
+        "activities",
+        "other"
+      ],
+      "default": "other",
+      "description": "Expense category"
+    },
+    "paid_by_member_id": {
+      "type": "string",
+      "description": "ID of member who paid"
+    },
+    "split_between": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Member IDs to split cost between",
+      "default": []
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of expense"
+    },
+    "receipt_url": {
+      "type": "string",
+      "description": "URL to receipt image"
+    }
+  },
+  "required": [
+    "trip_id",
+    "description",
+    "amount",
+    "category",
+    "paid_by_member_id"
+  ]
+}

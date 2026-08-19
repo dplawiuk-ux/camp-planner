@@ -1,0 +1,35 @@
+{
+  "name": "ChatMessage",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string",
+      "description": "ID of the trip"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "general"
+      ],
+      "description": "Chat channel - admin for leads/admins only, general for all"
+    },
+    "message": {
+      "type": "string",
+      "description": "The message content"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who sent the message"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of the user who sent the message"
+    }
+  },
+  "required": [
+    "trip_id",
+    "channel",
+    "message"
+  ]
+}

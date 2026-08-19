@@ -1,0 +1,39 @@
+{
+  "name": "Equipment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the equipment item"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "tents",
+        "watercraft",
+        "sleeping",
+        "fire",
+        "water",
+        "kitchen",
+        "other"
+      ],
+      "description": "Type of equipment"
+    },
+    "capacity": {
+      "type": "number",
+      "description": "Capacity for items like tents (people), coolers (liters), etc."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional details about the item"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Photo of the equipment"
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ]
+}

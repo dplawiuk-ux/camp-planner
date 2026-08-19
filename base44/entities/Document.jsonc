@@ -1,0 +1,45 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the document"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of the uploaded file"
+    },
+    "file_type": {
+      "type": "string",
+      "description": "MIME type or extension of the file"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "permit",
+        "booking",
+        "parking_pass",
+        "map",
+        "directions",
+        "photo",
+        "other"
+      ],
+      "default": "other",
+      "description": "Category of document"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "ID of the related trip (optional)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the document"
+    }
+  },
+  "required": [
+    "name",
+    "file_url",
+    "category"
+  ]
+}

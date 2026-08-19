@@ -1,0 +1,47 @@
+{
+  "name": "TripMember",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string",
+      "description": "ID of the trip"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the invited user (optional for offline members)"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of the user"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "admin",
+        "guest",
+        "jr_camper"
+      ],
+      "default": "guest",
+      "description": "User's role in the trip"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted"
+      ],
+      "default": "pending",
+      "description": "Invitation status"
+    },
+    "excluded_from_expenses": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this member is excluded from expense splitting (e.g., children)"
+    }
+  },
+  "required": [
+    "trip_id",
+    "role"
+  ]
+}

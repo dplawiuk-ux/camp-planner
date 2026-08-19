@@ -1,0 +1,17 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "alternate_emails": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "description": "Additional email addresses associated with this user account"
+    }
+  },
+  "required": [
+    "alternate_emails"
+  ]
+}

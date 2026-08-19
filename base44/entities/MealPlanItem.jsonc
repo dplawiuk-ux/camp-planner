@@ -1,0 +1,51 @@
+{
+  "name": "MealPlanItem",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string",
+      "description": "ID of the trip"
+    },
+    "day_number": {
+      "type": "number",
+      "description": "Day number of the trip"
+    },
+    "meal_type": {
+      "type": "string",
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "dessert"
+      ],
+      "description": "Type of meal"
+    },
+    "item_name": {
+      "type": "string",
+      "description": "Name of the food item"
+    },
+    "assigned_member_id": {
+      "type": "string",
+      "description": "ID of the member responsible for this item"
+    },
+    "is_shared_food": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a shared food item"
+    },
+    "request_status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "accepted",
+        "declined"
+      ],
+      "default": "open",
+      "description": "Status for shared food requests"
+    }
+  },
+  "required": [
+    "trip_id",
+    "item_name"
+  ]
+}

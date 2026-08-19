@@ -1,0 +1,213 @@
+{
+  "name": "Trip",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the camping trip"
+    },
+    "location": {
+      "type": "string",
+      "description": "Campsite or destination name"
+    },
+    "location_lat": {
+      "type": "number",
+      "description": "Latitude coordinate"
+    },
+    "location_lng": {
+      "type": "number",
+      "description": "Longitude coordinate"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Trip start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Trip end date"
+    },
+    "paddle_in": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a paddle-in trip requiring watercraft for all members"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or details"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Cover image for the trip"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "completed"
+      ],
+      "default": "planning"
+    },
+    "trip_code": {
+      "type": "string",
+      "description": "8-character alphanumeric code for joining the trip"
+    },
+    "locked_out_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who are locked out from rejoining this trip",
+      "default": []
+    },
+    "packing_items": {
+      "type": "array",
+      "description": "Packing checklist items",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "shelter",
+              "sleep",
+              "cooking",
+              "clothing",
+              "safety",
+              "tools",
+              "personal",
+              "food",
+              "other"
+            ]
+          },
+          "packed": {
+            "type": "boolean",
+            "default": false
+          },
+          "assigned_to": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Emails of members assigned to this item"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Capacity for shelter items (e.g., tent sleeps 4)"
+          }
+        }
+      }
+    },
+    "gear_items": {
+      "type": "array",
+      "description": "Gear/equipment list for the trip",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "tents",
+              "watercraft",
+              "sleeping",
+              "fire",
+              "water",
+              "kitchen",
+              "other"
+            ]
+          },
+          "equipment_id": {
+            "type": "string",
+            "description": "ID of equipment from gear shed if applicable"
+          },
+          "is_rental": {
+            "type": "boolean",
+            "default": false
+          },
+          "assigned_to": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Emails of members assigned to this item"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Capacity if applicable"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gear_requests": {
+      "type": "array",
+      "description": "Gear requests for the trip",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the requested gear"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "tents",
+              "watercraft",
+              "sleeping",
+              "fire",
+              "water",
+              "kitchen",
+              "other"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "assigned_to_member_id": {
+            "type": "string",
+            "description": "ID of member assigned to bring this gear"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "assigned",
+              "confirmed",
+              "declined"
+            ],
+            "default": "open",
+            "description": "Status of the request"
+          },
+          "fulfilled_by_equipment_id": {
+            "type": "string",
+            "description": "ID of equipment from gear shed if fulfilled"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "location",
+    "start_date"
+  ]
+}
